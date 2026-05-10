@@ -1,19 +1,21 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const secret = process.env.SHOPIFY_SECRET;
+  const token = process.env.SHOPIFY_TOKEN || process.env.SHOPIFY_SECRET;
   const domain = process.env.SHOPIFY_DOMAIN;
 
-  if (!secret || !domain) {
-    return res.status(500).json({ error: 'Shopify env vars not configured' });
+  if (!token || !domain) {
+    return res.status(500).json({ 
+      error: 'env vars missing',
+      hasToken: !!token,
+      hasDomain: !!domain,
+      domain: domain || 'NOT SET'
+    });
   }
 
   const path = req.query.path;
-  if (!path) return res.status(400).json({ error: 'Missing path param' });
+  if (!path) return res.status(400).json({ error: 'Missing path' });
 
   const { path: _, ...rest } = req.query;
   const qs = new URLSearchParams(rest).toString();
@@ -21,13 +23,10 @@ export default async function handler(req, res) {
 
   try {
     const r = await fetch(url, {
-      headers: {
-        'X-Shopify-Access-Token': secret,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
     });
     const data = await r.json();
-    if (!r.ok) return res.status(r.status).json({ error: data });
+    if (!r.ok) return res.status(r.status).json({ error: data, url });
     return res.status(200).json(data);
   } catch (e) {
     return res.status(500).json({ error: e.message });
