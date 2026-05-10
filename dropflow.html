@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DropFlow">
+<title>DropFlow</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d0d;--s1:#161616;--s2:#1c1c1c;--s3:#242424;
+  --b1:#282828;--b2:#323232;--b3:#404040;
+  --t1:#f2f2f2;--t2:#9a9a9a;--t3:#585858;
+  --acc:#4c7bff;--acc-dim:rgba(76,123,255,.13);
+  --grn:#1ec978;--grn-dim:rgba(30,201,120,.13);
+  --red:#f0524a;--red-dim:rgba(240,82,74,.13);
+  --amb:#f0a020;--amb-dim:rgba(240,160,32,.13);
+  --meta:#1877F2;--meta-dim:rgba(24,119,242,.13);
+  --tt:#FE2C55;--tt-dim:rgba(254,44,85,.13);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;
+  --safe:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  font-size:15px;-webkit-font-smoothing:antialiased}
+#root{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+/* nav */
+#nav{position:absolute;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(13,13,13,.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--b1);display:flex;padding:8px 0 calc(8px + var(--safe))}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;color:var(--t3);cursor:pointer;padding:4px 0;transition:.2s;font-family:inherit}
+.nb i{font-size:22px}.nb span{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.nb.on{color:var(--acc)}
+/* screens */
+#screens{flex:1;overflow:hidden;position:relative}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding-bottom:calc(78px + var(--safe));display:none;-webkit-overflow-scrolling:touch}
+.scr.on{display:block}
+.scr::-webkit-scrollbar{display:none}
+/* topbar */
+.topbar{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;
+  position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
+.ptitle{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.psub{font-size:12px;color:var(--t3);margin-top:2px}
+/* ccy */
+.ccy-row{display:flex;gap:4px}
+.cc{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  background:none;border:1px solid var(--b2);color:var(--t2);cursor:pointer;transition:.15s;font-family:inherit}
+.cc.on{background:var(--acc);border-color:var(--acc);color:#fff}
+/* sec */
+.sec{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 10px}
+.stitle{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px}
+.sact{font-size:12px;color:var(--acc);font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit}
+/* stat grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 18px}
+.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:14px 16px}
+.sl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.sv{font-size:21px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.sv.g{color:var(--grn)}.sv.r{color:var(--red)}.sv.a{color:var(--amb)}
+/* chart */
+.cbox{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  margin:0 18px;padding:12px;position:relative;overflow:hidden}
+/* bars */
+.brow{display:flex;align-items:flex-end;gap:5px;height:88px}
+.bcol{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bpair{display:flex;gap:2px;align-items:flex-end;width:100%;flex:1}
+.bar{border-radius:3px 3px 0 0;flex:1;min-height:2px}
+.bar.rv{background:var(--grn)}.bar.co{background:var(--s3)}
+.blbl{font-size:9px;color:var(--t3);font-weight:600}
+/* legend */
+.leg{display:flex;gap:12px;margin-bottom:8px}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.ld{width:6px;height:6px;border-radius:50%}
+/* item cards */
+.cl{display:flex;flex-direction:column;gap:8px;padding:0 18px}
+.ic{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  padding:13px 14px;display:flex;align-items:center;gap:11px}
+.ii{width:38px;height:38px;border-radius:var(--r8);display:flex;align-items:center;
+  justify-content:center;font-size:19px;flex-shrink:0}
+.ii.g{background:var(--grn-dim);color:var(--grn)}.ii.b{background:var(--acc-dim);color:var(--acc)}
+.ii.r{background:var(--red-dim);color:var(--red)}.ii.a{background:var(--amb-dim);color:var(--amb)}
+.ii.meta{background:var(--meta-dim);color:var(--meta)}.ii.tt{background:var(--tt-dim);color:var(--tt)}
+.ib{flex:1;min-width:0}
+.it{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.im{font-size:11px;color:var(--t2);margin-top:3px}
+.ir{text-align:right;flex-shrink:0}
+.ia{font-size:14px;font-weight:700}
+.ia.g{color:var(--grn)}.ia.r{color:var(--red)}
+.db{background:none;border:none;color:var(--red);cursor:pointer;padding:5px;font-size:16px;opacity:.6}
+.db:active{opacity:1}
+/* platform cards */
+.pfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 8px}
+.pfc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:13px;border-left:3px solid}
+.pfc.meta{border-left-color:var(--meta)}.pfc.tt{border-left-color:var(--tt)}
+.pfn{font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.pfd{width:7px;height:7px;border-radius:50%}
+.pfd.meta{background:var(--meta)}.pfd.tt{background:var(--tt)}
+.pfm{display:flex;flex-direction:column;gap:6px}
+.pfr{display:flex;justify-content:space-between;align-items:baseline}
+.pfl{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.pfv{font-size:12px;font-weight:700}
+.pfv.g{color:var(--grn)}.pfv.a{color:var(--amb)}.pfv.r{color:var(--red)}
+/* more menu */
+.mg{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 14px;overflow:hidden}
+.mr{display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer;
+  border-bottom:1px solid var(--b1);-webkit-tap-highlight-color:transparent}
+.mr:last-child{border-bottom:none}
+.mr:active{background:var(--s2)}
+.mi{width:36px;height:36px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ml{flex:1;font-size:15px;font-weight:500}
+.mb{background:var(--s3);color:var(--t2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+/* shopify card */
+.shc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  margin:12px 18px;padding:13px 15px;display:flex;align-items:center;gap:12px}
+.shlogo{width:36px;height:36px;border-radius:var(--r8);background:#96bf48;
+  display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0}
+.cdot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.cdot.ok{background:var(--grn)}.cdot.er{background:var(--red)}
+/* forms */
+.fc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 14px;padding:15px}
+.fr{display:flex;gap:8px;margin-bottom:11px}
+.fld{flex:1;min-width:0}
+.fl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+input,select{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r8);
+  padding:10px 11px;color:var(--t1);font-size:14px;font-family:inherit;
+  -webkit-appearance:none;appearance:none;outline:none;transition:.15s}
+input:focus,select:focus{border-color:var(--acc)}
+input::placeholder{color:var(--t3)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23585858' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.chip{padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;
+  border:1px solid var(--b2);color:var(--t2);cursor:pointer;background:none;
+  text-transform:capitalize;font-family:inherit;transition:.15s}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.abtn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r8);
+  padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.abtn:active{opacity:.85}
+.abtn.sec{background:var(--s2);color:var(--t1);border:1px solid var(--b2)}
+/* sync banner */
+.sb{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:12px}
+.sb.sy{background:var(--acc-dim);color:#93b4ff;border-bottom:1px solid rgba(76,123,255,.15)}
+.sb.ok{background:var(--grn-dim);color:#6ee7b7;border-bottom:1px solid rgba(30,201,120,.15)}
+.sb.er{background:var(--red-dim);color:#fca5a5;border-bottom:1px solid rgba(240,82,74,.15)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp{animation:spin .7s linear infinite;display:inline-block}
+/* subscreen */
+.ss{position:absolute;inset:0;background:var(--bg);z-index:50;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;
+  padding-bottom:calc(32px + var(--safe))}
+.ss.on{display:block}
+.ss::-webkit-scrollbar{display:none}
+.bbar{padding:12px 18px;display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
+.bbtn{background:none;border:none;color:var(--acc);cursor:pointer;
+  display:flex;align-items:center;gap:2px;font-size:15px;padding:0;font-family:inherit}
+.bbtn i{font-size:20px}
+.sstitle{font-size:17px;font-weight:600}
+/* subs */
+.subi{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--b1)}
+.subi:last-child{border-bottom:none}
+.dueb{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;flex-shrink:0}
+.dueb.r{background:var(--red-dim);color:var(--red)}
+.dueb.a{background:var(--amb-dim);color:var(--amb)}
+.dueb.g{background:var(--grn-dim);color:var(--grn)}
+/* forecast */
+.fpr{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 18px;border-bottom:1px solid var(--b1)}
+.fpr:last-child{border-bottom:none}
+/* settings */
+.sr{padding:13px 18px;border-bottom:1px solid var(--b1);display:flex;flex-direction:column;gap:6px}
+.srl{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+.srh{font-size:11px;color:var(--t3);line-height:1.5}
+/* info */
+.info{margin:10px 18px;padding:11px 13px;background:var(--acc-dim);
+  border:1px solid rgba(76,123,255,.18);border-radius:var(--r12);font-size:12px;color:#93b4ff;line-height:1.6}
+/* empty */
+.empty{text-align:center;padding:36px 24px;color:var(--t3)}
+.empty i{font-size:34px;margin-bottom:10px;display:block;opacity:.5}
+.empty p{font-size:13px;line-height:1.6}
+/* toast */
+#toast{position:fixed;bottom:calc(88px + var(--safe));left:50%;transform:translateX(-50%);
+  background:rgba(36,36,36,.97);color:var(--t1);padding:9px 18px;border-radius:999px;
+  font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:.25s;white-space:nowrap;z-index:999;
+  border:1px solid var(--b2)}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="root">
+<div id="screens">
+
+<!-- ① DASHBOARD -->
+<div class="scr on" id="s0">
+  <div class="topbar">
+    <div><div class="ptitle">DropFlow</div><div class="psub" id="d-sub">—</div></div>
+    <div class="ccy-row">
+      <button class="cc on" onclick="setCcy('CHF',this)">CHF</button>
+      <button class="cc" onclick="setCcy('EUR',this)">EUR</button>
+      <button class="cc" onclick="setCcy('USD',this)">USD</button>
+    </div>
+  </div>
+  <div id="synctop"></div>
+  <div class="sg" id="statgrid"></div>
+  <div class="sec"><span class="stitle">Revenue vs costs · 6 months</span>
+    <div class="leg"><div class="li"><div class="ld" style="background:var(--grn)"></div>Rev</div>
+    <div class="li"><div class="ld" style="background:var(--s3)"></div>Costs</div></div>
+  </div>
+  <div class="cbox" style="height:128px;padding:12px 12px 8px">
+    <div class="brow" id="bars"></div>
+  </div>
+  <div class="sec"><span class="stitle">Recent orders</span>
+    <button class="sact" onclick="goTab(1)">See all</button></div>
+  <div class="cl" id="d-orders"></div>
+  <div style="height:14px"></div>
+</div>
+
+<!-- ② ORDERS -->
+<div class="scr" id="s1">
+  <div class="topbar">
+    <div><div class="ptitle">Orders</div><div class="psub">Shopify sync</div></div>
+    <button onclick="syncShopify()" style="background:var(--acc-dim);border:1px solid rgba(76,123,255,.25);
+      color:var(--acc);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;gap:4px;font-family:inherit">
+      <i class="ti ti-refresh" id="sync-ico"></i>Sync
+    </button>
+  </div>
+  <div class="sec">
+    <span class="stitle" id="o-count">0 orders</span>
+    <div style="display:flex;gap:5px" id="ofilt">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="paid">Paid</button>
+      <button class="chip" data-f="refunded">Refunded</button>
+    </div>
+  </div>
+  <div class="cl" id="o-list"></div>
+  <div style="height:14px"></div>
+</div>
+
+<!-- ③ ADS -->
+<div class="scr" id="s2">
+  <div class="topbar"><div class="ptitle">Ads</div></div>
+  <div class="pfg" id="pfcards"></div>
+  <div class="cbox" style="height:100px;margin-top:10px">
+    <svg id="adsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
+  </div>
+  <div class="sec"><span class="stitle">Log campaign</span></div>
+  <div class="fc">
+    <div class="fl" style="margin-bottom:5px">Platform</div>
+    <div class="chips" id="ap"><button class="chip on" data-v="meta">Meta</button>
+      <button class="chip" data-v="tiktok">TikTok</button>
+      <button class="chip" data-v="google">Google</button></div>
+    <div class="fr"><div class="fld"><div class="fl">Date</div><input type="date" id="ad" style="color-scheme:dark"></div>
+      <div class="fld"><div class="fl">Campaign</div><input type="text" id="ac" placeholder="Name"></div></div>
+    <div class="fr"><div class="fld"><div class="fl">Spend</div><input type="number" id="as" placeholder="0.00" step="0.01"></div>
+      <div class="fld"><div class="fl">Revenue attr.</div><input type="number" id="ar" placeholder="0.00" step="0.01"></div></div>
+    <div class="fr"><div class="fld"><div class="fl">Impressions</div><input type="number" id="ai" placeholder="0"></div>
+      <div class="fld"><div class="fl">Clicks</div><input type="number" id="alk" placeholder="0"></div>
+      <div class="fld"><div class="fl">Conv.</div><input type="number" id="aco" placeholder="0"></div></div>
+    <div class="fl" style="margin-bottom:5px">Currency</div>
+    <div class="chips" id="accy"><button class="chip on" data-v="CHF">CHF</button>
+      <button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
+    <button class="abtn" onclick="addAd()">+ Add campaign</button>
+  </div>
+  <div class="sec"><span class="stitle" id="adcount">Ad history</span></div>
+  <div class="cl" id="adlist"></div>
+  <div style="height:14px"></div>
+</div>
+
+<!-- ④ MORE -->
+<div class="scr" id="s3">
+  <div class="topbar"><div class="ptitle">More</div></div>
+  <div class="shc">
+    <div class="shlogo"><i class="ti ti-brand-shopify"></i></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:600">Shopify</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:3px">
+        <div class="cdot" id="shdot"></div>
+        <div style="font-size:11px;color:var(--t2)" id="shlbl">Not connected</div>
+      </div>
+    </div>
+    <button onclick="showSub('set')"
+      style="background:var(--acc-dim);border:1px solid rgba(76,123,255,.22);color:var(--acc);
+      border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
+      Configure
+    </button>
+  </div>
+  <div class="mg">
+    <div class="mr" onclick="showSub('exp')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-receipt"></i></div><span class="ml">Expenses</span><span class="mb" id="bexp">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('sub')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-calendar-event"></i></div><span class="ml">Subscriptions</span><span class="mb" id="bsub">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('prod')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-package"></i></div><span class="ml">Products</span><span class="mb" id="bprod">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('fc')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-chart-line"></i></div><span class="ml">Cashflow forecast</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+  </div>
+  <div class="mg">
+    <div class="mr" onclick="exportCSV()"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-download"></i></div><span class="ml">Export CSV</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('set')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings & API</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+  </div>
+  <div style="height:14px"></div>
+</div>
+
+</div><!-- /screens -->
+
+<!-- SUB: SETTINGS -->
+<div class="ss" id="ss-set">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('set')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Settings & API</span></div>
+  <div class="info">
+    <b style="color:var(--t1)">How to get your Shopify token:</b><br>
+    Shopify Admin → Settings → Apps → Develop apps → Create app<br>
+    → Configure Admin API scopes → enable:<br>
+    <span style="color:#c7d7ff">read_orders, read_products, read_customers, read_all_orders</span><br>
+    → Install app → copy the <b style="color:var(--t1)">Admin API access token</b>
+  </div>
+  <div class="mg" style="margin-top:6px">
+    <div class="sr"><div class="srl">Store domain</div><input type="text" id="cfg-d" placeholder="shop.yourdomain.com or store.myshopify.com"><div class="srh">Your custom domain or yourstore.myshopify.com — no https://</div></div>
+    <div class="sr"><div class="srl">Admin API access token</div><input type="password" id="cfg-t" placeholder="shpat_xxxxxxxxxxxxxxxx"><div class="srh">Starts with shpat_ · stored only in your browser, never sent anywhere except Shopify</div></div>
+    <div class="sr"><div class="srl">Status</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+        <div class="cdot" id="cfg-dot"></div><span style="font-size:12px;color:var(--t2)" id="cfg-stat">Not tested</span>
+      </div>
+    </div>
+  </div>
+  <div style="padding:0 18px;margin-bottom:20px"><button class="abtn" onclick="testSave()">Save & test connection</button></div>
+  <div class="sec"><span class="stitle">Display & Finance</span></div>
+  <div class="mg">
+    <div class="sr"><div class="srl">VAT rate (%)</div><input type="number" id="cfg-v" placeholder="8.1" step="0.1"><div class="srh">Swiss standard rate is 8.1%</div></div>
+    <div class="sr"><div class="srl">VAT registered?</div>
+      <div class="chips" id="cfg-vr" style="margin:2px 0 0"><button class="chip on" data-v="0">No</button><button class="chip" data-v="1">Yes</button></div>
+    </div>
+    <div class="sr"><div class="srl">Starting cash balance (CHF)</div><input type="number" id="cfg-b" placeholder="0.00" step="0.01"><div class="srh">Used for cashflow forecast</div></div>
+  </div>
+  <div style="padding:0 18px;margin-bottom:32px"><button class="abtn sec" onclick="saveSett()">Save settings</button></div>
+</div>
+
+<!-- SUB: EXPENSES -->
+<div class="ss" id="ss-exp">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('exp')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Expenses</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="fr"><div class="fld"><div class="fl">Date</div><input type="date" id="ed" style="color-scheme:dark"></div>
+      <div class="fld"><div class="fl">Amount</div><input type="number" id="ea" placeholder="0.00" step="0.01"></div></div>
+    <div class="fld" style="margin-bottom:11px"><div class="fl">Description</div><input type="text" id="edesc" placeholder="e.g. Shopify plan"></div>
+    <div class="fl" style="margin-bottom:5px">Category</div>
+    <div class="chips" id="ecat"><button class="chip on" data-v="tools">tools</button><button class="chip" data-v="shipping">shipping</button><button class="chip" data-v="domain">domain</button><button class="chip" data-v="fees">fees</button><button class="chip" data-v="other">other</button></div>
+    <div class="fl" style="margin-bottom:5px">Currency</div>
+    <div class="chips" id="eccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
+    <button class="abtn" onclick="addExp()">+ Add expense</button>
+  </div>
+  <div class="cl" id="explist"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- SUB: SUBSCRIPTIONS -->
+<div class="ss" id="ss-sub">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('sub')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Subscriptions</span></div>
+  <div class="sg" style="padding:12px 18px 8px">
+    <div class="sc"><div class="sl">Monthly burn</div><div class="sv" id="submo">—</div></div>
+    <div class="sc"><div class="sl">Yearly cost</div><div class="sv" id="subyr">—</div></div>
+  </div>
+  <div class="fc">
+    <div class="fr"><div class="fld"><div class="fl">Name</div><input type="text" id="sn" placeholder="e.g. Shopify"></div>
+      <div class="fld"><div class="fl">Amount</div><input type="number" id="sa" placeholder="0.00" step="0.01"></div></div>
+    <div class="fr"><div class="fld"><div class="fl">Next charge</div><input type="date" id="snx" style="color-scheme:dark"></div></div>
+    <div class="fl" style="margin-bottom:5px">Cycle</div>
+    <div class="chips" id="scy"><button class="chip on" data-v="monthly">monthly</button><button class="chip" data-v="yearly">yearly</button></div>
+    <div class="fl" style="margin-bottom:5px">Currency</div>
+    <div class="chips" id="sccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
+    <button class="abtn" onclick="addSub()">+ Add subscription</button>
+  </div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px" id="sublist"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- SUB: PRODUCTS -->
+<div class="ss" id="ss-prod">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Products</span></div>
+  <div class="cl" style="margin-top:12px" id="prodlist"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- SUB: FORECAST -->
+<div class="ss" id="ss-fc">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('fc')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Cashflow forecast</span></div>
+  <div class="sg" style="padding:12px 18px 8px">
+    <div class="sc"><div class="sl">Avg monthly net</div><div class="sv" id="fcnet">—</div></div>
+    <div class="sc"><div class="sl">In 6 months</div><div class="sv" id="fcproj">—</div></div>
+  </div>
+  <div class="cbox" style="height:140px;margin-bottom:10px">
+    <svg id="fcsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
+  </div>
+  <div class="sec"><span class="stitle">Breakdown · monthly avg</span></div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px" id="fcbd"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- SUB: VAT -->
+<div class="ss" id="ss-vat">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('vat')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Swiss VAT estimate</span></div>
+  <div class="info" style="margin-top:12px">
+    <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>
+    VAT registration mandatory above CHF 100,000/year. Standard rate: 8.1%. Not tax advice.
+  </div>
+  <div class="sg" id="vatgrid"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <button class="nb on" id="nt0" onclick="goTab(0)"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
+  <button class="nb" id="nt1" onclick="goTab(1)"><i class="ti ti-shopping-cart"></i><span>Orders</span></button>
+  <button class="nb" id="nt2" onclick="goTab(2)"><i class="ti ti-target-arrow"></i><span>Ads</span></button>
+  <button class="nb" id="nt3" onclick="goTab(3)"><i class="ti ti-menu-2"></i><span>More</span></button>
+</nav>
+</div>
+<div id="toast"></div>
+
+<script>
+const FX={CHF:1,EUR:.94,USD:1.10},SYM={CHF:'CHF ',EUR:'€',USD:'$'};
+let ccy='CHF',activeTab=0;
+const ST={orders:[],products:[],customers:[],ads:[],expenses:[],subs:[],
+  settings:{domain:'',token:'',vat_rate:8.1,vat_registered:false,start_balance:0}};
+
+function persist(){localStorage.setItem('df3',JSON.stringify(ST));}
+function hydrate(){
+  try{const r=JSON.parse(localStorage.getItem('df3')||'{}');
+    if(r.settings)Object.assign(ST.settings,r.settings);
+    ['ads','expenses','subs','orders','products','customers'].forEach(k=>{if(r[k])ST[k]=r[k];});}catch(e){}
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function toCHF(a,c){return a/FX[c||'CHF'];}
+function fromCHF(a,c){return a*FX[c||'CHF'];}
+function fmt(chf){const v=fromCHF(chf,ccy);return SYM[ccy]+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function today(){return new Date().toISOString().slice(0,10);}
+function mk(d){return(d||'').slice(0,7);}
+function daysB(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+function nextR(s){let d=new Date(s.next_date);const n=new Date(today());const i=s.cycle==='yearly'?365:30;while(d<n)d.setDate(d.getDate()+i);return d.toISOString().slice(0,10);}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function chipV(id){return document.querySelector('#'+id+' .chip.on')?.dataset.v||'';}
+function setupC(id){document.querySelectorAll('#'+id+' .chip').forEach(c=>{c.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');}});}
+let toastT;
+function toast(m,d=2200){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),d);}
+
+// NAV
+function goTab(n){
+  activeTab=n;
+  [0,1,2,3].forEach(i=>{
+    document.getElementById('s'+i).classList.toggle('on',i===n);
+    document.getElementById('nt'+i).classList.toggle('on',i===n);
+  });
+  renderTab(n);
+}
+function showSub(n){document.getElementById('ss-'+n).classList.add('on');renderSub(n);}
+function hideSub(n){document.getElementById('ss-'+n).classList.remove('on');}
+function renderTab(n){if(n===0)rDash();else if(n===1)rOrders();else if(n===2)rAds();else if(n===3)rMore();}
+function renderSub(n){if(n==='exp')rExp();else if(n==='sub')rSubs();else if(n==='fc')rFc();else if(n==='vat')rVAT();else if(n==='prod')rProd();else if(n==='set')rSet();}
+
+// SHOPIFY
+async function sfetch(path){
+  const{domain,token}=ST.settings;
+  if(!domain||!token)throw new Error('not_configured');
+  const r=await fetch(`https://${domain}/admin/api/2024-01/${path}`,{headers:{'X-Shopify-Access-Token':token,'Content-Type':'application/json'}});
+  if(!r.ok)throw new Error('HTTP '+r.status+' — check domain, token & scopes');
+  return r.json();
+}
+
+async function syncShopify(silent){
+  const{domain,token}=ST.settings;
+  if(!domain||!token){showSub('set');return;}
+  const ico=document.getElementById('sync-ico');ico.classList.add('sp');
+  setBanner('sy','Syncing with Shopify…');
+  try{
+    const[od,pd,cd]=await Promise.all([
+      sfetch('orders.json?limit=250&status=any'),
+      sfetch('products.json?limit=250'),
+      sfetch('customers.json?limit=250'),
+    ]);
+    ST.orders=(od.orders||[]).map(o=>({
+      id:String(o.id),name:o.name,
+      date:(o.created_at||'').slice(0,10),
+      status:o.financial_status,
+      fulfillment:o.fulfillment_status||'unfulfilled',
+      amount:parseFloat(o.total_price||0),
+      currency:o.currency||'EUR',
+      customer:o.customer?`${o.customer.first_name||''} ${o.customer.last_name||''}`.trim():'Guest',
+      email:o.email||'',
+      items:(o.line_items||[]).map(li=>({title:li.title,qty:li.quantity,price:parseFloat(li.price||0)})),
+      refunded:o.financial_status==='refunded'||o.financial_status==='partially_refunded',
+    }));
+    ST.products=(pd.products||[]).map(p=>({
+      id:String(p.id),title:p.title,vendor:p.vendor,type:p.product_type,status:p.status,
+      variants:(p.variants||[]).map(v=>({id:String(v.id),title:v.title,price:parseFloat(v.price||0),sku:v.sku||'',inventory:v.inventory_quantity||0})),
+    }));
+    ST.customers=(cd.customers||[]).map(c=>({
+      id:String(c.id),name:`${c.first_name||''} ${c.last_name||''}`.trim()||'Unknown',
+      email:c.email||'',orders:c.orders_count||0,total:parseFloat(c.total_spent||0),currency:c.currency||'EUR',
+    }));
+    persist();
+    setBanner('ok',`✓ Synced ${ST.orders.length} orders · ${ST.products.length} products · ${ST.customers.length} customers`);
+    if(!silent)toast(`✓ Synced ${ST.orders.length} orders`);
+    shStatus(true);rAll();
+  }catch(e){
+    const m=e.message==='not_configured'?'Configure Shopify first':'Sync failed: '+e.message;
+    setBanner('er',m);if(!silent)toast('⚠ '+m,3500);shStatus(false,e.message);
+  }finally{ico.classList.remove('sp');}
+}
+
+async function testSave(){
+  const dom=document.getElementById('cfg-d').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const tok=document.getElementById('cfg-t').value.trim();
+  if(!dom||!tok){toast('Fill domain and token');return;}
+  ST.settings.domain=dom;ST.settings.token=tok;
+  document.getElementById('cfg-stat').textContent='Testing…';
+  document.getElementById('cfg-dot').className='cdot';
+  try{
+    const d=await sfetch('shop.json');
+    document.getElementById('cfg-stat').textContent='Connected: '+d.shop.name;
+    document.getElementById('cfg-dot').className='cdot ok';
+    persist();toast('✓ Connected to '+d.shop.name);shStatus(true,d.shop.name);
+    setTimeout(()=>syncShopify(true),600);
+  }catch(e){
+    document.getElementById('cfg-stat').textContent='Failed: '+e.message;
+    document.getElementById('cfg-dot').className='cdot er';
+    toast('⚠ '+e.message,3500);
+  }
+}
+
+function saveSett(){
+  const v=parseFloat(document.getElementById('cfg-v').value);
+  const b=parseFloat(document.getElementById('cfg-b').value);
+  if(!isNaN(v))ST.settings.vat_rate=v;
+  if(!isNaN(b))ST.settings.start_balance=b;
+  ST.settings.vat_registered=chipV('cfg-vr')==='1';
+  persist();toast('✓ Settings saved');rAll();
+}
+
+function setBanner(t,m){
+  const e=document.getElementById('synctop');
+  if(t==='sy')e.innerHTML=`<div class="sb sy"><i class="ti ti-refresh sp"></i>${esc(m)}</div>`;
+  else if(t==='ok'){e.innerHTML=`<div class="sb ok"><i class="ti ti-check"></i>${esc(m)}</div>`;setTimeout(()=>e.innerHTML='',5000);}
+  else if(t==='er')e.innerHTML=`<div class="sb er"><i class="ti ti-alert-circle"></i>${esc(m)}</div>`;
+  else e.innerHTML='';
+}
+
+function shStatus(ok,lbl){
+  document.getElementById('shdot').className='cdot '+(ok?'ok':'er');
+  document.getElementById('shlbl').textContent=ok?(lbl&&lbl!==true?lbl:`${ST.orders.length} orders synced`):(lbl||'Error');
+}
+
+// AGGREGATIONS
+function oTotals(){
+  const paid=ST.orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
+  const ref=ST.orders.filter(o=>o.status==='refunded');
+  const rev=paid.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  const refunds=ref.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  return{rev,refunds,net:rev-refunds,count:paid.length};
+}
+function aTotals(){const sp=ST.ads.reduce((s,a)=>s+toCHF(a.spend,a.currency),0),rv=ST.ads.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);return{sp,rv,roas:sp>0?rv/sp:0};}
+function eTotals(){return ST.expenses.reduce((s,e)=>s+toCHF(e.amount,e.currency),0);}
+function sMo(){return ST.subs.reduce((s,x)=>{const a=toCHF(x.amount,x.currency);return s+(x.cycle==='yearly'?a/12:a);},0);}
+function months6(){const now=new Date(),m=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);m.push(d.toISOString().slice(0,7));}return m;}
+function revByMo(ms){return ms.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+toCHF(o.amount,o.currency),0));}
+function adByMo(ms){return ms.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.spend,a.currency),0));}
+
+// RENDERS
+function rAll(){renderTab(activeTab);document.getElementById('bexp').textContent=ST.expenses.length;document.getElementById('bsub').textContent=ST.subs.length;document.getElementById('bprod').textContent=ST.products.length;if(ST.settings.domain&&ST.orders.length)shStatus(true);}
+
+function rDash(){
+  const ot=oTotals(),at=aTotals(),et=eTotals(),sm=sMo();
+  const profit=ot.net-at.sp-et,margin=ot.net>0?(profit/ot.net)*100:0;
+  document.getElementById('d-sub').textContent=new Date().toLocaleDateString('en',{month:'long',year:'numeric'});
+  const stats=[{l:'Revenue',v:fmt(ot.net)},{l:'Net profit',v:fmt(profit),c:profit>=0?'g':'r'},
+    {l:'Margin',v:margin.toFixed(1)+'%',c:margin>=20?'g':margin>=0?'':'r'},
+    {l:'Orders',v:String(ot.count)},{l:'Ad ROAS',v:at.roas.toFixed(2)+'x',c:at.roas>=2?'g':at.roas>=1?'a':'r'},
+    {l:'Subs/mo',v:fmt(sm)}];
+  document.getElementById('statgrid').innerHTML=stats.map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
+  const ms=months6(),revs=revByMo(ms),ads=adByMo(ms);
+  const costs=ads.map((a,i)=>a+(et/6));
+  const maxV=Math.max(...revs,...costs,1);
+  const labs=ms.map(m=>new Date(m+'-01').toLocaleDateString('en',{month:'short'}));
+  document.getElementById('bars').innerHTML=revs.map((r,i)=>{
+    const rh=Math.max((r/maxV)*78,2),ch=Math.max((costs[i]/maxV)*78,1);
+    return`<div class="bcol"><div class="bpair"><div class="bar rv" style="height:${rh}px"></div><div class="bar co" style="height:${ch}px"></div></div><div class="blbl">${labs[i]}</div></div>`;
+  }).join('');
+  const rec=ST.orders.slice(0,5);
+  document.getElementById('d-orders').innerHTML=rec.length?rec.map(oCard).join(''):
+    `<div class="empty"><i class="ti ti-shopping-cart"></i><p>${ST.settings.domain?'No orders yet — tap Sync':'Connect Shopify in More → Settings'}</p></div>`;
+}
+
+function oCard(o){
+  const sc=o.refunded?'r':o.status==='paid'?'g':'a';
+  const si=o.refunded?'ti-arrow-back-up':o.fulfillment==='fulfilled'?'ti-package-check':'ti-shopping-cart';
+  return`<div class="ic"><div class="ii ${sc}"><i class="ti ${si}"></i></div>
+    <div class="ib"><div class="it">${esc(o.customer||'Guest')} · ${esc(o.name)}</div>
+    <div class="im">${o.date} · ${o.items.length} item${o.items.length!==1?'s':''} · ${o.status}</div></div>
+    <div class="ir"><div class="ia ${sc}">${fmt(toCHF(o.amount,o.currency))}</div>
+    <div style="font-size:10px;color:var(--t3);margin-top:3px">${o.fulfillment}</div></div></div>`;
+}
+
+function rOrders(){
+  const filt=document.getElementById('ofilt');
+  setupC('ofilt');
+  filt.querySelectorAll('.chip').forEach(c=>{c.onclick=(c.onclick||function(){});const orig=c.onclick;c.onclick=()=>{orig&&orig();rOrders();}});
+  const f=chipV('ofilt')||'all';
+  let ords=ST.orders.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(f==='paid')ords=ords.filter(o=>o.status==='paid');
+  if(f==='refunded')ords=ords.filter(o=>o.refunded);
+  document.getElementById('o-count').textContent=`${ords.length} order${ords.length!==1?'s':''}`;
+  document.getElementById('o-list').innerHTML=ords.length?ords.map(oCard).join(''):
+    `<div class="empty"><i class="ti ti-shopping-cart"></i><p>${ST.settings.domain?'No orders — tap Sync':'Connect Shopify in More → Settings'}</p></div>`;
+}
+
+function rAds(){
+  const calc=p=>{const arr=p?ST.ads.filter(a=>a.platform===p):ST.ads;
+    const sp=arr.reduce((s,a)=>s+toCHF(a.spend,a.currency),0),rv=arr.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);
+    const imp=arr.reduce((s,a)=>s+(a.impressions||0),0),clk=arr.reduce((s,a)=>s+(a.clicks||0),0);
+    return{sp,rv,roas:sp>0?rv/sp:0,cpc:clk>0?sp/clk:0,ctr:imp>0?(clk/imp)*100:0};};
+  const m=calc('meta'),t=calc('tiktok');
+  document.getElementById('pfcards').innerHTML=pfCard('Meta','meta',m)+pfCard('TikTok','tt',t);
+  const ms=months6(),sp=adByMo(ms),rv=ms.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.revenue,a.currency),0));
+  const W=360,H=80,maxV=Math.max(...sp,...rv,1);
+  const pt=arr=>arr.map((v,i)=>`${12+i*(W-24)/5},${H-6-Math.max(v/maxV,0)*(H-16)}`).join(' ');
+  document.getElementById('adsvg').innerHTML=`<defs><linearGradient id="gR" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/><stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${pt(rv)} ${12+5*(W-24)/5},${H-6} 12,${H-6}" fill="url(#gR)"/>
+    <polyline points="${pt(rv)}" fill="none" stroke="#1ec978" stroke-width="1.8" stroke-linejoin="round"/>
+    <polyline points="${pt(sp)}" fill="none" stroke="#f0524a" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>`;
+  document.getElementById('ad').value=document.getElementById('ad').value||today();
+  setupC('ap');setupC('accy');
+  const sorted=ST.ads.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('adcount').textContent=`${sorted.length} campaign${sorted.length!==1?'s':''}`;
+  document.getElementById('adlist').innerHTML=sorted.length?sorted.map(a=>{
+    const rc=a.spend>0&&a.revenue/a.spend>=2?'g':a.spend>0&&a.revenue/a.spend>=1?'a':'r';
+    const ic=a.platform==='meta'?'ti-brand-facebook':a.platform==='tiktok'?'ti-brand-tiktok':'ti-brand-google';
+    const icls=a.platform==='meta'?'meta':a.platform==='tiktok'?'tt':'b';
+    return`<div class="ic"><div class="ii ${icls}"><i class="ti ${ic}"></i></div>
+      <div class="ib"><div class="it">${esc(a.campaign)}</div>
+      <div class="im">${a.date} · ${a.platform} · ROAS ${a.spend>0?(a.revenue/a.spend).toFixed(2)+'x':'—'}</div></div>
+      <div class="ir"><div class="ia r">−${fmt(toCHF(a.spend,a.currency))}</div>
+      <button class="db" onclick="delA('${a.id}')"><i class="ti ti-trash"></i></button></div></div>`;
+  }).join(''):`<div class="empty"><i class="ti ti-target-arrow"></i><p>No campaigns yet</p></div>`;
+}
+
+function pfCard(name,cls,d){
+  const rc=d.roas>=2?'g':d.roas>=1?'a':'r';
+  return`<div class="pfc ${cls}"><div class="pfn"><div class="pfd ${cls}"></div>${name}</div>
+    <div class="pfm">
+      <div class="pfr"><span class="pfl">Spend</span><span class="pfv">${fmt(d.sp)}</span></div>
+      <div class="pfr"><span class="pfl">Revenue</span><span class="pfv">${fmt(d.rv)}</span></div>
+      <div class="pfr"><span class="pfl">ROAS</span><span class="pfv ${rc}">${d.roas.toFixed(2)}x</span></div>
+      <div class="pfr"><span class="pfl">CTR</span><span class="pfv">${d.ctr.toFixed(2)}%</span></div>
+      <div class="pfr"><span class="pfl">CPC</span><span class="pfv">${d.cpc>0?fmt(d.cpc):'—'}</span></div>
+    </div></div>`;
+}
+
+function addAd(){
+  const sp=parseFloat(document.getElementById('as').value);
+  if(!sp||sp<=0){toast('Enter spend amount');return;}
+  ST.ads.unshift({id:uid(),date:document.getElementById('ad').value||today(),
+    platform:chipV('ap'),campaign:document.getElementById('ac').value||'—',
+    spend:sp,revenue:parseFloat(document.getElementById('ar').value)||0,
+    impressions:parseInt(document.getElementById('ai').value)||0,
+    clicks:parseInt(document.getElementById('alk').value)||0,
+    conversions:parseInt(document.getElementById('aco').value)||0,
+    currency:chipV('accy')||'CHF'});
+  ['as','ar','ai','alk','aco','ac'].forEach(id=>document.getElementById(id).value='');
+  persist();rAds();toast('✓ Campaign added');
+}
+
+function delA(id){ST.ads=ST.ads.filter(a=>a.id!==id);persist();rAds();}
+
+function rMore(){
+  document.getElementById('bexp').textContent=ST.expenses.length;
+  document.getElementById('bsub').textContent=ST.subs.length;
+  document.getElementById('bprod').textContent=ST.products.length;
+  if(ST.settings.domain&&ST.orders.length)shStatus(true);
+  else if(ST.settings.domain)shStatus(false,'Token set, no orders yet');
+}
+
+function rExp(){
+  document.getElementById('ed').value=document.getElementById('ed').value||today();
+  setupC('ecat');setupC('eccy');
+  const s=ST.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('explist').innerHTML=s.length?s.map(e=>`
+    <div class="ic"><div class="ii r"><i class="ti ti-receipt"></i></div>
+    <div class="ib"><div class="it">${esc(e.description)}</div><div class="im">${e.date} · ${e.category}</div></div>
+    <div class="ir"><div class="ia r">−${fmt(toCHF(e.amount,e.currency))}</div>
+    <button class="db" onclick="delE('${e.id}')"><i class="ti ti-trash"></i></button></div></div>`).join(''):
+    `<div class="empty"><i class="ti ti-receipt"></i><p>No expenses yet</p></div>`;
+}
+
+function addExp(){
+  const a=parseFloat(document.getElementById('ea').value);
+  if(!a||a<=0){toast('Enter amount');return;}
+  ST.expenses.unshift({id:uid(),date:document.getElementById('ed').value||today(),
+    description:document.getElementById('edesc').value||'—',
+    category:chipV('ecat')||'other',amount:a,currency:chipV('eccy')||'CHF'});
+  document.getElementById('ea').value='';document.getElementById('edesc').value='';
+  persist();rExp();rAll();toast('✓ Expense added');
+}
+function delE(id){ST.expenses=ST.expenses.filter(e=>e.id!==id);persist();rExp();rAll();}
+
+function rSubs(){
+  document.getElementById('snx').value=document.getElementById('snx').value||today();
+  setupC('scy');setupC('sccy');
+  const mo=sMo();
+  document.getElementById('submo').textContent=fmt(mo);
+  document.getElementById('subyr').textContent=fmt(mo*12);
+  const s=ST.subs.slice().sort((a,b)=>nextR(a).localeCompare(nextR(b)));
+  document.getElementById('sublist').innerHTML=s.length?s.map(x=>{
+    const nx=nextR(x),days=daysB(today(),nx),cls=days<=3?'r':days<=7?'a':'g';
+    return`<div class="subi"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">${esc(x.name)}</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:2px">${x.cycle} · ${fmt(toCHF(x.amount,x.currency))}</div></div>
+      <div style="text-align:right;flex-shrink:0;margin-right:8px"><div style="font-size:12px;font-weight:600">${nx}</div></div>
+      <div class="dueb ${cls}">${days<=0?'today!':'in '+days+'d'}</div>
+      <button class="db" style="margin-left:6px" onclick="delS('${x.id}')"><i class="ti ti-trash"></i></button></div>`;
+  }).join(''):`<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">No subscriptions yet</div>`;
+}
+
+function addSub(){
+  const n=document.getElementById('sn').value.trim(),a=parseFloat(document.getElementById('sa').value);
+  if(!n||!a){toast('Fill name and amount');return;}
+  ST.subs.push({id:uid(),name:n,amount:a,currency:chipV('sccy')||'CHF',cycle:chipV('scy')||'monthly',next_date:document.getElementById('snx').value||today()});
+  document.getElementById('sn').value='';document.getElementById('sa').value='';
+  persist();rSubs();rAll();toast('✓ Subscription added');
+}
+function delS(id){ST.subs=ST.subs.filter(s=>s.id!==id);persist();rSubs();rAll();}
+
+function rProd(){
+  const el=document.getElementById('prodlist');
+  if(!ST.products.length){el.innerHTML=`<div class="empty"><i class="ti ti-package"></i><p>${ST.settings.domain?'Sync Shopify to load products':'Connect Shopify in Settings'}</p></div>`;return;}
+  el.innerHTML=ST.products.map(p=>{
+    const sold=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.qty,0),0);
+    const rev=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.price*i.qty,0),0);
+    const stock=p.variants.reduce((s,v)=>s+(v.inventory||0),0);
+    const minP=p.variants.length?Math.min(...p.variants.map(v=>v.price)):0;
+    return`<div class="ic"><div class="ii b"><i class="ti ti-package"></i></div>
+      <div class="ib"><div class="it">${esc(p.title)}</div>
+      <div class="im">Sold: ${sold} · Stock: ${stock} · from ${SYM['EUR']}${minP.toFixed(2)}</div></div>
+      <div class="ir"><div class="ia g">${rev>0?fmt(toCHF(rev,'EUR')):'—'}</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:2px">${p.status}</div></div></div>`;
+  }).join('');
+}
+
+function rFc(){
+  const ms=months6(),revs=revByMo(ms),ads=adByMo(ms);
+  const avgRev=revs.reduce((s,v)=>s+v,0)/6,avgAds=ads.reduce((s,v)=>s+v,0)/6;
+  const avgExp=eTotals()/6,subs=sMo(),est_cogs=avgRev*.35;
+  const mNet=avgRev-est_cogs-avgAds-avgExp-subs;
+  const start=ST.settings.start_balance||0,proj=start+mNet*6;
+  document.getElementById('fcnet').textContent=fmt(mNet);
+  document.getElementById('fcnet').className='sv '+(mNet>=0?'g':'r');
+  document.getElementById('fcproj').textContent=fmt(proj);
+  const W=360,H=110,pts=[];let b=start;
+  for(let i=0;i<=6;i++){pts.push(b);b+=mNet;}
+  const minV=Math.min(...pts),maxV=Math.max(...pts,minV+.01),rng=maxV-minV;
+  const coords=pts.map((v,i)=>`${12+i*(W-24)/6},${H-8-((v-minV)/rng)*(H-24)}`).join(' ');
+  document.getElementById('fcsvg').innerHTML=`<defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4c7bff" stop-opacity=".18"/><stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${coords} ${12+6*(W-24)/6},${H-8} 12,${H-8}" fill="url(#gF)"/>
+    <polyline points="${coords}" fill="none" stroke="#4c7bff" stroke-width="2" stroke-linejoin="round"/>
+    ${pts.map((v,i)=>`<circle cx="${12+i*(W-24)/6}" cy="${H-8-((v-minV)/rng)*(H-24)}" r="3.5" fill="#4c7bff" stroke="var(--bg)" stroke-width="2"/>`).join('')}`;
+  const rows=[{l:'Avg revenue / mo',v:fmt(avgRev),pos:true},{l:'Est. COGS (~35%)',v:'−'+fmt(est_cogs)},
+    {l:'Avg ad spend / mo',v:'−'+fmt(avgAds)},{l:'Avg expenses / mo',v:'−'+fmt(avgExp)},{l:'Subscriptions / mo',v:'−'+fmt(subs)}];
+  document.getElementById('fcbd').innerHTML=rows.map(r=>`<div class="fpr"><span style="font-size:13px;color:var(--t2)">${r.l}</span>
+    <span style="font-size:13px;font-weight:700;color:${r.pos?'var(--grn)':'var(--t1)'}">${r.v}</span></div>`).join('')+
+    `<div class="fpr" style="background:var(--s2);margin:4px;border-radius:var(--r12);border-bottom:none">
+      <span style="font-size:14px;font-weight:700">Net / month</span>
+      <span style="font-size:14px;font-weight:700;color:var(--${mNet>=0?'grn':'red'})">${fmt(mNet)}</span></div>`;
+}
+
+function rVAT(){
+  const ot=oTotals(),et=eTotals(),at=aTotals(),rate=ST.settings.vat_rate||8.1,reg=ST.settings.vat_registered;
+  const vatS=reg?ot.net*(rate/(100+rate)):0,vatR=reg?(et+at.sp)*(rate/(100+rate)):0;
+  const vatD=Math.max(0,vatS-vatR),profit=ot.net-at.sp-et;
+  document.getElementById('vatgrid').innerHTML=[
+    {l:'Total revenue',v:fmt(ot.net)},{l:'Pre-tax profit',v:fmt(profit),c:profit>=0?'g':'r'},
+    {l:'Refunds',v:fmt(ot.refunds),c:'r'},{l:'VAT on sales',v:fmt(vatS)},
+    {l:'VAT recoverable',v:fmt(vatR)},{l:'VAT due (est.)',v:fmt(vatD),c:'a'},
+  ].map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
+}
+
+function rSet(){
+  const{domain,token,vat_rate,vat_registered,start_balance}=ST.settings;
+  document.getElementById('cfg-d').value=domain||'';
+  document.getElementById('cfg-t').value=token||'';
+  document.getElementById('cfg-v').value=vat_rate||8.1;
+  document.getElementById('cfg-b').value=start_balance||'';
+  setupC('cfg-vr');
+  if(vat_registered)document.querySelectorAll('#cfg-vr .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
+  if(domain&&ST.orders.length)shStatus(true);
+}
+
+function exportCSV(){
+  const lines=['=== ORDERS (Shopify) ===','date,order,customer,status,fulfillment,amount,currency,items'];
+  ST.orders.forEach(o=>lines.push([o.date,o.name,o.customer,o.status,o.fulfillment,o.amount,o.currency,o.items.map(i=>i.title+'x'+i.qty).join('|')].map(cc).join(',')));
+  lines.push('\n=== ADS ===','date,platform,campaign,spend,revenue,impressions,clicks,conversions,currency');
+  ST.ads.forEach(a=>lines.push([a.date,a.platform,a.campaign,a.spend,a.revenue,a.impressions,a.clicks,a.conversions,a.currency].map(cc).join(',')));
+  lines.push('\n=== EXPENSES ===','date,description,category,amount,currency');
+  ST.expenses.forEach(e=>lines.push([e.date,e.description,e.category,e.amount,e.currency].map(cc).join(',')));
+  lines.push('\n=== SUBSCRIPTIONS ===','name,amount,currency,cycle,next_date');
+  ST.subs.forEach(s=>lines.push([s.name,s.amount,s.currency,s.cycle,s.next_date].map(cc).join(',')));
+  lines.push('\n=== PRODUCTS (Shopify) ===','title,vendor,type,status,stock');
+  ST.products.forEach(p=>lines.push([p.title,p.vendor,p.type,p.status,p.variants.reduce((s,v)=>s+(v.inventory||0),0)].map(cc).join(',')));
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='dropflow-'+today()+'.csv';a.click();URL.revokeObjectURL(url);
+  toast('✓ CSV exported');
+}
+function cc(v){const s=String(v==null?'':v);return/[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+
+function setCcy(c,btn){ccy=c;document.querySelectorAll('.cc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rAll();}
+
+// INIT
+hydrate();
+document.getElementById('ad').value=today();
+document.getElementById('ed').value=today();
+document.getElementById('snx').value=today();
+setupC('ap');setupC('accy');
+rAll();
+if(ST.settings.domain&&ST.settings.token)setTimeout(()=>syncShopify(true),900);
+
+if('serviceWorker' in navigator){
+  const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>clients.claim());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)||new Response(''))));`;
+  const blob=new Blob([sw],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+</script>
+</body>
+</html>
