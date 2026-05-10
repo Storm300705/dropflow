@@ -5,11 +5,11 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const token = process.env.SHOPIFY_TOKEN;
+  const secret = process.env.SHOPIFY_SECRET;
   const domain = process.env.SHOPIFY_DOMAIN;
 
-  if (!token || !domain) {
-    return res.status(500).json({ error: 'Shopify env vars not configured in Vercel' });
+  if (!secret || !domain) {
+    return res.status(500).json({ error: 'Shopify env vars not configured' });
   }
 
   const path = req.query.path;
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   try {
     const r = await fetch(url, {
       headers: {
-        'X-Shopify-Access-Token': token,
+        'X-Shopify-Access-Token': secret,
         'Content-Type': 'application/json',
       },
     });
