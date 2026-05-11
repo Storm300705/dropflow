@@ -7,16 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="DropFlow">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='220' fill='%230d0d0d'/%3E%3Crect x='0' y='0' width='1024' height='1024' rx='220' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23111827'/%3E%3Cstop offset='100%25' stop-color='%230d0d0d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='180' y='200' width='664' height='624' rx='80' fill='%234c7bff' opacity='0.15'/%3E%3Ctext x='512' y='600' font-family='Arial Black,Arial' font-weight='900' font-size='480' fill='%234c7bff' text-anchor='middle'%3EDF%3C/text%3E%3Crect x='200' y='680' width='624' height='32' rx='16' fill='%231ec978'/%3E%3C/svg%3E">
-<meta name="msapplication-TileColor" content="#0d0d0d">
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkRyb3BGbG93IiwKICAic2hvcnRfbmFtZSI6ICJEcm9wRmxvdyIsCiAgImRlc2NyaXB0aW9uIjogIkRyb3BzaGlwcGluZyBmaW5hbmNlIHRyYWNrZXIiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBkMGQwZCIsCiAgInRoZW1lX2NvbG9yIjogIiMwZDBkMGQiLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImljb25zIjogWwogICAgeyJzcmMiOiAiL2ljb24tMTkyLnBuZyIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIn0sCiAgICB7InNyYyI6ICIvaWNvbi01MTIucG5nIiwgInNpemVzIjogIjUxMng1MTIiLCAidHlwZSI6ICJpbWFnZS9wbmcifQogIF0KfQ==">
 <title>DropFlow</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0d0d0d;--s1:#161616;--s2:#1c1c1c;--s3:#242424;
-  --b1:#282828;--b2:#323232;--b3:#404040;
+  --b1:#282828;--b2:#323232;
   --t1:#f2f2f2;--t2:#9a9a9a;--t3:#585858;
   --acc:#4c7bff;--acc-dim:rgba(76,123,255,.13);
   --grn:#1ec978;--grn-dim:rgba(30,201,120,.13);
@@ -32,127 +29,168 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
   font-size:15px;-webkit-font-smoothing:antialiased}
 #root{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
-.pwa-spacer{height:var(--safe-top);background:var(--bg);flex-shrink:0}
+.pwa-top{height:var(--safe-top);background:var(--bg);flex-shrink:0}
 #nav{position:absolute;bottom:0;left:0;right:0;z-index:100;
-  background:rgba(13,13,13,.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(13,13,13,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border-top:1px solid var(--b1);display:flex;padding:8px 0 calc(8px + var(--safe))}
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
   background:none;border:none;color:var(--t3);cursor:pointer;padding:4px 0;transition:.2s;font-family:inherit}
 .nb i{font-size:22px}.nb span{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .nb.on{color:var(--acc)}
 #screens{flex:1;overflow:hidden;position:relative}
-.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(78px + var(--safe));display:none;-webkit-overflow-scrolling:touch}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding-bottom:calc(80px + var(--safe));display:none;-webkit-overflow-scrolling:touch}
 .scr.on{display:block}
 .scr::-webkit-scrollbar{display:none}
-.topbar{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
+.topbar{padding:12px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;
+  position:sticky;top:0;background:rgba(13,13,13,.93);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
 .ptitle{font-size:22px;font-weight:700;letter-spacing:-.4px}
 .psub{font-size:12px;color:var(--t3);margin-top:2px}
 .ccy-row{display:flex;gap:4px}
-.cc{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;background:none;border:1px solid var(--b2);color:var(--t2);cursor:pointer;transition:.15s;font-family:inherit}
+.cc{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;background:none;
+  border:1px solid var(--b2);color:var(--t2);cursor:pointer;transition:.15s;font-family:inherit}
 .cc.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.sec{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 10px}
+.sec{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 8px}
 .stitle{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px}
 .sact{font-size:12px;color:var(--acc);font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 18px}
-.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:14px 16px}
-.sl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
-.sv{font-size:21px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 18px}
+.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:13px 15px}
+.sl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.sv{font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1}
 .sv.g{color:var(--grn)}.sv.r{color:var(--red)}.sv.a{color:var(--amb)}
-.cbox{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);margin:0 18px;padding:12px;position:relative;overflow:hidden}
-.brow{display:flex;align-items:flex-end;gap:5px;height:88px}
-.bcol{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.sv-sub{font-size:10px;color:var(--t3);margin-top:3px}
+.cbox{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  margin:0 18px;padding:12px;position:relative;overflow:hidden}
+.brow{display:flex;align-items:flex-end;gap:4px;height:80px}
+.bcol{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
 .bpair{display:flex;gap:2px;align-items:flex-end;width:100%;flex:1}
 .bar{border-radius:3px 3px 0 0;flex:1;min-height:2px}
-.bar.rv{background:var(--grn)}.bar.co{background:var(--s3)}
+.bar.rv{background:var(--grn)}.bar.co{background:var(--s3)}.bar.pr{background:var(--acc)}
 .blbl{font-size:9px;color:var(--t3);font-weight:600}
-.leg{display:flex;gap:12px;margin-bottom:8px}
-.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.leg{display:flex;gap:10px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t2)}
 .ld{width:6px;height:6px;border-radius:50%}
+.tf-row{display:flex;gap:5px;padding:0 18px 10px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.tf-row::-webkit-scrollbar{display:none}
+.tf{padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid var(--b2);
+  color:var(--t2);cursor:pointer;background:none;white-space:nowrap;font-family:inherit;transition:.15s}
+.tf.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .cl{display:flex;flex-direction:column;gap:8px;padding:0 18px}
-.ic{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:13px 14px;display:flex;align-items:center;gap:11px}
-.ii{width:38px;height:38px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.ic{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  padding:12px 14px;display:flex;align-items:center;gap:11px}
+.ii{width:36px;height:36px;border-radius:var(--r8);display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0}
 .ii.g{background:var(--grn-dim);color:var(--grn)}.ii.b{background:var(--acc-dim);color:var(--acc)}
 .ii.r{background:var(--red-dim);color:var(--red)}.ii.a{background:var(--amb-dim);color:var(--amb)}
 .ii.meta{background:var(--meta-dim);color:var(--meta)}.ii.tt{background:var(--tt-dim);color:var(--tt)}
 .ib{flex:1;min-width:0}
 .it{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.im{font-size:11px;color:var(--t2);margin-top:3px}
+.im{font-size:11px;color:var(--t2);margin-top:2px}
 .ir{text-align:right;flex-shrink:0}
 .ia{font-size:14px;font-weight:700}
-.ia.g{color:var(--grn)}.ia.r{color:var(--red)}
-.db{background:none;border:none;color:var(--red);cursor:pointer;padding:5px;font-size:16px;opacity:.6}
+.ia.g{color:var(--grn)}.ia.r{color:var(--red)}.ia.a{color:var(--amb)}
+.db{background:none;border:none;color:var(--red);cursor:pointer;padding:4px;font-size:16px;opacity:.55}
 .db:active{opacity:1}
-.pfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 8px}
-.pfc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:13px;border-left:3px solid}
+.pfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 6px}
+.pfc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:12px;border-left:3px solid}
 .pfc.meta{border-left-color:var(--meta)}.pfc.tt{border-left-color:var(--tt)}
-.pfn{font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.pfn{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px}
 .pfd{width:7px;height:7px;border-radius:50%}
 .pfd.meta{background:var(--meta)}.pfd.tt{background:var(--tt)}
-.pfm{display:flex;flex-direction:column;gap:6px}
+.pfm{display:flex;flex-direction:column;gap:5px}
 .pfr{display:flex;justify-content:space-between;align-items:baseline}
 .pfl{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .pfv{font-size:12px;font-weight:700}
 .pfv.g{color:var(--grn)}.pfv.a{color:var(--amb)}.pfv.r{color:var(--red)}
-.mg{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 14px;overflow:hidden}
-.mr{display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--b1);-webkit-tap-highlight-color:transparent}
+.mg{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 12px;overflow:hidden}
+.mr{display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer;
+  border-bottom:1px solid var(--b1);transition:.1s;-webkit-tap-highlight-color:transparent}
 .mr:last-child{border-bottom:none}
 .mr:active{background:var(--s2)}
-.mi{width:36px;height:36px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ml{flex:1;font-size:15px;font-weight:500}
+.mi{width:34px;height:34px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ml{flex:1;font-size:14px;font-weight:500}
 .mb{background:var(--s3);color:var(--t2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
-.shc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);margin:12px 18px;padding:13px 15px;display:flex;align-items:center;gap:12px}
-.shlogo{width:36px;height:36px;border-radius:var(--r8);background:#96bf48;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0}
-.cdot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.shc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);
+  margin:10px 18px;padding:12px 14px;display:flex;align-items:center;gap:11px}
+.shlogo{width:34px;height:34px;border-radius:var(--r8);background:#96bf48;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+.cdot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0}
 .cdot.ok{background:var(--grn)}.cdot.er{background:var(--red)}
-.fc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 14px;padding:15px}
-.fr{display:flex;gap:8px;margin-bottom:11px}
+.fc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 12px;padding:14px}
+.fr{display:flex;gap:8px;margin-bottom:10px}
 .fld{flex:1;min-width:0}
-.fl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-input,select{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r8);padding:10px 11px;color:var(--t1);font-size:14px;font-family:inherit;-webkit-appearance:none;appearance:none;outline:none;transition:.15s}
+.fl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+input,select{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r8);
+  padding:9px 11px;color:var(--t1);font-size:14px;font-family:inherit;
+  -webkit-appearance:none;appearance:none;outline:none;transition:.15s}
 input:focus,select:focus{border-color:var(--acc)}
 input::placeholder{color:var(--t3)}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23585858' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
-.chip{padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--b2);color:var(--t2);cursor:pointer;background:none;text-transform:capitalize;font-family:inherit;transition:.15s}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23585858' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.chip{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--b2);
+  color:var(--t2);cursor:pointer;background:none;text-transform:capitalize;font-family:inherit;transition:.15s}
 .chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.abtn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r8);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.abtn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r8);
+  padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
 .abtn:active{opacity:.85}
 .abtn.sec{background:var(--s2);color:var(--t1);border:1px solid var(--b2)}
-.abtn.danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,82,74,.3)}
-.sb{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:12px}
+.sb{display:flex;align-items:center;gap:8px;padding:8px 18px;font-size:12px}
 .sb.sy{background:var(--acc-dim);color:#93b4ff;border-bottom:1px solid rgba(76,123,255,.15)}
 .sb.ok{background:var(--grn-dim);color:#6ee7b7;border-bottom:1px solid rgba(30,201,120,.15)}
 .sb.er{background:var(--red-dim);color:#fca5a5;border-bottom:1px solid rgba(240,82,74,.15)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sp{animation:spin .7s linear infinite;display:inline-block}
-.ss{position:absolute;inset:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding-bottom:calc(32px + var(--safe))}
+.ss{position:absolute;inset:0;background:var(--bg);z-index:50;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;display:none;padding-bottom:calc(32px + var(--safe))}
 .ss.on{display:block}
 .ss::-webkit-scrollbar{display:none}
-.bbar{padding:12px 18px;display:flex;align-items:center;gap:8px;position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
-.bbtn{background:none;border:none;color:var(--acc);cursor:pointer;display:flex;align-items:center;gap:2px;font-size:15px;padding:0;font-family:inherit}
+.bbar{padding:11px 18px;display:flex;align-items:center;gap:8px;position:sticky;top:0;
+  background:rgba(13,13,13,.93);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  z-index:10;border-bottom:1px solid var(--b1)}
+.bbtn{background:none;border:none;color:var(--acc);cursor:pointer;display:flex;align-items:center;
+  gap:2px;font-size:15px;padding:0;font-family:inherit}
 .bbtn i{font-size:20px}
 .sstitle{font-size:17px;font-weight:600}
-.subi{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--b1)}
+.subi{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--b1)}
 .subi:last-child{border-bottom:none}
 .dueb{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;flex-shrink:0}
 .dueb.r{background:var(--red-dim);color:var(--red)}.dueb.a{background:var(--amb-dim);color:var(--amb)}.dueb.g{background:var(--grn-dim);color:var(--grn)}
-.fpr{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--b1)}
+.fpr{display:flex;justify-content:space-between;align-items:center;padding:9px 18px;border-bottom:1px solid var(--b1)}
 .fpr:last-child{border-bottom:none}
-.sr{padding:13px 18px;border-bottom:1px solid var(--b1);display:flex;flex-direction:column;gap:6px}
+.sr{padding:12px 18px;border-bottom:1px solid var(--b1);display:flex;flex-direction:column;gap:5px}
 .srl{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
 .srh{font-size:11px;color:var(--t3);line-height:1.5}
-.info{margin:10px 18px;padding:11px 13px;background:var(--acc-dim);border:1px solid rgba(76,123,255,.18);border-radius:var(--r12);font-size:12px;color:#93b4ff;line-height:1.6}
-.empty{text-align:center;padding:36px 24px;color:var(--t3)}
-.empty i{font-size:34px;margin-bottom:10px;display:block;opacity:.5}
+.info{margin:8px 18px;padding:10px 12px;background:var(--acc-dim);
+  border:1px solid rgba(76,123,255,.18);border-radius:var(--r12);font-size:12px;color:#93b4ff;line-height:1.6}
+.empty{text-align:center;padding:32px 24px;color:var(--t3)}
+.empty i{font-size:32px;margin-bottom:8px;display:block;opacity:.4}
 .empty p{font-size:13px;line-height:1.6}
-#toast{position:fixed;bottom:calc(88px + var(--safe));left:50%;transform:translateX(-50%);background:rgba(36,36,36,.97);color:var(--t1);padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:.25s;white-space:nowrap;z-index:999;border:1px solid var(--b2)}
+#toast{position:fixed;bottom:calc(88px + var(--safe));left:50%;transform:translateX(-50%);
+  background:rgba(36,36,36,.97);color:var(--t1);padding:8px 18px;border-radius:999px;
+  font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:.25s;
+  white-space:nowrap;z-index:999;border:1px solid var(--b2)}
 #toast.on{opacity:1}
-.fx-badge{font-size:10px;color:var(--t3);margin-top:2px}
+/* Plan picker */
+.plan-card{cursor:pointer;border-radius:var(--r12);padding:12px 14px;
+  display:flex;align-items:center;gap:10px;transition:.15s;border:2px solid var(--b2);background:var(--s2)}
+.plan-card.on{border-color:var(--acc);background:var(--acc-dim)}
+.plan-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+/* Margin bar */
+.mbar{height:5px;border-radius:3px;background:var(--s3);margin-top:4px;overflow:hidden}
+.mfill{height:100%;border-radius:3px;transition:.3s}
+/* Variant table */
+.vtbl{width:100%;border-collapse:collapse;font-size:12px}
+.vtbl th{text-align:left;padding:7px 12px;font-size:10px;font-weight:700;color:var(--t3);
+  text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--b1)}
+.vtbl td{padding:8px 12px;border-bottom:1px solid var(--b1)}
+.vtbl tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
 <div id="root">
-<div class="pwa-spacer" id="pwa-top"></div>
+<div class="pwa-top"></div>
 <div id="screens">
 
 <!-- DASHBOARD -->
@@ -166,12 +204,25 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
   </div>
   <div id="synctop"></div>
-  <div style="font-size:10px;color:var(--t3);padding:6px 18px 0;text-align:right" id="fx-info"></div>
+  <div class="tf-row" id="tf-row">
+    <button class="tf" data-d="7">7d</button>
+    <button class="tf" data-d="14">14d</button>
+    <button class="tf on" data-d="30">30d</button>
+    <button class="tf" data-d="90">90d</button>
+    <button class="tf" data-d="180">6mo</button>
+    <button class="tf" data-d="365">1yr</button>
+    <button class="tf" data-d="0">All time</button>
+  </div>
   <div class="sg" id="statgrid"></div>
-  <div class="sec"><span class="stitle">Revenue vs costs · 6 months</span>
-    <div class="leg"><div class="li"><div class="ld" style="background:var(--grn)"></div>Rev</div>
-    <div class="li"><div class="ld" style="background:var(--s3)"></div>Costs</div></div></div>
-  <div class="cbox" style="height:128px;padding:12px 12px 8px"><div class="brow" id="bars"></div></div>
+  <div class="sec">
+    <span class="stitle">Revenue vs costs · 6 months</span>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:var(--grn)"></div>Rev</div>
+      <div class="li"><div class="ld" style="background:var(--s3)"></div>Cost</div>
+      <div class="li"><div class="ld" style="background:var(--acc)"></div>Profit</div>
+    </div>
+  </div>
+  <div class="cbox" style="height:118px;padding:10px 10px 6px"><div class="brow" id="bars"></div></div>
   <div class="sec"><span class="stitle">Recent orders</span><button class="sact" onclick="goTab(1)">See all</button></div>
   <div class="cl" id="d-orders"></div>
   <div style="height:14px"></div>
@@ -199,38 +250,36 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <!-- ADS -->
 <div class="scr" id="s2">
-  <div class="topbar"><div class="ptitle">Ads</div></div>
+  <div class="topbar">
+    <div class="ptitle">Ads</div>
+    <button onclick="document.getElementById('meta-csv').click()" style="background:var(--meta-dim);border:1px solid rgba(24,119,242,.3);color:#6fa8ff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
+      <i class="ti ti-upload" style="font-size:14px"></i>Meta CSV
+    </button>
+    <input type="file" id="meta-csv" accept=".csv" style="display:none" onchange="importMetaCSV(event)">
+  </div>
   <div class="pfg" id="pfcards"></div>
-  <div class="cbox" style="height:100px;margin-top:10px">
+  <div class="cbox" style="height:88px;margin-top:8px">
     <svg id="adsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
   </div>
   <div class="sec"><span class="stitle">Log campaign</span></div>
   <div class="fc">
     <div class="fl" style="margin-bottom:5px">Platform</div>
-    <div class="chips" id="ap">
-      <button class="chip on" data-v="meta">Meta</button>
-      <button class="chip" data-v="tiktok">TikTok</button>
-      <button class="chip" data-v="google">Google</button>
+    <div class="chips" id="ap"><button class="chip on" data-v="meta">Meta</button><button class="chip" data-v="tiktok">TikTok</button><button class="chip" data-v="google">Google</button></div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Date</div><input type="date" id="ad-d" style="color-scheme:dark"></div>
+      <div class="fld"><div class="fl">Campaign</div><input type="text" id="ad-c" placeholder="Name"></div>
     </div>
     <div class="fr">
-      <div class="fld"><div class="fl">Date</div><input type="date" id="ad" style="color-scheme:dark"></div>
-      <div class="fld"><div class="fl">Campaign</div><input type="text" id="ac" placeholder="Name"></div>
+      <div class="fld"><div class="fl">Spend</div><input type="number" id="ad-s" placeholder="0.00" step="0.01"></div>
+      <div class="fld"><div class="fl">Revenue attr.</div><input type="number" id="ad-r" placeholder="0.00" step="0.01"></div>
     </div>
     <div class="fr">
-      <div class="fld"><div class="fl">Spend</div><input type="number" id="as" placeholder="0.00" step="0.01"></div>
-      <div class="fld"><div class="fl">Revenue attr.</div><input type="number" id="ar" placeholder="0.00" step="0.01"></div>
-    </div>
-    <div class="fr">
-      <div class="fld"><div class="fl">Impressions</div><input type="number" id="ai" placeholder="0"></div>
-      <div class="fld"><div class="fl">Clicks</div><input type="number" id="alk" placeholder="0"></div>
-      <div class="fld"><div class="fl">Conv.</div><input type="number" id="aco" placeholder="0"></div>
+      <div class="fld"><div class="fl">Impressions</div><input type="number" id="ad-i" placeholder="0"></div>
+      <div class="fld"><div class="fl">Clicks</div><input type="number" id="ad-k" placeholder="0"></div>
+      <div class="fld"><div class="fl">Conv.</div><input type="number" id="ad-v" placeholder="0"></div>
     </div>
     <div class="fl" style="margin-bottom:5px">Currency</div>
-    <div class="chips" id="accy">
-      <button class="chip on" data-v="CHF">CHF</button>
-      <button class="chip" data-v="EUR">EUR</button>
-      <button class="chip" data-v="USD">USD</button>
-    </div>
+    <div class="chips" id="ad-ccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
     <button class="abtn" onclick="addAd()">+ Add campaign</button>
   </div>
   <div class="sec"><span class="stitle" id="adcount">Ad history</span></div>
@@ -250,25 +299,25 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div style="font-size:11px;color:var(--t2)" id="shlbl">Checking…</div>
       </div>
     </div>
-    <button onclick="syncShopify()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.22);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Sync now</button>
+    <button onclick="syncShopify()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.2);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Sync</button>
   </div>
   <div class="mg">
-    <div class="mr" onclick="showSub('exp')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-receipt"></i></div><span class="ml">Expenses</span><span class="mb" id="bexp">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('sub')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-calendar-event"></i></div><span class="ml">Subscriptions</span><span class="mb" id="bsub">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('prod')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-package"></i></div><span class="ml">Products & COGS</span><span class="mb" id="bprod">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('cust')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-users"></i></div><span class="ml">Customers</span><span class="mb" id="bcust">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('fc')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-chart-line"></i></div><span class="ml">Cashflow forecast</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('settings')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('exp')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-receipt"></i></div><span class="ml">Expenses</span><span class="mb" id="bexp">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('sub')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-calendar-event"></i></div><span class="ml">Subscriptions</span><span class="mb" id="bsub">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('prod')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-package"></i></div><span class="ml">Products & COGS</span><span class="mb" id="bprod">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('cust')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-users"></i></div><span class="ml">Customers</span><span class="mb" id="bcust">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('fc')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-chart-line"></i></div><span class="ml">Cashflow forecast</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('settings')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings & fees</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
   </div>
   <div class="mg">
-    <div class="mr" onclick="exportCSV()"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-download"></i></div><span class="ml">Export CSV</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="exportCSV()"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-download"></i></div><span class="ml">Export CSV</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
   </div>
   <div style="height:14px"></div>
 </div>
 </div>
 
-<!-- EXPENSES -->
+<!-- SUB: EXPENSES -->
 <div class="ss" id="ss-exp">
   <div class="bbar"><button class="bbtn" onclick="hideSub('exp')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Expenses</span></div>
   <div class="fc" style="margin-top:12px">
@@ -276,28 +325,18 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="fld"><div class="fl">Date</div><input type="date" id="ed" style="color-scheme:dark"></div>
       <div class="fld"><div class="fl">Amount</div><input type="number" id="ea" placeholder="0.00" step="0.01"></div>
     </div>
-    <div class="fld" style="margin-bottom:11px"><div class="fl">Description</div><input type="text" id="edesc" placeholder="e.g. Shopify plan"></div>
+    <div class="fld" style="margin-bottom:10px"><div class="fl">Description</div><input type="text" id="edesc" placeholder="e.g. Shopify plan"></div>
     <div class="fl" style="margin-bottom:5px">Category</div>
-    <div class="chips" id="ecat">
-      <button class="chip on" data-v="tools">tools</button>
-      <button class="chip" data-v="shipping">shipping</button>
-      <button class="chip" data-v="domain">domain</button>
-      <button class="chip" data-v="fees">fees</button>
-      <button class="chip" data-v="other">other</button>
-    </div>
+    <div class="chips" id="ecat"><button class="chip on" data-v="tools">tools</button><button class="chip" data-v="shipping">shipping</button><button class="chip" data-v="domain">domain</button><button class="chip" data-v="fees">fees</button><button class="chip" data-v="other">other</button></div>
     <div class="fl" style="margin-bottom:5px">Currency</div>
-    <div class="chips" id="eccy">
-      <button class="chip on" data-v="CHF">CHF</button>
-      <button class="chip" data-v="EUR">EUR</button>
-      <button class="chip" data-v="USD">USD</button>
-    </div>
+    <div class="chips" id="eccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
     <button class="abtn" onclick="addExp()">+ Add expense</button>
   </div>
   <div class="cl" id="explist"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- SUBSCRIPTIONS -->
+<!-- SUB: SUBSCRIPTIONS -->
 <div class="ss" id="ss-sub">
   <div class="bbar"><button class="bbtn" onclick="hideSub('sub')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Subscriptions</span></div>
   <div class="sg" style="padding:12px 18px 8px">
@@ -320,125 +359,96 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div style="height:24px"></div>
 </div>
 
-<!-- PRODUCTS & COGS -->
+<!-- SUB: PRODUCTS & COGS -->
 <div class="ss" id="ss-prod">
   <div class="bbar"><button class="bbtn" onclick="hideSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Products & COGS</span></div>
-  <div class="info" style="margin-top:12px">
-    <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>
-    Set COGS (cost of goods), shipping cost, and transaction fees per product. These are subtracted from revenue to calculate your real profit.
-  </div>
+  <div class="info" style="margin-top:10px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>Tap any product to set COGS per variant. Margins update in real time from your Shopify orders.</div>
   <div class="cl" style="margin-top:8px" id="prodlist"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- PRODUCT COGS EDITOR (sub-sub screen) -->
+<!-- SUB: COGS EDITOR -->
 <div class="ss" id="ss-cogs">
-  <div class="bbar"><button class="bbtn" onclick="hideSub('cogs');showSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle" id="cogs-title">Edit COGS</span></div>
-  <div style="padding:12px 18px 4px">
-    <div class="info" style="margin:0 0 8px">
-      <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>
-      Set costs per variant. These are subtracted from each order's revenue to calculate real profit.
-    </div>
-  </div>
-  <!-- Global fees for this product -->
-  <div class="sec" style="padding:12px 18px 8px"><span class="stitle">Platform fees (all variants)</span></div>
-  <div class="fc" style="margin-top:0;margin-bottom:8px">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('cogs');showSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle" id="cogs-ptitle">Edit COGS</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="info" style="margin:0 0 10px">Platform fees for this product. Leave 0 to use global settings.</div>
     <div class="fr">
-      <div class="fld">
-        <div class="fl">Shopify fee %</div>
-        <input type="number" id="cogs-fee-pct" placeholder="2.0" step="0.1">
-        <div class="srh" style="margin-top:4px">Basic: 2% · Shopify: 1% · Advanced: 0.5%</div>
-      </div>
-      <div class="fld">
-        <div class="fl">Payment fee %</div>
-        <input type="number" id="cogs-pay-pct" placeholder="2.9" step="0.1">
-        <div class="srh" style="margin-top:4px">Shopify Payments / Stripe: ~2.9%</div>
-      </div>
+      <div class="fld"><div class="fl">Shopify fee %</div><input type="number" id="cogs-fee" placeholder="0" step="0.1"><div class="srh" style="margin-top:3px">0% with Shopify Payments</div></div>
+      <div class="fld"><div class="fl">Payment fee %</div><input type="number" id="cogs-pay" placeholder="2.95" step="0.1"><div class="srh" style="margin-top:3px">From your plan settings</div></div>
     </div>
-    <div class="fld" style="margin-bottom:0">
-      <div class="fl">Cost currency</div>
-      <div class="chips" id="cogs-ccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
-    </div>
+    <div class="fl" style="margin-bottom:5px">Cost currency</div>
+    <div class="chips" id="cogs-ccy"><button class="chip on" data-v="EUR">EUR</button><button class="chip" data-v="CHF">CHF</button><button class="chip" data-v="USD">USD</button></div>
   </div>
-  <!-- Per-variant COGS -->
-  <div class="sec" style="padding:12px 18px 8px"><span class="stitle">Cost per variant</span></div>
+  <div class="sec" style="padding:4px 18px 8px"><span class="stitle">Cost per variant</span></div>
   <div id="cogs-variants" style="display:flex;flex-direction:column;gap:8px;padding:0 18px"></div>
-  <div style="padding:16px 18px 32px">
-    <button class="abtn" onclick="saveCOGS()">Save all COGS</button>
-  </div>
+  <div style="padding:16px 18px 32px"><button class="abtn" onclick="saveCOGS()">Save COGS</button></div>
 </div>
 
-<!-- CUSTOMERS -->
+<!-- SUB: CUSTOMERS -->
 <div class="ss" id="ss-cust">
   <div class="bbar"><button class="bbtn" onclick="hideSub('cust')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Customers</span></div>
   <div class="sg" style="padding:12px 18px 8px">
-    <div class="sc"><div class="sl">Total customers</div><div class="sv" id="cust-total">—</div></div>
-    <div class="sc"><div class="sl">Total spent</div><div class="sv" id="cust-spent">—</div></div>
+    <div class="sc"><div class="sl">Total customers</div><div class="sv" id="cust-n">—</div></div>
+    <div class="sc"><div class="sl">Total spent</div><div class="sv" id="cust-s">—</div></div>
   </div>
   <div class="cl" style="margin-top:4px" id="custlist"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- FORECAST -->
+<!-- SUB: FORECAST -->
 <div class="ss" id="ss-fc">
   <div class="bbar"><button class="bbtn" onclick="hideSub('fc')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Cashflow forecast</span></div>
   <div class="sg" style="padding:12px 18px 8px">
     <div class="sc"><div class="sl">Avg monthly net</div><div class="sv" id="fcnet">—</div></div>
     <div class="sc"><div class="sl">In 6 months</div><div class="sv" id="fcproj">—</div></div>
   </div>
-  <div class="cbox" style="height:140px;margin-bottom:10px">
+  <div class="cbox" style="height:128px;margin-bottom:10px">
     <svg id="fcsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
   </div>
-  <div class="sec"><span class="stitle">Breakdown · monthly avg</span></div>
+  <div class="sec"><span class="stitle">Monthly breakdown</span></div>
   <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px" id="fcbd"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- VAT -->
+<!-- SUB: VAT -->
 <div class="ss" id="ss-vat">
-  <div class="bbar"><button class="bbtn" onclick="hideSub('vat')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Swiss VAT estimate</span></div>
-  <div class="info" style="margin-top:12px">
-    <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>
-    VAT registration mandatory above CHF 100,000/year. Standard rate 8.1%. Not tax advice.
-  </div>
+  <div class="bbar"><button class="bbtn" onclick="hideSub('vat')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Swiss VAT</span></div>
+  <div class="info" style="margin-top:10px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>VAT mandatory above CHF 100k/year. Rate: 8.1%. Not tax advice. Note: Switzerland adds 7.7% VAT on Shopify fees themselves.</div>
   <div class="sg" id="vatgrid"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- SETTINGS -->
+<!-- SUB: SETTINGS -->
 <div class="ss" id="ss-settings">
-  <div class="bbar"><button class="bbtn" onclick="hideSub('settings')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Settings</span></div>
-  <div class="sec"><span class="stitle">Shopify fees</span></div>
-  <div class="mg">
-    <div class="sr">
-      <div class="srl">Shopify plan transaction fee (%)</div>
-      <input type="number" id="set-shopify-fee" placeholder="2.0" step="0.1">
-      <div class="srh">Basic: 2% · Shopify: 1% · Advanced: 0.5% · Plus: 0%</div>
-    </div>
-    <div class="sr">
-      <div class="srl">Payment processing fee (%)</div>
-      <input type="number" id="set-pay-fee" placeholder="2.9" step="0.1">
-      <div class="srh">Shopify Payments / Stripe: ~2.9%</div>
-    </div>
+  <div class="bbar"><button class="bbtn" onclick="hideSub('settings')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Settings & fees</span></div>
+
+  <div class="sec"><span class="stitle">Your Shopify plan (Switzerland)</span></div>
+  <div style="display:flex;flex-direction:column;gap:6px;padding:0 18px 14px" id="plan-picker"></div>
+
+  <div class="sec"><span class="stitle">Active fees</span></div>
+  <div class="mg" style="margin-bottom:6px">
+    <div class="sr"><div class="srl">Processing rate</div><div id="active-rate" style="font-size:18px;font-weight:700;color:var(--t1);margin-top:3px">—</div><div class="srh">Applied to every order from your Shopify payouts</div></div>
+    <div class="sr"><div class="srl">Fixed fee per order</div><div id="active-fixed" style="font-size:18px;font-weight:700;color:var(--t1);margin-top:3px">—</div></div>
+    <div class="sr"><div class="srl">3rd-party transaction fee</div><div id="active-3p" style="font-size:18px;font-weight:700;color:var(--t1);margin-top:3px">—</div><div class="srh">0% if using Shopify Payments (waived)</div></div>
   </div>
+
+  <div class="sec"><span class="stitle">Override manually</span></div>
+  <div class="mg" style="margin-bottom:6px">
+    <div class="sr"><div class="srl">Processing fee %</div><input type="number" id="set-pfee" step="0.01" placeholder="2.95"></div>
+    <div class="sr"><div class="srl">Fixed fee per order (CHF)</div><input type="number" id="set-ffee" step="0.01" placeholder="0.30"></div>
+    <div class="sr"><div class="srl">3rd-party transaction fee %</div><input type="number" id="set-sfee" step="0.1" placeholder="0"><div class="srh">Basic 2% · Grow 1% · Advanced 0.6% · Plus 0.2%</div></div>
+  </div>
+
   <div class="sec"><span class="stitle">Swiss VAT</span></div>
-  <div class="mg">
-    <div class="sr">
-      <div class="srl">VAT rate (%)</div>
-      <input type="number" id="set-vat" placeholder="8.1" step="0.1">
-    </div>
-    <div class="sr">
-      <div class="srl">VAT registered?</div>
-      <div class="chips" id="set-vat-reg"><button class="chip on" data-v="0">No</button><button class="chip" data-v="1">Yes</button></div>
+  <div class="mg" style="margin-bottom:6px">
+    <div class="sr"><div class="srl">VAT rate (%)</div><input type="number" id="set-vat" step="0.1" placeholder="8.1"></div>
+    <div class="sr"><div class="srl">VAT registered?</div>
+      <div class="chips" id="set-vat-reg" style="margin:4px 0 0"><button class="chip on" data-v="0">No</button><button class="chip" data-v="1">Yes</button></div>
     </div>
   </div>
-  <div style="padding:0 18px;margin-top:4px;display:flex;flex-direction:column;gap:8px">
-    <button class="abtn" onclick="saveSettings()">Save settings</button>
-  </div>
-  <div style="height:32px"></div>
+  <div style="padding:0 18px;margin-bottom:32px"><button class="abtn" onclick="saveSettings()">Save settings</button></div>
 </div>
 
-<!-- NAV -->
 <nav id="nav">
   <button class="nb on" id="nt0" onclick="goTab(0)"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
   <button class="nb" id="nt1" onclick="goTab(1)"><i class="ti ti-shopping-cart"></i><span>Orders</span></button>
@@ -447,184 +457,125 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </nav>
 </div>
 <div id="toast"></div>
-
 <script>
-// ── FX rates (live from API, fallback to static) ──
-let FX = {CHF:1, EUR:0.944, USD:1.095}; // updated from API on load
-const SYM = {CHF:'CHF ', EUR:'€', USD:'$'};
-let ccy = 'CHF';
-let activeTab = 0;
-let editingProductId = null;
+// ── STATE ──
+let FX={CHF:1,EUR:0.944,USD:1.095};
+const SYM={CHF:'CHF ',EUR:'€',USD:'$'};
+let ccy='CHF',activeTab=0,tfDays=30,editingProd=null;
 
-const ST = {
-  orders:[], products:[], customers:[], ads:[], expenses:[], subs:[],
-  cogs:{}, // {productTitle: {cost, ship, feePct, payPct, currency}}
-  settings:{
-    shopifyFeePct: 2.0,  // Shopify transaction fee %
-    payFeePct: 2.9,      // payment processing %
-    vatRate: 8.1,
-    vatRegistered: false,
-  }
+// Shopify Payments Switzerland rates — confirmed from your Shopify admin screenshot
+const PLANS=[
+  {id:'basic',   name:'Basic',   sub:'CHF 36/mo',  pct:2.95,fixed:0.30,thirdPct:2.0,  color:'#4c7bff',note:'Current plan · confirmed from your payouts'},
+  {id:'grow',    name:'Grow',    sub:'CHF 105/mo', pct:2.75,fixed:0.30,thirdPct:1.0,  color:'#1ec978',note:'Worth it above ~CHF 8k/mo revenue'},
+  {id:'advanced',name:'Advanced',sub:'CHF 384/mo', pct:2.55,fixed:0.30,thirdPct:0.6,  color:'#f0a020',note:'Worth it above ~CHF 30k/mo'},
+  {id:'plus',    name:'Plus',    sub:'CHF 3400+/mo',pct:2.30,fixed:0.30,thirdPct:0.2, color:'#9b59b6',note:'Enterprise, fees negotiable'},
+];
+
+const ST={
+  orders:[],products:[],customers:[],ads:[],expenses:[],subs:[],cogs:{},
+  settings:{plan:'basic',payPct:2.95,fixedFee:0.30,thirdPct:0,vatRate:8.1,vatReg:false}
 };
 
-// ── Persistence ──
-function persist(){
-  localStorage.setItem('df6', JSON.stringify({
-    ads:ST.ads, expenses:ST.expenses, subs:ST.subs,
-    orders:ST.orders, products:ST.products, customers:ST.customers,
-    cogs:ST.cogs, settings:ST.settings
-  }));
-}
+function persist(){localStorage.setItem('df8',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings}));}
 function hydrate(){
   try{
-    const r = JSON.parse(localStorage.getItem('df6')||'{}');
+    const r=JSON.parse(localStorage.getItem('df8')||'{}');
     ['ads','expenses','subs','orders','products','customers'].forEach(k=>{if(r[k])ST[k]=r[k];});
-    if(r.cogs) ST.cogs = r.cogs;
-    if(r.settings) Object.assign(ST.settings, r.settings);
+    if(r.cogs)ST.cogs=r.cogs;
+    if(r.settings)Object.assign(ST.settings,r.settings);
   }catch(e){}
 }
 
-// ── Helpers ──
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function toCHF(a,c){return a/FX[c||'CHF'];}
-function fromCHF(a,c){return a*FX[c||'CHF'];}
-function fmt(chf){
-  const v = fromCHF(chf, ccy);
-  return SYM[ccy]+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+function toCHF(a,c){return(a||0)/FX[c||'CHF'];}
+function fromCHF(a,c){return(a||0)*FX[c||'CHF'];}
+function fmt(chf){const v=fromCHF(chf,ccy);return SYM[ccy]+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function today(){return new Date().toISOString().slice(0,10);}
 function mk(d){return(d||'').slice(0,7);}
-function daysB(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
-function nextR(s){let d=new Date(s.next_date);const n=new Date(today());const i=s.cycle==='yearly'?365:30;while(d<n)d.setDate(d.getDate()+i);return d.toISOString().slice(0,10);}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function chipV(id){return document.querySelector('#'+id+' .chip.on')?.dataset.v||'';}
 function setupC(id){document.querySelectorAll('#'+id+' .chip').forEach(c=>{c.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');}});}
 let toastT;
 function toast(m,d=2200){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),d);}
+function daysB(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+function nextR(s){let d=new Date(s.next_date);const n=new Date(today());const i=s.cycle==='yearly'?365:30;while(d<n)d.setDate(d.getDate()+i);return d.toISOString().slice(0,10);}
 
-// ── Live FX rates ──
+// ── LIVE FX ──
 async function loadFX(){
-  try{
-    const r = await fetch('https://api.exchangerate-api.com/v4/latest/CHF');
-    const d = await r.json();
-    if(d.rates){
-      FX.EUR = d.rates.EUR || FX.EUR;
-      FX.USD = d.rates.USD || FX.USD;
-      FX.CHF = 1;
-      const el = document.getElementById('fx-info');
-      if(el) el.textContent = `Live FX: 1 CHF = €${FX.EUR.toFixed(4)} / $${FX.USD.toFixed(4)}`;
-    }
-  }catch(e){
-    const el = document.getElementById('fx-info');
-    if(el) el.textContent = 'Using estimated FX rates';
-  }
+  try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CHF');const d=await r.json();if(d.rates){FX.EUR=d.rates.EUR||FX.EUR;FX.USD=d.rates.USD||FX.USD;}}catch(e){}
 }
 
-// ── COGS calculation for an order ──
+// ── COGS CALCULATION ──
 function getOrderCOGS(order){
-  let total = 0;
-  const shopifyFee = (ST.settings.shopifyFeePct || 0) / 100;
-  const payFee = (ST.settings.payFeePct || 0) / 100;
-
-  order.items.forEach(item => {
-    const cogs = ST.cogs[item.title];
-    const itemRev = item.price * item.qty;
-
-    if(cogs){
-      // Try to find variant-specific cost first
-      let unitCost = 0;
-      if(cogs.variants){
-        // Match by variant id if available on line item, else use first variant or default
-        const variantCosts = cogs.variants[item.variantId] || cogs.variants['default'] || Object.values(cogs.variants)[0] || {};
-        unitCost = (Number(variantCosts.cost)||0) + (Number(variantCosts.ship)||0);
-      } else {
-        unitCost = (Number(cogs.cost)||0) + (Number(cogs.ship)||0);
-      }
-      const costCHF = toCHF(unitCost * item.qty, cogs.currency);
-      const feeAmt = itemRev * ((Number(cogs.feePct)||shopifyFee*100)/100);
-      const payAmt = itemRev * ((Number(cogs.payPct)||payFee*100)/100);
-      total += costCHF + toCHF(feeAmt + payAmt, order.currency);
-    } else {
-      // no COGS set — just deduct platform fees
-      const feeAmt = itemRev * shopifyFee;
-      const payAmt = itemRev * payFee;
-      total += toCHF(feeAmt + payAmt, order.currency);
+  let total=0;
+  const gPay=(ST.settings.payPct||0)/100;
+  const g3p=(ST.settings.thirdPct||0)/100;
+  const gFixed=ST.settings.fixedFee||0;
+  order.items.forEach(item=>{
+    const cogs=ST.cogs[item.title];
+    const itemRev=item.price*item.qty;
+    const payPct=cogs&&cogs.payPct!=null?(Number(cogs.payPct)||0)/100:gPay;
+    const s3p=cogs&&cogs.feePct!=null?(Number(cogs.feePct)||0)/100:g3p;
+    total+=toCHF(itemRev*(payPct+s3p),order.currency);
+    if(cogs&&cogs.variants){
+      const vd=cogs.variants[item.variantId]||cogs.variants['default']||Object.values(cogs.variants)[0]||{};
+      total+=toCHF(((Number(vd.cost)||0)+(Number(vd.ship)||0))*item.qty,cogs.currency||'EUR');
     }
   });
+  total+=toCHF(gFixed,'CHF');
   return total;
 }
+function totalCOGS(orders){return(orders||ST.orders).filter(o=>o.status==='paid'||o.status==='partially_refunded').reduce((s,o)=>s+getOrderCOGS(o),0);}
 
-function totalCOGS(){
-  return ST.orders
-    .filter(o=>o.status==='paid'||o.status==='partially_refunded')
-    .reduce((s,o)=>s+getOrderCOGS(o), 0);
+// ── TIMEFRAME ──
+function filteredOrders(){
+  if(!tfDays)return ST.orders;
+  const cut=new Date();cut.setDate(cut.getDate()-tfDays);
+  const cs=cut.toISOString().slice(0,10);
+  return ST.orders.filter(o=>o.date>=cs);
 }
 
-// ── Nav ──
+// ── NAV ──
 function goTab(n){
   activeTab=n;
-  [0,1,2,3].forEach(i=>{
-    document.getElementById('s'+i).classList.toggle('on',i===n);
-    document.getElementById('nt'+i).classList.toggle('on',i===n);
-  });
+  [0,1,2,3].forEach(i=>{document.getElementById('s'+i).classList.toggle('on',i===n);document.getElementById('nt'+i).classList.toggle('on',i===n);});
   renderTab(n);
 }
 function showSub(n){document.getElementById('ss-'+n).classList.add('on');renderSub(n);}
 function hideSub(n){document.getElementById('ss-'+n).classList.remove('on');}
 function renderTab(n){if(n===0)rDash();else if(n===1)rOrders();else if(n===2)rAds();else if(n===3)rMore();}
 function renderSub(n){
-  if(n==='exp')rExp();
-  else if(n==='sub')rSubs();
-  else if(n==='fc')rFc();
-  else if(n==='vat')rVAT();
-  else if(n==='prod')rProd();
-  else if(n==='cust')rCust();
-  else if(n==='settings')rSettingsForm();
+  if(n==='exp')rExp();else if(n==='sub')rSubs();else if(n==='fc')rFc();
+  else if(n==='vat')rVAT();else if(n==='prod')rProd();else if(n==='cust')rCust();
+  else if(n==='settings')rSettings();
 }
 
-// ── Shopify proxy ──
+// ── SHOPIFY SYNC ──
 async function sfetch(path,params={}){
   const qs=new URLSearchParams({path,...params}).toString();
   const r=await fetch('/api/shopify?'+qs);
   if(!r.ok){const e=await r.json().catch(()=>({error:'Unknown'}));throw new Error(e.error||'HTTP '+r.status);}
   return r.json();
 }
-
 async function syncShopify(silent){
-  const ico=document.getElementById('sync-ico');
-  ico.classList.add('sp');
-  setBanner('sy','Syncing with Shopify…');
+  const ico=document.getElementById('sync-ico');ico.classList.add('sp');
+  setBanner('sy','Syncing…');
   try{
-    const[od,pd,cd]=await Promise.all([
-      sfetch('orders.json',{limit:250,status:'any'}),
-      sfetch('products.json',{limit:250}),
-      sfetch('customers.json',{limit:250}),
-    ]);
+    const[od,pd,cd]=await Promise.all([sfetch('orders.json',{limit:250,status:'any'}),sfetch('products.json',{limit:250}),sfetch('customers.json',{limit:250})]);
     ST.orders=(od.orders||[]).map(o=>({
-      id:String(o.id),name:o.name,
-      date:(o.created_at||'').slice(0,10),
-      status:o.financial_status,
-      fulfillment:o.fulfillment_status||'unfulfilled',
-      amount:parseFloat(o.total_price||0),
-      currency:o.currency||'EUR',
-      customer:o.customer?`${o.customer.first_name||''} ${o.customer.last_name||''}`.trim():'Guest',
+      id:String(o.id),name:o.name,date:(o.created_at||'').slice(0,10),
+      status:o.financial_status,fulfillment:o.fulfillment_status||'unfulfilled',
+      amount:parseFloat(o.total_price||0),currency:o.currency||'EUR',
+      customer:o.customer?((o.customer.first_name||'')+' '+(o.customer.last_name||'')).trim():'Guest',
       email:o.email||'',
-      items:(o.line_items||[]).map(li=>({title:li.title,qty:li.quantity,price:parseFloat(li.price||0),variantId:String(li.variant_id||'')})),
+      items:(o.line_items||[]).map(li=>({title:li.title,qty:li.quantity,price:parseFloat(li.price||0),variantId:String(li.variant_id||'default')})),
       refunded:o.financial_status==='refunded'||o.financial_status==='partially_refunded',
     }));
-    ST.products=(pd.products||[]).map(p=>({
-      id:String(p.id),title:p.title,vendor:p.vendor,type:p.product_type,status:p.status,
-      variants:(p.variants||[]).map(v=>({id:String(v.id),title:v.title,price:parseFloat(v.price||0),sku:v.sku||'',inventory:v.inventory_quantity||0})),
-    }));
-    ST.customers=(cd.customers||[]).map(c=>({
-      id:String(c.id),
-      name:`${c.first_name||''} ${c.last_name||''}`.trim()||'Unknown',
-      email:c.email||'',orders:c.orders_count||0,
-      total:parseFloat(c.total_spent||0),currency:c.currency||'EUR',
-    }));
+    ST.products=(pd.products||[]).map(p=>({id:String(p.id),title:p.title,vendor:p.vendor,type:p.product_type,status:p.status,variants:(p.variants||[]).map(v=>({id:String(v.id),title:v.title,price:parseFloat(v.price||0),sku:v.sku||'',inventory:v.inventory_quantity||0}))}));
+    ST.customers=(cd.customers||[]).map(c=>({id:String(c.id),name:((c.first_name||'')+' '+(c.last_name||'')).trim()||'Unknown',email:c.email||'',orders:c.orders_count||0,total:parseFloat(c.total_spent||0),currency:c.currency||'EUR'}));
     persist();
-    setBanner('ok',`Synced ${ST.orders.length} orders · ${ST.products.length} products`);
-    if(!silent)toast(`Synced ${ST.orders.length} orders`);
+    setBanner('ok','Synced '+ST.orders.length+' orders · '+ST.products.length+' products · '+ST.customers.length+' customers');
+    if(!silent)toast('Synced '+ST.orders.length+' orders');
     shStatus(true);rAll();
   }catch(e){
     setBanner('er','Sync failed: '+e.message);
@@ -632,23 +583,22 @@ async function syncShopify(silent){
     shStatus(false,e.message);
   }finally{ico.classList.remove('sp');}
 }
-
 function setBanner(t,m){
-  const e=document.getElementById('synctop');
-  if(t==='sy')e.innerHTML=`<div class="sb sy"><i class="ti ti-refresh sp"></i>${esc(m)}</div>`;
-  else if(t==='ok'){e.innerHTML=`<div class="sb ok"><i class="ti ti-check"></i>${esc(m)}</div>`;setTimeout(()=>e.innerHTML='',5000);}
-  else if(t==='er')e.innerHTML=`<div class="sb er"><i class="ti ti-alert-circle"></i>${esc(m)}</div>`;
-  else e.innerHTML='';
+  const el=document.getElementById('synctop');
+  if(t==='sy')el.innerHTML='<div class="sb sy"><i class="ti ti-refresh sp"></i>'+esc(m)+'</div>';
+  else if(t==='ok'){el.innerHTML='<div class="sb ok"><i class="ti ti-check"></i>'+esc(m)+'</div>';setTimeout(()=>el.innerHTML='',5000);}
+  else if(t==='er')el.innerHTML='<div class="sb er"><i class="ti ti-alert-circle"></i>'+esc(m)+'</div>';
+  else el.innerHTML='';
 }
 function shStatus(ok,lbl){
   document.getElementById('shdot').className='cdot '+(ok?'ok':'er');
-  document.getElementById('shlbl').textContent=ok?`${ST.orders.length} orders · ${ST.products.length} products`:(lbl||'Not connected');
+  document.getElementById('shlbl').textContent=ok?ST.orders.length+' orders · '+ST.products.length+' products':(lbl||'Not connected');
 }
 
-// ── Aggregations ──
-function oTotals(){
-  const paid=ST.orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
-  const ref=ST.orders.filter(o=>o.status==='refunded');
+// ── AGGREGATIONS ──
+function oTotals(orders){
+  const paid=(orders||filteredOrders()).filter(o=>o.status==='paid'||o.status==='partially_refunded');
+  const ref=(orders||filteredOrders()).filter(o=>o.status==='refunded');
   const rev=paid.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
   const refunds=ref.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
   return{rev,refunds,net:rev-refunds,count:paid.length};
@@ -656,9 +606,6 @@ function oTotals(){
 function aTotals(){const sp=ST.ads.reduce((s,a)=>s+toCHF(a.spend,a.currency),0),rv=ST.ads.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);return{sp,rv,roas:sp>0?rv/sp:0};}
 function eTotals(){return ST.expenses.reduce((s,e)=>s+toCHF(e.amount,e.currency),0);}
 function sMo(){return ST.subs.reduce((s,x)=>{const a=toCHF(x.amount,x.currency);return s+(x.cycle==='yearly'?a/12:a);},0);}
-function months6(){const now=new Date(),m=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);m.push(d.toISOString().slice(0,7));}return m;}
-function revByMo(ms){return ms.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+toCHF(o.amount,o.currency),0));}
-function adByMo(ms){return ms.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.spend,a.currency),0));}
 
 function rAll(){
   renderTab(activeTab);
@@ -668,138 +615,202 @@ function rAll(){
   document.getElementById('bcust').textContent=ST.customers.length;
 }
 
-// ── Dashboard ──
+// ── DASHBOARD ──
 function rDash(){
-  const ot=oTotals(),at=aTotals(),et=eTotals(),sm=sMo();
-  const cogs=totalCOGS();
+  const fo=filteredOrders();
+  const ot=oTotals(fo);
+  const cogs=totalCOGS(fo);
+  const at=aTotals();
+  const et=eTotals();
+  const sm=sMo();
   const profit=ot.net-cogs-at.sp-et;
   const margin=ot.net>0?(profit/ot.net)*100:0;
-  document.getElementById('d-sub').textContent=new Date().toLocaleDateString('en',{month:'long',year:'numeric'});
+  const tfl=tfDays?tfDays+'d':'All';
+  document.getElementById('d-sub').textContent=new Date().toLocaleDateString('en',{month:'long',year:'numeric'})+' · '+tfl;
+  document.getElementById('statgrid').innerHTML=[
+    {l:'Revenue',v:fmt(ot.net),sub:ot.count+' paid orders'},
+    {l:'Net profit',v:fmt(profit),c:profit>=0?'g':'r',sub:margin.toFixed(1)+'% margin'},
+    {l:'COGS + fees',v:fmt(cogs),c:'r',sub:'platform costs'},
+    {l:'Ad spend',v:fmt(at.sp),sub:'ROAS '+at.roas.toFixed(2)+'x'},
+    {l:'Ad ROAS',v:at.roas.toFixed(2)+'x',c:at.roas>=2?'g':at.roas>=1?'a':'r',sub:at.rv>0?fmt(at.rv)+' attr.':'no data'},
+    {l:'Subs / mo',v:fmt(sm),sub:'recurring costs'},
+  ].map(s=>'<div class="sc"><div class="sl">'+s.l+'</div><div class="sv '+(s.c||'')+'">'+s.v+'</div>'+(s.sub?'<div class="sv-sub">'+s.sub+'</div>':'')+'</div>').join('');
 
-  const stats=[
-    {l:'Revenue',v:fmt(ot.net)},
-    {l:'Net profit',v:fmt(profit),c:profit>=0?'g':'r'},
-    {l:'Margin',v:margin.toFixed(1)+'%',c:margin>=20?'g':margin>=0?'':'r'},
-    {l:'Orders',v:String(ot.count)},
-    {l:'Ad ROAS',v:at.roas.toFixed(2)+'x',c:at.roas>=2?'g':at.roas>=1?'a':'r'},
-    {l:'COGS + fees',v:fmt(cogs),c:'r'},
-  ];
-  document.getElementById('statgrid').innerHTML=stats.map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
-
-  const ms=months6(),revs=revByMo(ms),adsp=adByMo(ms);
-  const cogsByMo=ms.map(m=>{
-    return ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded'))
-      .reduce((s,o)=>s+getOrderCOGS(o),0);
+  // 6-month chart (always 6 months regardless of timeframe picker)
+  const now=new Date();const months=[];
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(d.toISOString().slice(0,7));}
+  const revs=months.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+toCHF(o.amount,o.currency),0));
+  const costs=months.map((m,idx)=>{
+    const mo=ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded'));
+    const adsp=ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.spend,a.currency),0);
+    return totalCOGS(mo)+adsp+(et/6);
   });
-  const costs=adsp.map((a,i)=>a+cogsByMo[i]+(et/6));
+  const profits=revs.map((r,i)=>Math.max(r-costs[i],0));
   const maxV=Math.max(...revs,...costs,1);
-  const labs=ms.map(m=>new Date(m+'-01').toLocaleDateString('en',{month:'short'}));
+  const labs=months.map(m=>new Date(m+'-01').toLocaleDateString('en',{month:'short'}));
   document.getElementById('bars').innerHTML=revs.map((r,i)=>{
-    const rh=Math.max((r/maxV)*78,2),ch=Math.max((costs[i]/maxV)*78,1);
-    return`<div class="bcol"><div class="bpair"><div class="bar rv" style="height:${rh}px"></div><div class="bar co" style="height:${ch}px"></div></div><div class="blbl">${labs[i]}</div></div>`;
+    const rh=Math.max((r/maxV)*70,2),ch=Math.max((costs[i]/maxV)*70,1),ph=Math.max((profits[i]/maxV)*70,1);
+    return '<div class="bcol"><div class="bpair"><div class="bar rv" style="height:'+rh+'px"></div><div class="bar co" style="height:'+ch+'px"></div><div class="bar pr" style="height:'+ph+'px"></div></div><div class="blbl">'+labs[i]+'</div></div>';
   }).join('');
 
-  const rec=ST.orders.slice(0,5);
+  const rec=fo.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
   document.getElementById('d-orders').innerHTML=rec.length?rec.map(oCard).join(''):
-    `<div class="empty"><i class="ti ti-shopping-cart"></i><p>No orders yet — tap Sync in Orders tab</p></div>`;
+    '<div class="empty"><i class="ti ti-shopping-cart"></i><p>'+(ST.orders.length?'No orders in this period':'Connect Shopify in More → Settings')+'</p></div>';
 }
 
 function oCard(o){
   const sc=o.refunded?'r':o.status==='paid'?'g':'a';
   const si=o.refunded?'ti-arrow-back-up':o.fulfillment==='fulfilled'?'ti-package-check':'ti-shopping-cart';
+  const rev=toCHF(o.amount,o.currency);
   const cogs=getOrderCOGS(o);
-  const orderRev=toCHF(o.amount,o.currency);
-  const orderProfit=orderRev-cogs;
-  return`<div class="ic"><div class="ii ${sc}"><i class="ti ${si}"></i></div>
-    <div class="ib">
-      <div class="it">${esc(o.customer||'Guest')} · ${esc(o.name)}</div>
-      <div class="im">${o.date} · ${o.items.map(i=>esc(i.title)).join(', ').slice(0,40)}</div>
-      <div class="im" style="margin-top:2px">Rev: ${fmt(orderRev)} · COGS: ${fmt(cogs)} · Profit: <span style="color:${orderProfit>=0?'var(--grn)':'var(--red)'}">${fmt(orderProfit)}</span></div>
-    </div>
-    <div class="ir">
-      <div class="ia ${sc}">${fmt(orderRev)}</div>
-      <div style="font-size:10px;color:var(--t3);margin-top:3px">${o.status}</div>
-    </div>
-  </div>`;
+  const profit=rev-cogs;
+  return '<div class="ic"><div class="ii '+sc+'"><i class="ti '+si+'"></i></div>'+
+    '<div class="ib"><div class="it">'+esc(o.customer||'Guest')+' · '+esc(o.name)+'</div>'+
+    '<div class="im">'+o.date+' · '+o.items.map(i=>esc(i.title)).join(', ').slice(0,40)+'</div>'+
+    '<div class="im" style="margin-top:2px">Profit: <span style="color:'+(profit>=0?'var(--grn)':'var(--red)')+'">'+fmt(profit)+'</span></div></div>'+
+    '<div class="ir"><div class="ia '+sc+'">'+fmt(rev)+'</div><div style="font-size:10px;color:var(--t3);margin-top:3px">'+o.status+'</div></div></div>';
 }
 
-// ── Orders ──
+// ── ORDERS ──
 function rOrders(){
   setupC('ofilt');
-  document.querySelectorAll('#ofilt .chip').forEach(c=>{
-    const prev=c.onclick;
-    c.onclick=()=>{if(prev)prev.call(c);setTimeout(rOrders,0);};
-  });
+  document.querySelectorAll('#ofilt .chip').forEach(c=>{const p=c.onclick;c.onclick=()=>{if(p)p.call(c);setTimeout(rOrders,0);};});
   const f=chipV('ofilt')||'all';
   let ords=ST.orders.slice().sort((a,b)=>b.date.localeCompare(a.date));
   if(f==='paid')ords=ords.filter(o=>o.status==='paid');
   if(f==='refunded')ords=ords.filter(o=>o.refunded);
-  document.getElementById('o-count').textContent=`${ords.length} order${ords.length!==1?'s':''}`;
+  document.getElementById('o-count').textContent=ords.length+' order'+(ords.length!==1?'s':'');
   document.getElementById('o-list').innerHTML=ords.length?ords.map(oCard).join(''):
-    `<div class="empty"><i class="ti ti-shopping-cart"></i><p>No orders — tap Sync to load</p></div>`;
+    '<div class="empty"><i class="ti ti-shopping-cart"></i><p>No orders — tap Sync</p></div>';
 }
 
-// ── Ads ──
+// ── ADS ──
 function rAds(){
   const calc=p=>{
     const arr=p?ST.ads.filter(a=>a.platform===p):ST.ads;
-    const sp=arr.reduce((s,a)=>s+toCHF(a.spend,a.currency),0),rv=arr.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);
-    const imp=arr.reduce((s,a)=>s+(a.impressions||0),0),clk=arr.reduce((s,a)=>s+(a.clicks||0),0);
+    const sp=arr.reduce((s,a)=>s+toCHF(a.spend,a.currency),0);
+    const rv=arr.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);
+    const imp=arr.reduce((s,a)=>s+(a.impressions||0),0);
+    const clk=arr.reduce((s,a)=>s+(a.clicks||0),0);
     return{sp,rv,roas:sp>0?rv/sp:0,cpc:clk>0?sp/clk:0,ctr:imp>0?(clk/imp)*100:0};
   };
   const m=calc('meta'),t=calc('tiktok');
   document.getElementById('pfcards').innerHTML=pfCard('Meta','meta',m)+pfCard('TikTok','tt',t);
-  const ms=months6(),sp=adByMo(ms),rv=ms.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.revenue,a.currency),0));
-  const W=360,H=80,maxV=Math.max(...sp,...rv,1);
-  const pt=arr=>arr.map((v,i)=>`${12+i*(W-24)/5},${H-6-Math.max(v/maxV,0)*(H-16)}`).join(' ');
-  document.getElementById('adsvg').innerHTML=`<defs><linearGradient id="gR" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/><stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>
-    <polygon points="${pt(rv)} ${12+5*(W-24)/5},${H-6} 12,${H-6}" fill="url(#gR)"/>
-    <polyline points="${pt(rv)}" fill="none" stroke="#1ec978" stroke-width="1.8" stroke-linejoin="round"/>
-    <polyline points="${pt(sp)}" fill="none" stroke="#f0524a" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>`;
-  document.getElementById('ad').value=document.getElementById('ad').value||today();
-  setupC('ap');setupC('accy');
+  const now=new Date();const months=[];
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(d.toISOString().slice(0,7));}
+  const sp=months.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.spend,a.currency),0));
+  const rv=months.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.revenue,a.currency),0));
+  const W=360,H=80,mx=Math.max(...sp,...rv,1);
+  const pt=arr=>arr.map((v,i)=>(12+i*(W-24)/5)+','+(H-6-Math.max(v/mx,0)*(H-16))).join(' ');
+  document.getElementById('adsvg').innerHTML=
+    '<defs><linearGradient id="gR" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/><stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>'+
+    '<polygon points="'+pt(rv)+' '+(12+5*(W-24)/5)+','+(H-6)+' 12,'+(H-6)+'" fill="url(#gR)"/>'+
+    '<polyline points="'+pt(rv)+'" fill="none" stroke="#1ec978" stroke-width="1.8" stroke-linejoin="round"/>'+
+    '<polyline points="'+pt(sp)+'" fill="none" stroke="#f0524a" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>';
+  document.getElementById('ad-d').value=document.getElementById('ad-d').value||today();
+  setupC('ap');setupC('ad-ccy');
   const sorted=ST.ads.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('adcount').textContent=`${sorted.length} campaign${sorted.length!==1?'s':''}`;
+  document.getElementById('adcount').textContent=sorted.length+' campaign'+(sorted.length!==1?'s':'');
   document.getElementById('adlist').innerHTML=sorted.length?sorted.map(a=>{
     const rc=a.spend>0&&a.revenue/a.spend>=2?'g':a.spend>0&&a.revenue/a.spend>=1?'a':'r';
     const ic=a.platform==='meta'?'ti-brand-facebook':a.platform==='tiktok'?'ti-brand-tiktok':'ti-brand-google';
     const icls=a.platform==='meta'?'meta':a.platform==='tiktok'?'tt':'b';
-    return`<div class="ic"><div class="ii ${icls}"><i class="ti ${ic}"></i></div>
-      <div class="ib"><div class="it">${esc(a.campaign)}</div>
-      <div class="im">${a.date} · ${a.platform} · ROAS ${a.spend>0?(a.revenue/a.spend).toFixed(2)+'x':'—'}</div></div>
-      <div class="ir"><div class="ia r">−${fmt(toCHF(a.spend,a.currency))}</div>
-      <button class="db" onclick="delA('${a.id}')"><i class="ti ti-trash"></i></button></div></div>`;
-  }).join(''):`<div class="empty"><i class="ti ti-target-arrow"></i><p>No campaigns yet</p></div>`;
+    return '<div class="ic"><div class="ii '+icls+'"><i class="ti '+ic+'"></i></div>'+
+      '<div class="ib"><div class="it">'+esc(a.campaign)+'</div>'+
+      '<div class="im">'+a.date+' · '+a.platform+' · ROAS '+(a.spend>0?(a.revenue/a.spend).toFixed(2)+'x':'—')+'</div></div>'+
+      '<div class="ir"><div class="ia r">−'+fmt(toCHF(a.spend,a.currency))+'</div>'+
+      '<button class="db" onclick="delA(\''+a.id+'\')"><i class="ti ti-trash"></i></button></div></div>';
+  }).join(''):'<div class="empty"><i class="ti ti-target-arrow"></i><p>No campaigns. Log manually or import Meta CSV.</p></div>';
 }
-
 function pfCard(name,cls,d){
   const rc=d.roas>=2?'g':d.roas>=1?'a':'r';
-  return`<div class="pfc ${cls}"><div class="pfn"><div class="pfd ${cls}"></div>${name}</div>
-    <div class="pfm">
-      <div class="pfr"><span class="pfl">Spend</span><span class="pfv">${fmt(d.sp)}</span></div>
-      <div class="pfr"><span class="pfl">Revenue</span><span class="pfv">${fmt(d.rv)}</span></div>
-      <div class="pfr"><span class="pfl">ROAS</span><span class="pfv ${rc}">${d.roas.toFixed(2)}x</span></div>
-      <div class="pfr"><span class="pfl">CTR</span><span class="pfv">${d.ctr.toFixed(2)}%</span></div>
-      <div class="pfr"><span class="pfl">CPC</span><span class="pfv">${d.cpc>0?fmt(d.cpc):'—'}</span></div>
-    </div></div>`;
+  return '<div class="pfc '+cls+'"><div class="pfn"><div class="pfd '+cls+'"></div>'+name+'</div>'+
+    '<div class="pfm">'+
+    '<div class="pfr"><span class="pfl">Spend</span><span class="pfv">'+fmt(d.sp)+'</span></div>'+
+    '<div class="pfr"><span class="pfl">Revenue</span><span class="pfv">'+fmt(d.rv)+'</span></div>'+
+    '<div class="pfr"><span class="pfl">ROAS</span><span class="pfv '+rc+'">'+d.roas.toFixed(2)+'x</span></div>'+
+    '<div class="pfr"><span class="pfl">CTR</span><span class="pfv">'+d.ctr.toFixed(2)+'%</span></div>'+
+    '<div class="pfr"><span class="pfl">CPC</span><span class="pfv">'+(d.cpc>0?fmt(d.cpc):'—')+'</span></div>'+
+    '</div></div>';
 }
-
 function addAd(){
-  const sp=parseFloat(document.getElementById('as').value);
+  const sp=parseFloat(document.getElementById('ad-s').value);
   if(!sp||sp<=0){toast('Enter spend amount');return;}
-  ST.ads.unshift({id:uid(),date:document.getElementById('ad').value||today(),
-    platform:chipV('ap'),campaign:document.getElementById('ac').value||'—',
-    spend:sp,revenue:parseFloat(document.getElementById('ar').value)||0,
-    impressions:parseInt(document.getElementById('ai').value)||0,
-    clicks:parseInt(document.getElementById('alk').value)||0,
-    conversions:parseInt(document.getElementById('aco').value)||0,
-    currency:chipV('accy')||'CHF'});
-  ['as','ar','ai','alk','aco','ac'].forEach(id=>document.getElementById(id).value='');
+  ST.ads.unshift({id:uid(),date:document.getElementById('ad-d').value||today(),
+    platform:chipV('ap'),campaign:document.getElementById('ad-c').value||'—',
+    spend:sp,revenue:parseFloat(document.getElementById('ad-r').value)||0,
+    impressions:parseInt(document.getElementById('ad-i').value)||0,
+    clicks:parseInt(document.getElementById('ad-k').value)||0,
+    conversions:parseInt(document.getElementById('ad-v').value)||0,
+    currency:chipV('ad-ccy')||'EUR'});
+  ['ad-s','ad-r','ad-i','ad-k','ad-v','ad-c'].forEach(id=>document.getElementById(id).value='');
   persist();rAds();toast('Campaign added');
 }
 function delA(id){ST.ads=ST.ads.filter(a=>a.id!==id);persist();rAds();}
 
-// ── More ──
+// ── META CSV IMPORT ──
+function parseCSVRow(line){
+  const res=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.replace(/^"|"$/g,'').trim());cur='';}else{cur+=c;}
+  }
+  res.push(cur.replace(/^"|"$/g,'').trim());
+  return res;
+}
+function importMetaCSV(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());
+      if(lines.length<2){toast('CSV too short');return;}
+      let hi=0;
+      for(let i=0;i<Math.min(8,lines.length);i++){
+        const l=lines[i].toLowerCase();
+        if(l.includes('campaign')||l.includes('impressions')||l.includes('amount spent')){hi=i;break;}
+      }
+      const hdrs=parseCSVRow(lines[hi]).map(h=>h.toLowerCase().trim());
+      function fc(names){for(const n of names){const i=hdrs.findIndex(h=>h.includes(n));if(i>=0)return i;}return -1;}
+      const ci={
+        date:fc(['day','date','reporting start','period']),
+        campaign:fc(['campaign name','ad set name','ad name']),
+        spend:fc(['amount spent','spend','total spent']),
+        imp:fc(['impressions']),
+        clicks:fc(['clicks (all)','link clicks','outbound clicks','clicks']),
+        conv:fc(['results','purchases','leads','conversions']),
+        roas:fc(['purchase roas','website purchase roas','conversion value']),
+      };
+      let imported=0,skipped=0;
+      const cur=chipV('ad-ccy')||'EUR';
+      for(let i=hi+1;i<lines.length;i++){
+        const row=parseCSVRow(lines[i]);
+        if(row.length<3)continue;
+        if(row.join('').trim().toLowerCase().startsWith('total'))continue;
+        const spend=parseFloat((ci.spend>=0?row[ci.spend]||'':'').replace(/[^0-9.-]/g,''));
+        if(!spend||isNaN(spend)||spend<=0){skipped++;continue;}
+        let date=ci.date>=0?(row[ci.date]||'').trim():'';
+        if(date.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)){const[mo,dy,yr]=date.split('/');date=yr+'-'+mo.padStart(2,'0')+'-'+dy.padStart(2,'0');}
+        else if(date.match(/^\d{1,2}\.\d{1,2}\.\d{4}$/)){const[dy,mo,yr]=date.split('.');date=yr+'-'+mo.padStart(2,'0')+'-'+dy.padStart(2,'0');}
+        if(!date||date.length<8)date=today();
+        const campaign=ci.campaign>=0?(row[ci.campaign]||'Meta').trim():'Meta';
+        const impressions=ci.imp>=0?parseInt((row[ci.imp]||'').replace(/[^0-9]/g,''))||0:0;
+        const clicks=ci.clicks>=0?parseInt((row[ci.clicks]||'').replace(/[^0-9]/g,''))||0:0;
+        const conversions=ci.conv>=0?parseInt((row[ci.conv]||'').replace(/[^0-9]/g,''))||0:0;
+        let revenue=0;
+        if(ci.roas>=0){const rv=parseFloat((row[ci.roas]||'').replace(/[^0-9.-]/g,''));if(rv>0)revenue=rv<50?rv*spend:rv;}
+        ST.ads.push({id:uid(),date,platform:'meta',campaign,spend,revenue,impressions,clicks,conversions,currency:cur});
+        imported++;
+      }
+      persist();rAds();rAll();
+      event.target.value='';
+      toast('Imported '+imported+' rows'+(skipped?' ('+skipped+' skipped)':''));
+    }catch(err){toast('Import error: '+err.message,3500);event.target.value='';}
+  };
+  reader.readAsText(file);
+}
+
+// ── MORE ──
 function rMore(){
   document.getElementById('bexp').textContent=ST.expenses.length;
   document.getElementById('bsub').textContent=ST.subs.length;
@@ -809,30 +820,27 @@ function rMore(){
   else{document.getElementById('shdot').className='cdot';document.getElementById('shlbl').textContent='Tap Sync now';}
 }
 
-// ── Expenses ──
+// ── EXPENSES ──
 function rExp(){
   document.getElementById('ed').value=document.getElementById('ed').value||today();
   setupC('ecat');setupC('eccy');
   const s=ST.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('explist').innerHTML=s.length?s.map(e=>`
-    <div class="ic"><div class="ii r"><i class="ti ti-receipt"></i></div>
-    <div class="ib"><div class="it">${esc(e.description)}</div><div class="im">${e.date} · ${e.category}</div></div>
-    <div class="ir"><div class="ia r">−${fmt(toCHF(e.amount,e.currency))}</div>
-    <button class="db" onclick="delE('${e.id}')"><i class="ti ti-trash"></i></button></div></div>`).join(''):
-    `<div class="empty"><i class="ti ti-receipt"></i><p>No expenses yet</p></div>`;
+  document.getElementById('explist').innerHTML=s.length?s.map(e=>
+    '<div class="ic"><div class="ii r"><i class="ti ti-receipt"></i></div>'+
+    '<div class="ib"><div class="it">'+esc(e.description)+'</div><div class="im">'+e.date+' · '+e.category+'</div></div>'+
+    '<div class="ir"><div class="ia r">−'+fmt(toCHF(e.amount,e.currency))+'</div>'+
+    '<button class="db" onclick="delE(\''+e.id+'\')"><i class="ti ti-trash"></i></button></div></div>'
+  ).join(''):'<div class="empty"><i class="ti ti-receipt"></i><p>No expenses yet</p></div>';
 }
 function addExp(){
-  const a=parseFloat(document.getElementById('ea').value);
-  if(!a||a<=0){toast('Enter amount');return;}
-  ST.expenses.unshift({id:uid(),date:document.getElementById('ed').value||today(),
-    description:document.getElementById('edesc').value||'—',
-    category:chipV('ecat')||'other',amount:a,currency:chipV('eccy')||'CHF'});
+  const a=parseFloat(document.getElementById('ea').value);if(!a||a<=0){toast('Enter amount');return;}
+  ST.expenses.unshift({id:uid(),date:document.getElementById('ed').value||today(),description:document.getElementById('edesc').value||'—',category:chipV('ecat')||'other',amount:a,currency:chipV('eccy')||'CHF'});
   document.getElementById('ea').value='';document.getElementById('edesc').value='';
   persist();rExp();rAll();toast('Expense added');
 }
 function delE(id){ST.expenses=ST.expenses.filter(e=>e.id!==id);persist();rExp();rAll();}
 
-// ── Subscriptions ──
+// ── SUBSCRIPTIONS ──
 function rSubs(){
   document.getElementById('snx').value=document.getElementById('snx').value||today();
   setupC('scy');setupC('sccy');
@@ -842,16 +850,13 @@ function rSubs(){
   const s=ST.subs.slice().sort((a,b)=>nextR(a).localeCompare(nextR(b)));
   document.getElementById('sublist').innerHTML=s.length?s.map(x=>{
     const nx=nextR(x),days=daysB(today(),nx),cls=days<=3?'r':days<=7?'a':'g';
-    return`<div class="subi">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:600">${esc(x.name)}</div>
-        <div style="font-size:11px;color:var(--t2);margin-top:2px">${x.cycle} · ${fmt(toCHF(x.amount,x.currency))}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;margin-right:8px"><div style="font-size:12px;font-weight:600">${nx}</div></div>
-      <div class="dueb ${cls}">${days<=0?'today!':'in '+days+'d'}</div>
-      <button class="db" style="margin-left:6px" onclick="delS('${x.id}')"><i class="ti ti-trash"></i></button>
-    </div>`;
-  }).join(''):`<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">No subscriptions yet</div>`;
+    return '<div class="subi">'+
+      '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+esc(x.name)+'</div>'+
+      '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+x.cycle+' · '+fmt(toCHF(x.amount,x.currency))+'</div></div>'+
+      '<div style="text-align:right;flex-shrink:0;margin-right:8px"><div style="font-size:12px;font-weight:600">'+nx+'</div></div>'+
+      '<div class="dueb '+cls+'">'+(days<=0?'today!':'in '+days+'d')+'</div>'+
+      '<button class="db" style="margin-left:6px" onclick="delS(\''+x.id+'\')"><i class="ti ti-trash"></i></button></div>';
+  }).join(''):'<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">No subscriptions yet</div>';
 }
 function addSub(){
   const n=document.getElementById('sn').value.trim(),a=parseFloat(document.getElementById('sa').value);
@@ -862,289 +867,288 @@ function addSub(){
 }
 function delS(id){ST.subs=ST.subs.filter(s=>s.id!==id);persist();rSubs();rAll();}
 
-// ── Products & COGS ──
+// ── PRODUCTS & COGS ──
 function rProd(){
   const el=document.getElementById('prodlist');
-  if(!ST.products.length){
-    el.innerHTML=`<div class="empty"><i class="ti ti-package"></i><p>No products — tap Sync in Orders tab</p></div>`;
-    return;
-  }
+  if(!ST.products.length){el.innerHTML='<div class="empty"><i class="ti ti-package"></i><p>No products — tap Sync in Orders tab</p></div>';return;}
   el.innerHTML=ST.products.map(p=>{
     const cogs=ST.cogs[p.title];
-    const sold=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.qty,0),0);
-    const rev=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+toCHF(i.price*i.qty,o.currency),0),0);
-    const cogsTotal=ST.orders.reduce((s,o)=>{
-      const items=o.items.filter(i=>i.title===p.title);
-      if(!items.length)return s;
-      const fakeOrder={...o,items};
-      return s+getOrderCOGS(fakeOrder);
-    },0);
-    const profit=rev-cogsTotal;
-    const margin=rev>0?(profit/rev)*100:0;
-    const hasCOGS=!!cogs;
+    const hasCOGS=!!(cogs&&cogs.variants&&Object.keys(cogs.variants).length);
+    const paidOrders=ST.orders.filter(o=>(o.status==='paid'||o.status==='partially_refunded')&&o.items.some(i=>i.title===p.title));
+    const totalRev=paidOrders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+toCHF(i.price*i.qty,o.currency),0),0);
+    const totalUnits=paidOrders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.qty,0),0);
+    const totalFees=paidOrders.reduce((s,o)=>{const fake={...o,items:o.items.filter(i=>i.title===p.title)};return s+getOrderCOGS(fake);},0);
+    const totalProfit=totalRev-totalFees;
+    const margin=totalRev>0?(totalProfit/totalRev)*100:null;
+    const mc=margin===null?'var(--t3)':margin>=30?'var(--grn)':margin>=10?'var(--amb)':'var(--red)';
 
-    return`<div class="ic" style="flex-direction:column;align-items:stretch;gap:10px">
-      <div style="display:flex;align-items:center;gap:11px">
-        <div class="ii b"><i class="ti ti-package"></i></div>
-        <div class="ib">
-          <div class="it">${esc(p.title)}</div>
-          <div class="im">Sold: ${sold} · Rev: ${fmt(rev)}</div>
-          ${hasCOGS?`<div class="im" style="color:${profit>=0?'var(--grn)':'var(--red)'}">Profit: ${fmt(profit)} (${margin.toFixed(1)}%)</div>`:''}
-        </div>
-        <div style="flex-shrink:0">
-          ${hasCOGS
-            ?`<div style="font-size:10px;color:var(--grn);font-weight:700;text-align:right">COGS set</div>
-               <div style="font-size:10px;color:var(--t3);text-align:right">Cost: ${fmt(toCHF(Number(cogs.cost)+Number(cogs.ship),cogs.currency))}</div>`
-            :`<div style="font-size:10px;color:var(--amb);font-weight:700">No COGS</div>`}
-        </div>
-      </div>
-      <button class="abtn sec" style="padding:9px" onclick="openCOGS('${p.id}')">
-        <i class="ti ti-pencil" style="vertical-align:-2px;margin-right:4px"></i>
-        ${hasCOGS?'Edit COGS & fees':'Set COGS & fees'}
-      </button>
-    </div>`;
+    // Per-variant margin table (only shown if COGS set and multiple variants)
+    let varTable='';
+    if(hasCOGS&&p.variants.length>1){
+      const rows=p.variants.map(v=>{
+        const vd=cogs.variants[v.id]||cogs.variants['default']||{};
+        const costPerUnit=(Number(vd.cost)||0)+(Number(vd.ship)||0);
+        const costCHF=toCHF(costPerUnit,cogs.currency||'EUR');
+        const payPct=(Number(cogs.payPct)||ST.settings.payPct||0)/100;
+        const s3p=(Number(cogs.feePct)||ST.settings.thirdPct||0)/100;
+        const sellingCHF=toCHF(v.price,'EUR');
+        const feesPct=(payPct+s3p)*sellingCHF+toCHF(ST.settings.fixedFee||0,'CHF');
+        const vProfit=sellingCHF-costCHF-feesPct;
+        const vMargin=sellingCHF>0?(vProfit/sellingCHF)*100:0;
+        const vmc=vMargin>=30?'var(--grn)':vMargin>=10?'var(--amb)':'var(--red)';
+        return '<tr><td style="color:var(--t2)">'+esc(v.title)+'</td>'+
+          '<td style="color:var(--t2)">'+fmt(sellingCHF)+'</td>'+
+          '<td style="color:var(--t3)">'+fmt(costCHF+feesPct)+'</td>'+
+          '<td style="color:'+vmc+';font-weight:700">'+fmt(vProfit)+'</td>'+
+          '<td style="color:'+vmc+';font-weight:700">'+vMargin.toFixed(1)+'%</td></tr>';
+      }).join('');
+      varTable='<div style="background:var(--s2);border-radius:var(--r8);overflow:hidden;margin-top:8px">'+
+        '<table class="vtbl"><thead><tr>'+
+        '<th>Variant</th><th>Price</th><th>Costs</th><th>Profit</th><th>Margin</th>'+
+        '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+    }
+
+    return '<div class="ic" style="flex-direction:column;align-items:stretch;gap:10px">'+
+      '<div style="display:flex;align-items:center;gap:11px">'+
+        '<div class="ii b"><i class="ti ti-package"></i></div>'+
+        '<div class="ib">'+
+          '<div class="it">'+esc(p.title)+'</div>'+
+          '<div class="im">'+totalUnits+' sold · '+fmt(totalRev)+' revenue</div>'+
+          (hasCOGS?'<div class="im" style="color:'+mc+'">Profit: '+fmt(totalProfit)+' ('+(margin!==null?margin.toFixed(1)+'%':'—')+')</div>':
+            '<div class="im" style="color:var(--amb)">⚠ Set COGS to see true profit</div>')+
+        '</div>'+
+        '<div style="flex-shrink:0;text-align:right">'+
+          (hasCOGS?'<div style="font-size:10px;color:var(--grn);font-weight:700">COGS ✓</div>':
+            '<div style="font-size:10px;color:var(--amb);font-weight:700">No COGS</div>')+
+        '</div>'+
+      '</div>'+
+      (hasCOGS&&margin!==null?
+        '<div><div style="font-size:10px;color:var(--t3);margin-bottom:3px">Overall margin</div>'+
+        '<div class="mbar"><div class="mfill" style="width:'+Math.min(Math.max(margin,0),100)+'%;background:'+mc+'"></div></div></div>':'')+ 
+      varTable+
+      '<button class="abtn sec" style="padding:8px" onclick="openCOGS(\''+esc(p.id)+'\')">'+
+        '<i class="ti ti-pencil" style="vertical-align:-2px;margin-right:4px"></i>'+(hasCOGS?'Edit COGS & fees':'Set COGS & fees')+
+      '</button></div>';
   }).join('');
 }
 
-function openCOGS(productId){
-  editingProductId = productId;
-  const product = ST.products.find(p=>p.id===productId);
-  if(!product) return;
-  const title = product.title;
-  document.getElementById('cogs-title').textContent = title.slice(0,26)+(title.length>26?'…':'');
-
-  // Global fees
-  const existing = ST.cogs[title] || {};
-  document.getElementById('cogs-fee-pct').value = existing.feePct !== undefined ? existing.feePct : ST.settings.shopifyFeePct;
-  document.getElementById('cogs-pay-pct').value = existing.payPct !== undefined ? existing.payPct : ST.settings.payFeePct;
+function openCOGS(pid){
+  editingProd=pid;
+  const p=ST.products.find(x=>x.id===pid);if(!p)return;
+  const c=ST.cogs[p.title]||{};
+  document.getElementById('cogs-ptitle').textContent=p.title.slice(0,22)+(p.title.length>22?'…':'');
+  document.getElementById('cogs-fee').value=c.feePct!=null?c.feePct:ST.settings.thirdPct;
+  document.getElementById('cogs-pay').value=c.payPct!=null?c.payPct:ST.settings.payPct;
   setupC('cogs-ccy');
-  if(existing.currency){
-    document.querySelectorAll('#cogs-ccy .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===existing.currency));
-  }
-
-  // Build variant inputs
-  const variants = product.variants || [];
-  const variantData = existing.variants || {};
-  const vContainer = document.getElementById('cogs-variants');
-
-  if(variants.length === 0 || (variants.length === 1 && variants[0].title === 'Default Title')){
-    // Single variant / no variants - show simple form
-    vContainer.innerHTML = `
-      <div class="fc" style="margin:0">
-        <div class="fr" style="margin-bottom:0">
-          <div class="fld"><div class="fl">Product cost</div><input type="number" class="variant-cost" data-variant="default" placeholder="0.00" step="0.01" value="${variantData['default']?.cost||existing.cost||''}"></div>
-          <div class="fld"><div class="fl">Shipping cost</div><input type="number" class="variant-ship" data-variant="default" placeholder="0.00" step="0.01" value="${variantData['default']?.ship||existing.ship||''}"></div>
-        </div>
-      </div>`;
-  } else {
-    vContainer.innerHTML = variants.map(v => {
-      const vd = variantData[v.id] || {};
-      const salePrice = v.price ? `· sells for ${SYM[ccy]}${fromCHF(toCHF(v.price,'EUR'),ccy).toFixed(2)}` : '';
-      return `<div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);padding:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:8px">${esc(v.title)} <span style="color:var(--t3);font-weight:400">${salePrice}</span></div>
-        ${v.sku?`<div style="font-size:10px;color:var(--t3);margin-bottom:8px">SKU: ${esc(v.sku)}</div>`:''}
-        <div style="display:flex;gap:8px">
-          <div class="fld"><div class="fl">Cost</div><input type="number" class="variant-cost" data-variant="${v.id}" placeholder="0.00" step="0.01" value="${vd.cost||''}"></div>
-          <div class="fld"><div class="fl">Shipping</div><input type="number" class="variant-ship" data-variant="${v.id}" placeholder="0.00" step="0.01" value="${vd.ship||''}"></div>
-        </div>
-      </div>`;
+  if(c.currency)document.querySelectorAll('#cogs-ccy .chip').forEach(x=>x.classList.toggle('on',x.dataset.v===c.currency));
+  const existing=c.variants||{};
+  const variants=p.variants||[];
+  const vc=document.getElementById('cogs-variants');
+  if(!variants.length||(variants.length===1&&variants[0].title==='Default Title')){
+    const vd=existing['default']||{};
+    vc.innerHTML='<div class="fc" style="margin:0"><div class="fr" style="margin-bottom:0">'+
+      '<div class="fld"><div class="fl">Product cost</div><input type="number" class="vc" data-vid="default" placeholder="0.00" step="0.01" value="'+(vd.cost||'')+'"></div>'+
+      '<div class="fld"><div class="fl">Shipping cost</div><input type="number" class="vs" data-vid="default" placeholder="0.00" step="0.01" value="'+(vd.ship||'')+'"></div>'+
+      '</div></div>';
+  }else{
+    vc.innerHTML=variants.map(v=>{
+      const vd=existing[v.id]||{};
+      return '<div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);padding:12px">'+
+        '<div style="font-size:13px;font-weight:700;margin-bottom:6px">'+esc(v.title)+
+        ' <span style="font-size:11px;color:var(--t3);font-weight:400">sells '+fmt(toCHF(v.price,'EUR'))+(v.sku?' · SKU: '+esc(v.sku):'')+'</span></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<div class="fld"><div class="fl">Cost</div><input type="number" class="vc" data-vid="'+v.id+'" placeholder="0.00" step="0.01" value="'+(vd.cost||'')+'"></div>'+
+          '<div class="fld"><div class="fl">Shipping</div><input type="number" class="vs" data-vid="'+v.id+'" placeholder="0.00" step="0.01" value="'+(vd.ship||'')+'"></div>'+
+        '</div></div>';
     }).join('');
   }
   showSub('cogs');
 }
 
 function saveCOGS(){
-  if(!editingProductId)return;
-  const product = ST.products.find(p=>p.id===editingProductId);
-  if(!product)return;
-  const title = product.title;
-
-  // Collect per-variant costs
-  const variants = {};
-  document.querySelectorAll('.variant-cost').forEach(input=>{
-    const vid = input.dataset.variant;
-    const shipEl = document.querySelector(`.variant-ship[data-variant="${vid}"]`);
-    variants[vid] = {
-      cost: parseFloat(input.value)||0,
-      ship: parseFloat(shipEl?.value)||0,
-    };
+  if(!editingProd)return;
+  const p=ST.products.find(x=>x.id===editingProd);if(!p)return;
+  const variants={};
+  document.querySelectorAll('.vc').forEach(input=>{
+    const vid=input.dataset.vid;
+    const shipEl=document.querySelector('.vs[data-vid="'+vid+'"]');
+    variants[vid]={cost:parseFloat(input.value)||0,ship:parseFloat(shipEl?.value)||0};
   });
-
-  // For backward compat, also store flattened cost (average/first)
-  const firstVariant = Object.values(variants)[0] || {};
-
-  ST.cogs[title] = {
-    cost: firstVariant.cost || 0,
-    ship: firstVariant.ship || 0,
-    feePct: parseFloat(document.getElementById('cogs-fee-pct').value)||0,
-    payPct: parseFloat(document.getElementById('cogs-pay-pct').value)||0,
-    currency: chipV('cogs-ccy')||'EUR',
-    variants, // keyed by variant id or "default"
-  };
-  persist();
-  hideSub('cogs');
-  showSub('prod');
-  rProd();
-  rAll();
-  toast('COGS saved');
+  ST.cogs[p.title]={feePct:parseFloat(document.getElementById('cogs-fee').value)||0,payPct:parseFloat(document.getElementById('cogs-pay').value)||ST.settings.payPct,currency:chipV('cogs-ccy')||'EUR',variants};
+  persist();hideSub('cogs');showSub('prod');rProd();rAll();toast('COGS saved');
 }
 
-// ── Customers ──
+// ── CUSTOMERS ──
 function rCust(){
   const total=ST.customers.length;
   const spent=ST.customers.reduce((s,c)=>s+toCHF(c.total,c.currency),0);
-  document.getElementById('cust-total').textContent=String(total);
-  document.getElementById('cust-spent').textContent=fmt(spent);
-  if(!ST.customers.length){document.getElementById('custlist').innerHTML=`<div class="empty"><i class="ti ti-users"></i><p>No customers — tap Sync</p></div>`;return;}
-  document.getElementById('custlist').innerHTML=ST.customers.slice().sort((a,b)=>b.total-a.total).slice(0,50).map(c=>`
-    <div class="ic"><div class="ii g"><i class="ti ti-user"></i></div>
-    <div class="ib"><div class="it">${esc(c.name)}</div><div class="im">${esc(c.email)} · ${c.orders} orders</div></div>
-    <div class="ir"><div class="ia g">${fmt(toCHF(c.total,c.currency))}</div></div></div>`).join('');
+  document.getElementById('cust-n').textContent=String(total);
+  document.getElementById('cust-s').textContent=fmt(spent);
+  if(!total){document.getElementById('custlist').innerHTML='<div class="empty"><i class="ti ti-users"></i><p>No customers — tap Sync</p></div>';return;}
+  document.getElementById('custlist').innerHTML=ST.customers.slice().sort((a,b)=>b.total-a.total).slice(0,50).map(c=>
+    '<div class="ic"><div class="ii g"><i class="ti ti-user"></i></div>'+
+    '<div class="ib"><div class="it">'+esc(c.name)+'</div><div class="im">'+esc(c.email)+' · '+c.orders+' orders</div></div>'+
+    '<div class="ir"><div class="ia g">'+fmt(toCHF(c.total,c.currency))+'</div></div></div>'
+  ).join('');
 }
 
-// ── Forecast ──
+// ── FORECAST ──
 function rFc(){
-  const ms=months6(),revs=revByMo(ms),adsp=adByMo(ms);
-  const cogsByMo=ms.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+getOrderCOGS(o),0));
+  const now=new Date();const months=[];
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(d.toISOString().slice(0,7));}
+  const revs=months.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+toCHF(o.amount,o.currency),0));
+  const cogsArr=months.map(m=>{const mo=ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded'));return totalCOGS(mo);});
+  const adArr=months.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.spend,a.currency),0));
   const avgRev=revs.reduce((s,v)=>s+v,0)/6;
-  const avgAds=adsp.reduce((s,v)=>s+v,0)/6;
-  const avgCogs=cogsByMo.reduce((s,v)=>s+v,0)/6;
-  const avgExp=eTotals()/6,subs=sMo();
-  const mNet=avgRev-avgCogs-avgAds-avgExp-subs,proj=mNet*6;
+  const avgCogs=cogsArr.reduce((s,v)=>s+v,0)/6;
+  const avgAds=adArr.reduce((s,v)=>s+v,0)/6;
+  const avgExp=eTotals()/6;
+  const subs=sMo();
+  const mNet=avgRev-avgCogs-avgAds-avgExp-subs;
+  const proj=mNet*6;
   document.getElementById('fcnet').textContent=fmt(mNet);
   document.getElementById('fcnet').className='sv '+(mNet>=0?'g':'r');
   document.getElementById('fcproj').textContent=fmt(proj);
-  const W=360,H=110,pts=[];let b=0;
+  const W=360,H=100,pts=[];let b=0;
   for(let i=0;i<=6;i++){pts.push(b);b+=mNet;}
   const minV=Math.min(...pts),maxV=Math.max(...pts,minV+.01),rng=maxV-minV;
-  const coords=pts.map((v,i)=>`${12+i*(W-24)/6},${H-8-((v-minV)/rng)*(H-24)}`).join(' ');
-  document.getElementById('fcsvg').innerHTML=`<defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4c7bff" stop-opacity=".18"/><stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>
-    <polygon points="${coords} ${12+6*(W-24)/6},${H-8} 12,${H-8}" fill="url(#gF)"/>
-    <polyline points="${coords}" fill="none" stroke="#4c7bff" stroke-width="2" stroke-linejoin="round"/>
-    ${pts.map((v,i)=>`<circle cx="${12+i*(W-24)/6}" cy="${H-8-((v-minV)/rng)*(H-24)}" r="3.5" fill="#4c7bff" stroke="var(--bg)" stroke-width="2"/>`).join('')}`;
-  const rows=[
+  const coords=pts.map((v,i)=>(12+i*(W-24)/6)+','+(H-8-((v-minV)/rng)*(H-24))).join(' ');
+  document.getElementById('fcsvg').innerHTML=
+    '<defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4c7bff" stop-opacity=".18"/><stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>'+
+    '<polygon points="'+coords+' '+(12+6*(W-24)/6)+','+(H-8)+' 12,'+(H-8)+'" fill="url(#gF)"/>'+
+    '<polyline points="'+coords+'" fill="none" stroke="#4c7bff" stroke-width="2" stroke-linejoin="round"/>'+
+    pts.map((v,i)=>'<circle cx="'+(12+i*(W-24)/6)+'" cy="'+(H-8-((v-minV)/rng)*(H-24))+'" r="3.5" fill="#4c7bff" stroke="var(--bg)" stroke-width="2"/>').join('');
+  document.getElementById('fcbd').innerHTML=[
     {l:'Avg revenue / mo',v:fmt(avgRev),pos:true},
-    {l:'COGS + fees / mo',v:'−'+fmt(avgCogs)},
+    {l:'COGS + platform fees / mo',v:'−'+fmt(avgCogs)},
     {l:'Avg ad spend / mo',v:'−'+fmt(avgAds)},
     {l:'Avg expenses / mo',v:'−'+fmt(avgExp)},
-    {l:'Subscriptions / mo',v:'−'+fmt(subs)}
-  ];
-  document.getElementById('fcbd').innerHTML=rows.map(r=>`
-    <div class="fpr"><span style="font-size:13px;color:var(--t2)">${r.l}</span>
-    <span style="font-size:13px;font-weight:700;color:${r.pos?'var(--grn)':'var(--t1)'}">${r.v}</span></div>`).join('')+
-    `<div class="fpr" style="background:var(--s2);margin:4px;border-radius:var(--r12);border-bottom:none">
-      <span style="font-size:14px;font-weight:700">Net / month</span>
-      <span style="font-size:14px;font-weight:700;color:var(--${mNet>=0?'grn':'red'})">${fmt(mNet)}</span></div>`;
+    {l:'Subscriptions / mo',v:'−'+fmt(subs)},
+  ].map(r=>'<div class="fpr"><span style="font-size:13px;color:var(--t2)">'+r.l+'</span><span style="font-size:13px;font-weight:700;color:'+(r.pos?'var(--grn)':'var(--t1)')+'">'+r.v+'</span></div>').join('')+
+    '<div class="fpr" style="background:var(--s2);margin:4px;border-radius:var(--r12);border-bottom:none">'+
+    '<span style="font-size:14px;font-weight:700">Net / month</span>'+
+    '<span style="font-size:14px;font-weight:700;color:var(--'+(mNet>=0?'grn':'red')+')">'+fmt(mNet)+'</span></div>';
 }
 
 // ── VAT ──
 function rVAT(){
-  const ot=oTotals(),et=eTotals(),at=aTotals(),cogs=totalCOGS();
-  const rate=ST.settings.vatRate||8.1,reg=ST.settings.vatRegistered;
-  const vatS=reg?ot.net*(rate/(100+rate)):0,vatR=reg?(et+at.sp+cogs)*(rate/(100+rate)):0;
-  const vatD=Math.max(0,vatS-vatR),profit=ot.net-cogs-at.sp-et;
+  const ot=oTotals();
+  const cogs=totalCOGS();
+  const at=aTotals();
+  const et=eTotals();
+  const rate=ST.settings.vatRate||8.1;
+  const reg=ST.settings.vatReg;
+  const vatS=reg?ot.net*(rate/(100+rate)):0;
+  const vatR=reg?(cogs+at.sp+et)*(rate/(100+rate)):0;
+  const vatD=Math.max(0,vatS-vatR);
+  const profit=ot.net-cogs-at.sp-et;
   document.getElementById('vatgrid').innerHTML=[
     {l:'Total revenue',v:fmt(ot.net)},
-    {l:'True profit',v:fmt(profit),c:profit>=0?'g':'r'},
-    {l:'COGS + fees',v:fmt(cogs),c:'r'},
+    {l:'True net profit',v:fmt(profit),c:profit>=0?'g':'r'},
+    {l:'COGS + all fees',v:fmt(cogs),c:'r'},
+    {l:'Refunds',v:fmt(ot.refunds),c:'r'},
     {l:'VAT on sales',v:fmt(vatS)},
     {l:'VAT recoverable',v:fmt(vatR)},
     {l:'VAT due (est.)',v:fmt(vatD),c:'a'},
-  ].map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
+  ].map(s=>'<div class="sc"><div class="sl">'+s.l+'</div><div class="sv '+(s.c||'')+'">'+s.v+'</div></div>').join('');
 }
 
-// ── Settings ──
-function rSettingsForm(){
-  document.getElementById('set-shopify-fee').value=ST.settings.shopifyFeePct||2;
-  document.getElementById('set-pay-fee').value=ST.settings.payFeePct||2.9;
+// ── SETTINGS ──
+function rSettings(){
+  const cur=ST.settings.plan||'basic';
+  document.getElementById('plan-picker').innerHTML=PLANS.map(p=>{
+    const on=cur===p.id;
+    return '<div onclick="selectPlan(\''+p.id+'\')" class="plan-card'+(on?' on':'')+'">'+
+      '<div class="plan-dot" style="background:'+p.color+'"></div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:14px;font-weight:700;color:'+(on?'var(--t1)':'var(--t2)')+'">'+p.name+' <span style="font-size:11px;font-weight:400;color:var(--t3)">'+p.sub+'</span></div>'+
+        '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+p.pct+'% + CHF '+p.fixed.toFixed(2)+' · '+p.note+'</div>'+
+      '</div>'+
+      (on?'<i class="ti ti-check" style="color:var(--acc);font-size:18px"></i>':'')+
+    '</div>';
+  }).join('');
+  // Active fee summary
+  const plan=PLANS.find(p=>p.id===cur)||PLANS[0];
+  document.getElementById('active-rate').textContent=(ST.settings.payPct||plan.pct).toFixed(2)+'%';
+  document.getElementById('active-fixed').textContent='CHF '+(ST.settings.fixedFee||plan.fixed).toFixed(2)+' per order';
+  document.getElementById('active-3p').textContent=(ST.settings.thirdPct||0)+'% (3rd party)';
+  // Manual override fields
+  document.getElementById('set-pfee').value=ST.settings.payPct||plan.pct;
+  document.getElementById('set-ffee').value=ST.settings.fixedFee||plan.fixed;
+  document.getElementById('set-sfee').value=ST.settings.thirdPct||0;
   document.getElementById('set-vat').value=ST.settings.vatRate||8.1;
   setupC('set-vat-reg');
-  if(ST.settings.vatRegistered){
-    document.querySelectorAll('#set-vat-reg .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
-  }
-}
-function saveSettings(){
-  ST.settings.shopifyFeePct=parseFloat(document.getElementById('set-shopify-fee').value)||2;
-  ST.settings.payFeePct=parseFloat(document.getElementById('set-pay-fee').value)||2.9;
-  ST.settings.vatRate=parseFloat(document.getElementById('set-vat').value)||8.1;
-  ST.settings.vatRegistered=chipV('set-vat-reg')==='1';
-  persist();toast('Settings saved');rAll();
+  if(ST.settings.vatReg)document.querySelectorAll('#set-vat-reg .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
 }
 
-// ── CSV Export ──
+function selectPlan(id){
+  const p=PLANS.find(x=>x.id===id);if(!p)return;
+  ST.settings.plan=id;
+  ST.settings.payPct=p.pct;
+  ST.settings.fixedFee=p.fixed;
+  ST.settings.thirdPct=0; // 0 if using Shopify Payments
+  rSettings();
+  toast(p.name+': '+p.pct+'% + CHF '+p.fixed.toFixed(2));
+}
+
+function saveSettings(){
+  ST.settings.payPct=parseFloat(document.getElementById('set-pfee').value)||ST.settings.payPct;
+  ST.settings.fixedFee=parseFloat(document.getElementById('set-ffee').value)||ST.settings.fixedFee;
+  ST.settings.thirdPct=parseFloat(document.getElementById('set-sfee').value)||0;
+  ST.settings.vatRate=parseFloat(document.getElementById('set-vat').value)||8.1;
+  ST.settings.vatReg=chipV('set-vat-reg')==='1';
+  persist();toast('Settings saved');rAll();hideSub('settings');
+}
+
+// ── CSV EXPORT ──
 function exportCSV(){
-  const lines=['=== ORDERS ===','date,order,customer,status,revenue,cogs,profit,currency'];
-  ST.orders.forEach(o=>{
-    const rev=toCHF(o.amount,o.currency);
-    const cogs=getOrderCOGS(o);
-    lines.push([o.date,o.name,o.customer,o.status,rev.toFixed(2),cogs.toFixed(2),(rev-cogs).toFixed(2),'CHF'].map(cc).join(','));
-  });
-  lines.push('\n=== ADS ===','date,platform,campaign,spend,revenue,currency');
-  ST.ads.forEach(a=>lines.push([a.date,a.platform,a.campaign,a.spend,a.revenue,a.currency].map(cc).join(',')));
+  const cc=v=>{const s=String(v==null?'':v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+  const lines=['=== ORDERS ===','date,order,customer,status,revenue_CHF,cogs_CHF,profit_CHF'];
+  ST.orders.forEach(o=>{const rev=toCHF(o.amount,o.currency);const cogs=getOrderCOGS(o);lines.push([o.date,o.name,o.customer,o.status,rev.toFixed(2),cogs.toFixed(2),(rev-cogs).toFixed(2)].map(cc).join(','));});
+  lines.push('\n=== ADS ===','date,platform,campaign,spend,revenue,impressions,clicks,conversions,currency');
+  ST.ads.forEach(a=>lines.push([a.date,a.platform,a.campaign,a.spend,a.revenue,a.impressions,a.clicks,a.conversions,a.currency].map(cc).join(',')));
   lines.push('\n=== EXPENSES ===','date,description,category,amount,currency');
   ST.expenses.forEach(e=>lines.push([e.date,e.description,e.category,e.amount,e.currency].map(cc).join(',')));
   lines.push('\n=== SUBSCRIPTIONS ===','name,amount,currency,cycle,next_date');
   ST.subs.forEach(s=>lines.push([s.name,s.amount,s.currency,s.cycle,s.next_date].map(cc).join(',')));
-  lines.push('\n=== PRODUCT COGS ===','product,cost,shipping,shopify_fee_pct,payment_fee_pct,currency');
-  Object.entries(ST.cogs).forEach(([title,c])=>lines.push([title,c.cost,c.ship,c.feePct,c.payPct,c.currency].map(cc).join(',')));
   const blob=new Blob([lines.join('\n')],{type:'text/csv'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='dropflow-'+today()+'.csv';a.click();URL.revokeObjectURL(url);
-  toast('CSV exported');
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='dropflow-'+today()+'.csv';a.click();
+  URL.revokeObjectURL(url);toast('CSV exported');
 }
-function cc(v){const s=String(v==null?'':v);return/[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+
+// ── CCY ──
 function setCcy(c,btn){ccy=c;document.querySelectorAll('.cc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rAll();}
 
-// ── Init ──
-hydrate();
-document.getElementById('ad').value=today();
-document.getElementById('ed').value=today();
-document.getElementById('snx').value=today();
-setupC('ap');setupC('accy');
-rAll();
-loadFX().then(()=>rAll());
-setTimeout(()=>syncShopify(true),1000);
+// ── TIMEFRAME BUTTONS ──
+document.getElementById('tf-row').querySelectorAll('.tf').forEach(btn=>{
+  btn.onclick=()=>{document.querySelectorAll('.tf').forEach(b=>b.classList.remove('on'));btn.classList.add('on');tfDays=parseInt(btn.dataset.d)||0;rDash();};
+});
 
-// ── PWA icon injection ──
-// Inject SVG icon as apple-touch-icon via canvas
+// ── PWA ICON ──
 (function(){
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512; canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-    // Background
-    const r = 512*0.18;
-    ctx.beginPath();
-    ctx.moveTo(r,0); ctx.lineTo(512-r,0);
-    ctx.quadraticCurveTo(512,0,512,r);
-    ctx.lineTo(512,512-r); ctx.quadraticCurveTo(512,512,512-r,512);
-    ctx.lineTo(r,512); ctx.quadraticCurveTo(0,512,0,512-r);
-    ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0,0,512,512);
-    grad.addColorStop(0,'#111827'); grad.addColorStop(1,'#0d0d0d');
-    ctx.fillStyle = grad; ctx.fill();
-    // Blue glow background
-    ctx.fillStyle = 'rgba(76,123,255,0.12)';
-    ctx.beginPath(); ctx.roundRect(60,70,392,372,50); ctx.fill();
-    // DF text
-    ctx.fillStyle = '#4c7bff';
-    ctx.font = '900 280px "Arial Black", Arial';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('DF', 256, 270);
-    // Green bar
-    ctx.fillStyle = '#1ec978';
-    ctx.beginPath(); ctx.roundRect(80,390,352,22,11); ctx.fill();
-    // Green dot
-    ctx.beginPath(); ctx.arc(420,120,28,0,Math.PI*2);
-    ctx.fillStyle='rgba(30,201,120,0.85)'; ctx.fill();
-    // Set as apple touch icon
-    const link = document.createElement('link');
-    link.rel='apple-touch-icon'; link.href=canvas.toDataURL('image/png');
-    document.head.appendChild(link);
-  } catch(e){}
+  try{
+    const cv=document.createElement('canvas');cv.width=512;cv.height=512;
+    const ctx=cv.getContext('2d');
+    const r=92;ctx.beginPath();ctx.moveTo(r,0);ctx.lineTo(512-r,0);ctx.quadraticCurveTo(512,0,512,r);ctx.lineTo(512,512-r);ctx.quadraticCurveTo(512,512,512-r,512);ctx.lineTo(r,512);ctx.quadraticCurveTo(0,512,0,512-r);ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);ctx.closePath();
+    const g=ctx.createLinearGradient(0,0,512,512);g.addColorStop(0,'#111827');g.addColorStop(1,'#0d0d0d');ctx.fillStyle=g;ctx.fill();
+    ctx.fillStyle='rgba(76,123,255,0.1)';ctx.beginPath();ctx.roundRect(60,70,392,372,50);ctx.fill();
+    ctx.fillStyle='#4c7bff';ctx.font='900 290px "Arial Black",Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('DF',256,270);
+    ctx.fillStyle='#1ec978';ctx.beginPath();ctx.roundRect(80,400,352,22,11);ctx.fill();
+    ctx.beginPath();ctx.arc(420,110,26,0,Math.PI*2);ctx.fillStyle='rgba(30,201,120,0.85)';ctx.fill();
+    const lnk=document.createElement('link');lnk.rel='apple-touch-icon';lnk.href=cv.toDataURL('image/png');document.head.appendChild(lnk);
+  }catch(e){}
 })();
 
+// ── INIT ──
+hydrate();
+document.getElementById('ad-d').value=today();
+document.getElementById('ed').value=today();
+document.getElementById('snx').value=today();
+setupC('ap');setupC('ad-ccy');
+rAll();
+loadFX().then(()=>rAll());
+setTimeout(()=>syncShopify(true),900);
 </script>
 </body>
 </html>
