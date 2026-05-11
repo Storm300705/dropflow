@@ -199,13 +199,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <!-- ADS -->
 <div class="scr" id="s2">
-  <div class="topbar">
-    <div class="ptitle">Ads</div>
-    <button onclick="document.getElementById('meta-csv-input').click()" style="background:var(--meta-dim);border:1px solid rgba(24,119,242,.3);color:#6fa8ff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
-      <i class="ti ti-upload" style="font-size:14px"></i>Import Meta CSV
-    </button>
-    <input type="file" id="meta-csv-input" accept=".csv" style="display:none" onchange="importMetaCSV(event)">
-  </div>
+  <div class="topbar"><div class="ptitle">Ads</div></div>
   <div class="pfg" id="pfcards"></div>
   <div class="cbox" style="height:100px;margin-top:10px">
     <svg id="adsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
@@ -414,27 +408,17 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <!-- SETTINGS -->
 <div class="ss" id="ss-settings">
   <div class="bbar"><button class="bbtn" onclick="hideSub('settings')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Settings</span></div>
-  <div class="sec"><span class="stitle">Shopify plan</span></div>
+  <div class="sec"><span class="stitle">Shopify fees</span></div>
   <div class="mg">
     <div class="sr">
-      <div class="srl">Select your plan</div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px" id="plan-picker"></div>
-      <div class="srh" style="margin-top:6px">Fees auto-filled below. You can override manually.</div>
-    </div>
-    <div class="sr">
-      <div class="srl">3rd-party transaction fee (%)</div>
-      <input type="number" id="set-shopify-fee" placeholder="0" step="0.1">
-      <div class="srh">0% with Shopify Payments (waived) · 2% Basic, 1% Grow, 0.6% Advanced with 3rd party</div>
+      <div class="srl">Shopify plan transaction fee (%)</div>
+      <input type="number" id="set-shopify-fee" placeholder="2.0" step="0.1">
+      <div class="srh">Basic: 2% · Shopify: 1% · Advanced: 0.5% · Plus: 0%</div>
     </div>
     <div class="sr">
       <div class="srl">Payment processing fee (%)</div>
-      <input type="number" id="set-pay-fee" placeholder="3.2" step="0.1">
-      <div class="srh">Shopify Payments CH: Basic 3.2% · Grow 2.6% · Advanced 2.3%</div>
-    </div>
-    <div class="sr">
-      <div class="srl">Fixed fee per order (CHF)</div>
-      <input type="number" id="set-pay-fixed" placeholder="0.30" step="0.01">
-      <div class="srh">CHF 0.30 per order on all CH plans</div>
+      <input type="number" id="set-pay-fee" placeholder="2.9" step="0.1">
+      <div class="srh">Shopify Payments / Stripe: ~2.9%</div>
     </div>
   </div>
   <div class="sec"><span class="stitle">Swiss VAT</span></div>
@@ -476,9 +460,8 @@ const ST = {
   orders:[], products:[], customers:[], ads:[], expenses:[], subs:[],
   cogs:{}, // {productTitle: {cost, ship, feePct, payPct, currency}}
   settings:{
-    shopifyFeePct: 0,    // Shopify transaction fee % (0 if using Shopify Payments CH)
-    payFeePct: 3.2,      // Shopify Payments CH: ~3.2%
-    payFeeFixed: 0.30,   // fixed fee per order CHF 0.30
+    shopifyFeePct: 2.0,  // Shopify transaction fee %
+    payFeePct: 2.9,      // payment processing %
     vatRate: 8.1,
     vatRegistered: false,
   }
@@ -568,9 +551,6 @@ function getOrderCOGS(order){
       total += toCHF(feeAmt + payAmt, order.currency);
     }
   });
-  // Add fixed per-order fee (e.g. CHF 0.30 for Shopify Payments) — converted to CHF
-  const fixedFee = ST.settings.payFeeFixed || 0;
-  total += toCHF(fixedFee, 'CHF'); // fixed fee stored in CHF
   return total;
 }
 
@@ -1074,55 +1054,18 @@ function rVAT(){
 }
 
 // ── Settings ──
-// ── Shopify Plans (Switzerland, Shopify Payments, 2026) ──
-const SHOPIFY_PLANS = [
-  {id:'starter',name:'Starter',monthly:'CHF 7/mo',payPct:3.2,fixedFee:0.30,thirdPartyPct:5.0,note:'Social only, no store',color:'#585858'},
-  {id:'basic',name:'Basic',monthly:'CHF 36/mo',payPct:3.2,fixedFee:0.30,thirdPartyPct:2.0,note:'Your plan — confirmed 3.2% + CHF 0.30',color:'#4c7bff'},
-  {id:'grow',name:'Grow',monthly:'CHF 105/mo',payPct:2.6,fixedFee:0.30,thirdPartyPct:1.0,note:'Worth it above ~CHF 8k/mo',color:'#1ec978'},
-  {id:'advanced',name:'Advanced',monthly:'CHF 384/mo',payPct:2.3,fixedFee:0.30,thirdPartyPct:0.6,note:'Worth it above ~CHF 30k/mo',color:'#f0a020'},
-  {id:'plus',name:'Plus',monthly:'CHF 2300+/mo',payPct:1.6,fixedFee:0.30,thirdPartyPct:0.0,note:'Enterprise, negotiable rates',color:'#9b59b6'},
-];
-
 function rSettingsForm(){
-  const picker=document.getElementById('plan-picker');
-  const cur=ST.settings.shopifyPlan||'basic';
-  picker.innerHTML=SHOPIFY_PLANS.map(p=>{
-    const active=cur===p.id;
-    return '<div onclick="selectPlan(''+p.id+'')" style="cursor:pointer;background:'+(active?'var(--acc-dim)':'var(--s2)')+';border:1px solid '+(active?'var(--acc)':'var(--b2)')+';border-radius:var(--r10);padding:10px 12px;display:flex;align-items:center;gap:10px;transition:.15s">'+
-      '<div style="width:8px;height:8px;border-radius:50%;background:'+p.color+';flex-shrink:0"></div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div style="font-size:13px;font-weight:700;color:'+(active?'var(--t1)':'var(--t2)')+'">'+p.name+' <span style="font-size:11px;font-weight:400;color:var(--t3)">'+p.monthly+'</span></div>'+
-        '<div style="font-size:10px;color:var(--t3);margin-top:2px">'+p.payPct+'% + CHF '+p.fixedFee.toFixed(2)+' · '+p.note+'</div>'+
-      '</div>'+
-      (active?'<i class="ti ti-check" style="color:var(--acc);font-size:16px"></i>':'')+
-    '</div>';
-  }).join('');
-  document.getElementById('set-shopify-fee').value=ST.settings.shopifyFeePct||0;
-  document.getElementById('set-pay-fee').value=ST.settings.payFeePct||3.2;
-  document.getElementById('set-pay-fixed').value=ST.settings.payFeeFixed||0.30;
+  document.getElementById('set-shopify-fee').value=ST.settings.shopifyFeePct||2;
+  document.getElementById('set-pay-fee').value=ST.settings.payFeePct||2.9;
   document.getElementById('set-vat').value=ST.settings.vatRate||8.1;
   setupC('set-vat-reg');
-  if(ST.settings.vatRegistered)document.querySelectorAll('#set-vat-reg .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
+  if(ST.settings.vatRegistered){
+    document.querySelectorAll('#set-vat-reg .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
+  }
 }
-
-function selectPlan(planId){
-  const plan=SHOPIFY_PLANS.find(p=>p.id===planId);
-  if(!plan)return;
-  ST.settings.shopifyPlan=planId;
-  ST.settings.shopifyFeePct=0;
-  ST.settings.payFeePct=plan.payPct;
-  ST.settings.payFeeFixed=plan.fixedFee;
-  document.getElementById('set-shopify-fee').value=0;
-  document.getElementById('set-pay-fee').value=plan.payPct;
-  document.getElementById('set-pay-fixed').value=plan.fixedFee;
-  rSettingsForm();
-  toast(plan.name+' selected: '+plan.payPct+'% + CHF '+plan.fixedFee.toFixed(2));
-}
-
 function saveSettings(){
-  ST.settings.shopifyFeePct=parseFloat(document.getElementById('set-shopify-fee').value)||0;
-  ST.settings.payFeePct=parseFloat(document.getElementById('set-pay-fee').value)||3.2;
-  ST.settings.payFeeFixed=parseFloat(document.getElementById('set-pay-fixed').value)||0.30;
+  ST.settings.shopifyFeePct=parseFloat(document.getElementById('set-shopify-fee').value)||2;
+  ST.settings.payFeePct=parseFloat(document.getElementById('set-pay-fee').value)||2.9;
   ST.settings.vatRate=parseFloat(document.getElementById('set-vat').value)||8.1;
   ST.settings.vatRegistered=chipV('set-vat-reg')==='1';
   persist();toast('Settings saved');rAll();
@@ -1151,110 +1094,6 @@ function exportCSV(){
 }
 function cc(v){const s=String(v==null?'':v);return/[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function setCcy(c,btn){ccy=c;document.querySelectorAll('.cc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rAll();}
-
-
-// ── Meta Ads CSV Import ──
-function importMetaCSV(event){
-  const file=event.target.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=(e)=>{
-    try{
-      const text=e.target.result;
-      const lines=text.split(/
-?
-/).filter(l=>l.trim());
-      if(lines.length<2){toast('CSV empty');return;}
-
-      // Find header row (Meta sometimes has report title rows at top)
-      let hi=0;
-      for(let i=0;i<Math.min(8,lines.length);i++){
-        const l=lines[i].toLowerCase();
-        if(l.includes('campaign')||l.includes('impressions')||l.includes('amount spent')){hi=i;break;}
-      }
-
-      const headers=parseCSVRow(lines[hi]).map(h=>h.toLowerCase().replace(/['"]/g,'').trim());
-
-      // Meta column name variations
-      function fc(names){return names.reduce((found,n)=>{if(found>=0)return found;const i=headers.findIndex(h=>h.includes(n));return i;},-1);}
-      const cols={
-        date: fc(['day','date','reporting start','period']),
-        campaign: fc(['campaign name','ad set name','ad name']),
-        spend: fc(['amount spent','spend','total spent']),
-        impressions: fc(['impressions']),
-        clicks: fc(['clicks (all)','link clicks','outbound clicks','clicks']),
-        conversions: fc(['results','purchases','leads','conversions']),
-        convValue: fc(['purchase roas','website purchase roas','conversion value','website purchases roas']),
-      };
-
-      let imported=0,skipped=0;
-      const cur=chipV('accy')||'EUR';
-
-      for(let i=hi+1;i<lines.length;i++){
-        const row=parseCSVRow(lines[i]);
-        if(!row.length||row.length<3)continue;
-        const rowStr=row.join('').trim();
-        if(!rowStr||rowStr.toLowerCase().includes('total')||rowStr.toLowerCase().includes('report'))continue;
-
-        const spend=parseFloat((row[cols.spend]||'').replace(/[^0-9.-]/g,''));
-        if(!spend||isNaN(spend)||spend<=0){skipped++;continue;}
-
-        // Parse date
-        let date=(cols.date>=0?(row[cols.date]||''):'').replace(/['"]/g,'').trim();
-        if(!date||date===''){date=today();}
-        // Handle MM/DD/YYYY
-        else if(date.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)){
-          const[m,d,y]=date.split('/');
-          date=y+'-'+m.padStart(2,'0')+'-'+d.padStart(2,'0');
-        }
-        // Handle DD.MM.YYYY
-        else if(date.match(/^\d{1,2}\.\d{1,2}\.\d{4}$/)){
-          const[d,m,y]=date.split('.');
-          date=y+'-'+m.padStart(2,'0')+'-'+d.padStart(2,'0');
-        }
-
-        const campaign=cols.campaign>=0?(row[cols.campaign]||'Meta').replace(/['"]/g,'').trim():'Meta';
-        const impressions=cols.impressions>=0?parseInt((row[cols.impressions]||'').replace(/[^0-9]/g,''))||0:0;
-        const clicks=cols.clicks>=0?parseInt((row[cols.clicks]||'').replace(/[^0-9]/g,''))||0:0;
-        const conversions=cols.conversions>=0?parseInt((row[cols.conversions]||'').replace(/[^0-9]/g,''))||0:0;
-
-        // Revenue: if column is ROAS, multiply by spend. If it's conversion value, use directly.
-        let revenue=0;
-        if(cols.convValue>=0){
-          const rv=parseFloat((row[cols.convValue]||'').replace(/[^0-9.-]/g,''));
-          if(rv>0){
-            // ROAS values are typically < 20, conversion values are > spend
-            revenue = rv < 50 ? rv*spend : rv;
-          }
-        }
-
-        ST.ads.push({id:uid(),date,platform:'meta',campaign,spend,revenue,impressions,clicks,conversions,currency:cur});
-        imported++;
-      }
-
-      persist();rAds();rAll();
-      event.target.value='';
-      toast('Imported '+imported+' Meta rows'+(skipped?' ('+skipped+' skipped)':''));
-    }catch(err){
-      toast('Import error: '+err.message,3500);
-      console.error(err);
-      event.target.value='';
-    }
-  };
-  reader.readAsText(file);
-}
-
-function parseCSVRow(line){
-  const res=[];let cur='',inQ=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){inQ=!inQ;}
-    else if(c===','&&!inQ){res.push(cur);cur='';}
-    else{cur+=c;}
-  }
-  res.push(cur);
-  return res;
-}
 
 // ── Init ──
 hydrate();
