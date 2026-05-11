@@ -36,18 +36,14 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);
 .nb i{font-size:22px}.nb span{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .nb.on{color:var(--acc)}
 #screens{flex:1;overflow:hidden;position:relative}
-.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
-  padding-bottom:calc(78px + var(--safe));display:none;-webkit-overflow-scrolling:touch}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(78px + var(--safe));display:none;-webkit-overflow-scrolling:touch}
 .scr.on{display:block}
 .scr::-webkit-scrollbar{display:none}
-.topbar{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;
-  position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
+.topbar{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:rgba(13,13,13,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--b1)}
 .ptitle{font-size:22px;font-weight:700;letter-spacing:-.4px}
 .psub{font-size:12px;color:var(--t3);margin-top:2px}
 .ccy-row{display:flex;gap:4px}
-.cc{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;
-  background:none;border:1px solid var(--b2);color:var(--t2);cursor:pointer;transition:.15s;font-family:inherit}
+.cc{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;background:none;border:1px solid var(--b2);color:var(--t2);cursor:pointer;transition:.15s;font-family:inherit}
 .cc.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .sec{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 10px}
 .stitle{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px}
@@ -117,6 +113,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .abtn{width:100%;background:var(--acc);color:#fff;border:none;border-radius:var(--r8);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
 .abtn:active{opacity:.85}
 .abtn.sec{background:var(--s2);color:var(--t1);border:1px solid var(--b2)}
+.abtn.danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,82,74,.3)}
 .sb{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:12px}
 .sb.sy{background:var(--acc-dim);color:#93b4ff;border-bottom:1px solid rgba(76,123,255,.15)}
 .sb.ok{background:var(--grn-dim);color:#6ee7b7;border-bottom:1px solid rgba(30,201,120,.15)}
@@ -145,6 +142,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .empty p{font-size:13px;line-height:1.6}
 #toast{position:fixed;bottom:calc(88px + var(--safe));left:50%;transform:translateX(-50%);background:rgba(36,36,36,.97);color:var(--t1);padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:.25s;white-space:nowrap;z-index:999;border:1px solid var(--b2)}
 #toast.on{opacity:1}
+.fx-badge{font-size:10px;color:var(--t3);margin-top:2px}
 </style>
 </head>
 <body>
@@ -162,6 +160,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
   </div>
   <div id="synctop"></div>
+  <div style="font-size:10px;color:var(--t3);padding:6px 18px 0;text-align:right" id="fx-info"></div>
   <div class="sg" id="statgrid"></div>
   <div class="sec"><span class="stitle">Revenue vs costs · 6 months</span>
     <div class="leg"><div class="li"><div class="ld" style="background:var(--grn)"></div>Rev</div>
@@ -245,25 +244,23 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div style="font-size:11px;color:var(--t2)" id="shlbl">Checking…</div>
       </div>
     </div>
-    <button onclick="syncShopify()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.22);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
-      Sync now
-    </button>
+    <button onclick="syncShopify()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.22);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Sync now</button>
   </div>
   <div class="mg">
     <div class="mr" onclick="showSub('exp')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-receipt"></i></div><span class="ml">Expenses</span><span class="mb" id="bexp">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
     <div class="mr" onclick="showSub('sub')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-calendar-event"></i></div><span class="ml">Subscriptions</span><span class="mb" id="bsub">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
-    <div class="mr" onclick="showSub('prod')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-package"></i></div><span class="ml">Products</span><span class="mb" id="bprod">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('prod')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-package"></i></div><span class="ml">Products & COGS</span><span class="mb" id="bprod">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
     <div class="mr" onclick="showSub('cust')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-users"></i></div><span class="ml">Customers</span><span class="mb" id="bcust">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
     <div class="mr" onclick="showSub('fc')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-chart-line"></i></div><span class="ml">Cashflow forecast</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
     <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
+    <div class="mr" onclick="showSub('settings')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
   </div>
   <div class="mg">
     <div class="mr" onclick="exportCSV()"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-download"></i></div><span class="ml">Export CSV</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:15px"></i></div>
   </div>
   <div style="height:14px"></div>
 </div>
-
-</div><!-- /screens -->
+</div>
 
 <!-- EXPENSES -->
 <div class="ss" id="ss-exp">
@@ -308,27 +305,55 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="fr"><div class="fld"><div class="fl">Next charge</div><input type="date" id="snx" style="color-scheme:dark"></div></div>
     <div class="fl" style="margin-bottom:5px">Cycle</div>
-    <div class="chips" id="scy">
-      <button class="chip on" data-v="monthly">monthly</button>
-      <button class="chip" data-v="yearly">yearly</button>
-    </div>
+    <div class="chips" id="scy"><button class="chip on" data-v="monthly">monthly</button><button class="chip" data-v="yearly">yearly</button></div>
     <div class="fl" style="margin-bottom:5px">Currency</div>
-    <div class="chips" id="sccy">
-      <button class="chip on" data-v="CHF">CHF</button>
-      <button class="chip" data-v="EUR">EUR</button>
-      <button class="chip" data-v="USD">USD</button>
-    </div>
+    <div class="chips" id="sccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
     <button class="abtn" onclick="addSub()">+ Add subscription</button>
   </div>
   <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px" id="sublist"></div>
   <div style="height:24px"></div>
 </div>
 
-<!-- PRODUCTS -->
+<!-- PRODUCTS & COGS -->
 <div class="ss" id="ss-prod">
-  <div class="bbar"><button class="bbtn" onclick="hideSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Products</span></div>
-  <div class="cl" style="margin-top:12px" id="prodlist"></div>
+  <div class="bbar"><button class="bbtn" onclick="hideSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Products & COGS</span></div>
+  <div class="info" style="margin-top:12px">
+    <i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>
+    Set COGS (cost of goods), shipping cost, and transaction fees per product. These are subtracted from revenue to calculate your real profit.
+  </div>
+  <div class="cl" style="margin-top:8px" id="prodlist"></div>
   <div style="height:24px"></div>
+</div>
+
+<!-- PRODUCT COGS EDITOR (sub-sub screen) -->
+<div class="ss" id="ss-cogs">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('cogs');showSub('prod')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle" id="cogs-title">Edit COGS</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="info" style="margin:0 0 12px;">
+      Enter costs in the same currency as your Shopify orders. These will be converted to your display currency automatically.
+    </div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Product cost (COGS)</div><input type="number" id="cogs-cost" placeholder="0.00" step="0.01"></div>
+      <div class="fld"><div class="fl">Shipping cost</div><input type="number" id="cogs-ship" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="fr">
+      <div class="fld">
+        <div class="fl">Transaction fee %</div>
+        <input type="number" id="cogs-fee-pct" placeholder="2.0" step="0.1">
+        <div class="srh" style="margin-top:4px">Shopify: 2% Basic, 1% Shopify plan, 0.5% Advanced</div>
+      </div>
+      <div class="fld">
+        <div class="fl">Payment processing %</div>
+        <input type="number" id="cogs-pay-pct" placeholder="2.9" step="0.1">
+        <div class="srh" style="margin-top:4px">Stripe/Shopify Payments: ~2.9% + fixed</div>
+      </div>
+    </div>
+    <div class="fld" style="margin-bottom:12px">
+      <div class="fl">Currency of costs</div>
+      <div class="chips" id="cogs-ccy"><button class="chip on" data-v="CHF">CHF</button><button class="chip" data-v="EUR">EUR</button><button class="chip" data-v="USD">USD</button></div>
+    </div>
+    <button class="abtn" onclick="saveCOGS()">Save COGS</button>
+  </div>
 </div>
 
 <!-- CUSTOMERS -->
@@ -368,6 +393,39 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div style="height:24px"></div>
 </div>
 
+<!-- SETTINGS -->
+<div class="ss" id="ss-settings">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('settings')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Settings</span></div>
+  <div class="sec"><span class="stitle">Shopify fees</span></div>
+  <div class="mg">
+    <div class="sr">
+      <div class="srl">Shopify plan transaction fee (%)</div>
+      <input type="number" id="set-shopify-fee" placeholder="2.0" step="0.1">
+      <div class="srh">Basic: 2% · Shopify: 1% · Advanced: 0.5% · Plus: 0%</div>
+    </div>
+    <div class="sr">
+      <div class="srl">Payment processing fee (%)</div>
+      <input type="number" id="set-pay-fee" placeholder="2.9" step="0.1">
+      <div class="srh">Shopify Payments / Stripe: ~2.9%</div>
+    </div>
+  </div>
+  <div class="sec"><span class="stitle">Swiss VAT</span></div>
+  <div class="mg">
+    <div class="sr">
+      <div class="srl">VAT rate (%)</div>
+      <input type="number" id="set-vat" placeholder="8.1" step="0.1">
+    </div>
+    <div class="sr">
+      <div class="srl">VAT registered?</div>
+      <div class="chips" id="set-vat-reg"><button class="chip on" data-v="0">No</button><button class="chip" data-v="1">Yes</button></div>
+    </div>
+  </div>
+  <div style="padding:0 18px;margin-top:4px;display:flex;flex-direction:column;gap:8px">
+    <button class="abtn" onclick="saveSettings()">Save settings</button>
+  </div>
+  <div style="height:32px"></div>
+</div>
+
 <!-- NAV -->
 <nav id="nav">
   <button class="nb on" id="nt0" onclick="goTab(0)"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
@@ -379,19 +437,49 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div id="toast"></div>
 
 <script>
-const FX={CHF:1,EUR:.94,USD:1.10},SYM={CHF:'CHF ',EUR:'€',USD:'$'};
-let ccy='CHF',activeTab=0;
-const ST={orders:[],products:[],customers:[],ads:[],expenses:[],subs:[]};
+// ── FX rates (live from API, fallback to static) ──
+let FX = {CHF:1, EUR:0.944, USD:1.095}; // updated from API on load
+const SYM = {CHF:'CHF ', EUR:'€', USD:'$'};
+let ccy = 'CHF';
+let activeTab = 0;
+let editingProductId = null;
 
-function persist(){localStorage.setItem('df5',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers}));}
-function hydrate(){
-  try{const r=JSON.parse(localStorage.getItem('df5')||'{}');
-    ['ads','expenses','subs','orders','products','customers'].forEach(k=>{if(r[k])ST[k]=r[k];});}catch(e){}
+const ST = {
+  orders:[], products:[], customers:[], ads:[], expenses:[], subs:[],
+  cogs:{}, // {productTitle: {cost, ship, feePct, payPct, currency}}
+  settings:{
+    shopifyFeePct: 2.0,  // Shopify transaction fee %
+    payFeePct: 2.9,      // payment processing %
+    vatRate: 8.1,
+    vatRegistered: false,
+  }
+};
+
+// ── Persistence ──
+function persist(){
+  localStorage.setItem('df6', JSON.stringify({
+    ads:ST.ads, expenses:ST.expenses, subs:ST.subs,
+    orders:ST.orders, products:ST.products, customers:ST.customers,
+    cogs:ST.cogs, settings:ST.settings
+  }));
 }
+function hydrate(){
+  try{
+    const r = JSON.parse(localStorage.getItem('df6')||'{}');
+    ['ads','expenses','subs','orders','products','customers'].forEach(k=>{if(r[k])ST[k]=r[k];});
+    if(r.cogs) ST.cogs = r.cogs;
+    if(r.settings) Object.assign(ST.settings, r.settings);
+  }catch(e){}
+}
+
+// ── Helpers ──
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function toCHF(a,c){return a/FX[c||'CHF'];}
 function fromCHF(a,c){return a*FX[c||'CHF'];}
-function fmt(chf){const v=fromCHF(chf,ccy);return SYM[ccy]+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmt(chf){
+  const v = fromCHF(chf, ccy);
+  return SYM[ccy]+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
 function today(){return new Date().toISOString().slice(0,10);}
 function mk(d){return(d||'').slice(0,7);}
 function daysB(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
@@ -402,6 +490,58 @@ function setupC(id){document.querySelectorAll('#'+id+' .chip').forEach(c=>{c.onc
 let toastT;
 function toast(m,d=2200){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),d);}
 
+// ── Live FX rates ──
+async function loadFX(){
+  try{
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/CHF');
+    const d = await r.json();
+    if(d.rates){
+      FX.EUR = d.rates.EUR || FX.EUR;
+      FX.USD = d.rates.USD || FX.USD;
+      FX.CHF = 1;
+      const el = document.getElementById('fx-info');
+      if(el) el.textContent = `Live FX: 1 CHF = €${FX.EUR.toFixed(4)} / $${FX.USD.toFixed(4)}`;
+    }
+  }catch(e){
+    const el = document.getElementById('fx-info');
+    if(el) el.textContent = 'Using estimated FX rates';
+  }
+}
+
+// ── COGS calculation for an order ──
+function getOrderCOGS(order){
+  let total = 0;
+  const shopifyFee = (ST.settings.shopifyFeePct || 0) / 100;
+  const payFee = (ST.settings.payFeePct || 0) / 100;
+
+  order.items.forEach(item => {
+    const cogs = ST.cogs[item.title];
+    const itemRev = item.price * item.qty;
+
+    if(cogs){
+      const unitCost = (Number(cogs.cost)||0) + (Number(cogs.ship)||0);
+      const costCHF = toCHF(unitCost * item.qty, cogs.currency);
+      // per-product custom fee overrides global
+      const feeAmt = itemRev * ((Number(cogs.feePct)||shopifyFee*100)/100);
+      const payAmt = itemRev * ((Number(cogs.payPct)||payFee*100)/100);
+      total += costCHF + toCHF(feeAmt + payAmt, order.currency);
+    } else {
+      // no COGS set — just deduct platform fees
+      const feeAmt = itemRev * shopifyFee;
+      const payAmt = itemRev * payFee;
+      total += toCHF(feeAmt + payAmt, order.currency);
+    }
+  });
+  return total;
+}
+
+function totalCOGS(){
+  return ST.orders
+    .filter(o=>o.status==='paid'||o.status==='partially_refunded')
+    .reduce((s,o)=>s+getOrderCOGS(o), 0);
+}
+
+// ── Nav ──
 function goTab(n){
   activeTab=n;
   [0,1,2,3].forEach(i=>{
@@ -413,9 +553,17 @@ function goTab(n){
 function showSub(n){document.getElementById('ss-'+n).classList.add('on');renderSub(n);}
 function hideSub(n){document.getElementById('ss-'+n).classList.remove('on');}
 function renderTab(n){if(n===0)rDash();else if(n===1)rOrders();else if(n===2)rAds();else if(n===3)rMore();}
-function renderSub(n){if(n==='exp')rExp();else if(n==='sub')rSubs();else if(n==='fc')rFc();else if(n==='vat')rVAT();else if(n==='prod')rProd();else if(n==='cust')rCust();}
+function renderSub(n){
+  if(n==='exp')rExp();
+  else if(n==='sub')rSubs();
+  else if(n==='fc')rFc();
+  else if(n==='vat')rVAT();
+  else if(n==='prod')rProd();
+  else if(n==='cust')rCust();
+  else if(n==='settings')rSettingsForm();
+}
 
-// ── SHOPIFY via server proxy ──
+// ── Shopify proxy ──
 async function sfetch(path,params={}){
   const qs=new URLSearchParams({path,...params}).toString();
   const r=await fetch('/api/shopify?'+qs);
@@ -456,7 +604,7 @@ async function syncShopify(silent){
       total:parseFloat(c.total_spent||0),currency:c.currency||'EUR',
     }));
     persist();
-    setBanner('ok',`Synced ${ST.orders.length} orders · ${ST.products.length} products · ${ST.customers.length} customers`);
+    setBanner('ok',`Synced ${ST.orders.length} orders · ${ST.products.length} products`);
     if(!silent)toast(`Synced ${ST.orders.length} orders`);
     shStatus(true);rAll();
   }catch(e){
@@ -478,6 +626,7 @@ function shStatus(ok,lbl){
   document.getElementById('shlbl').textContent=ok?`${ST.orders.length} orders · ${ST.products.length} products`:(lbl||'Not connected');
 }
 
+// ── Aggregations ──
 function oTotals(){
   const paid=ST.orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
   const ref=ST.orders.filter(o=>o.status==='refunded');
@@ -500,27 +649,37 @@ function rAll(){
   document.getElementById('bcust').textContent=ST.customers.length;
 }
 
+// ── Dashboard ──
 function rDash(){
   const ot=oTotals(),at=aTotals(),et=eTotals(),sm=sMo();
-  const profit=ot.net-at.sp-et,margin=ot.net>0?(profit/ot.net)*100:0;
+  const cogs=totalCOGS();
+  const profit=ot.net-cogs-at.sp-et;
+  const margin=ot.net>0?(profit/ot.net)*100:0;
   document.getElementById('d-sub').textContent=new Date().toLocaleDateString('en',{month:'long',year:'numeric'});
+
   const stats=[
     {l:'Revenue',v:fmt(ot.net)},
     {l:'Net profit',v:fmt(profit),c:profit>=0?'g':'r'},
     {l:'Margin',v:margin.toFixed(1)+'%',c:margin>=20?'g':margin>=0?'':'r'},
     {l:'Orders',v:String(ot.count)},
     {l:'Ad ROAS',v:at.roas.toFixed(2)+'x',c:at.roas>=2?'g':at.roas>=1?'a':'r'},
-    {l:'Subs/mo',v:fmt(sm)}
+    {l:'COGS + fees',v:fmt(cogs),c:'r'},
   ];
   document.getElementById('statgrid').innerHTML=stats.map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
+
   const ms=months6(),revs=revByMo(ms),adsp=adByMo(ms);
-  const costs=adsp.map(a=>a+(et/6));
+  const cogsByMo=ms.map(m=>{
+    return ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded'))
+      .reduce((s,o)=>s+getOrderCOGS(o),0);
+  });
+  const costs=adsp.map((a,i)=>a+cogsByMo[i]+(et/6));
   const maxV=Math.max(...revs,...costs,1);
   const labs=ms.map(m=>new Date(m+'-01').toLocaleDateString('en',{month:'short'}));
   document.getElementById('bars').innerHTML=revs.map((r,i)=>{
     const rh=Math.max((r/maxV)*78,2),ch=Math.max((costs[i]/maxV)*78,1);
     return`<div class="bcol"><div class="bpair"><div class="bar rv" style="height:${rh}px"></div><div class="bar co" style="height:${ch}px"></div></div><div class="blbl">${labs[i]}</div></div>`;
   }).join('');
+
   const rec=ST.orders.slice(0,5);
   document.getElementById('d-orders').innerHTML=rec.length?rec.map(oCard).join(''):
     `<div class="empty"><i class="ti ti-shopping-cart"></i><p>No orders yet — tap Sync in Orders tab</p></div>`;
@@ -529,13 +688,23 @@ function rDash(){
 function oCard(o){
   const sc=o.refunded?'r':o.status==='paid'?'g':'a';
   const si=o.refunded?'ti-arrow-back-up':o.fulfillment==='fulfilled'?'ti-package-check':'ti-shopping-cart';
+  const cogs=getOrderCOGS(o);
+  const orderRev=toCHF(o.amount,o.currency);
+  const orderProfit=orderRev-cogs;
   return`<div class="ic"><div class="ii ${sc}"><i class="ti ${si}"></i></div>
-    <div class="ib"><div class="it">${esc(o.customer||'Guest')} · ${esc(o.name)}</div>
-    <div class="im">${o.date} · ${o.items.length} item${o.items.length!==1?'s':''} · ${o.status}</div></div>
-    <div class="ir"><div class="ia ${sc}">${fmt(toCHF(o.amount,o.currency))}</div>
-    <div style="font-size:10px;color:var(--t3);margin-top:3px">${o.fulfillment}</div></div></div>`;
+    <div class="ib">
+      <div class="it">${esc(o.customer||'Guest')} · ${esc(o.name)}</div>
+      <div class="im">${o.date} · ${o.items.map(i=>esc(i.title)).join(', ').slice(0,40)}</div>
+      <div class="im" style="margin-top:2px">Rev: ${fmt(orderRev)} · COGS: ${fmt(cogs)} · Profit: <span style="color:${orderProfit>=0?'var(--grn)':'var(--red)'}">${fmt(orderProfit)}</span></div>
+    </div>
+    <div class="ir">
+      <div class="ia ${sc}">${fmt(orderRev)}</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:3px">${o.status}</div>
+    </div>
+  </div>`;
 }
 
+// ── Orders ──
 function rOrders(){
   setupC('ofilt');
   document.querySelectorAll('#ofilt .chip').forEach(c=>{
@@ -551,6 +720,7 @@ function rOrders(){
     `<div class="empty"><i class="ti ti-shopping-cart"></i><p>No orders — tap Sync to load</p></div>`;
 }
 
+// ── Ads ──
 function rAds(){
   const calc=p=>{
     const arr=p?ST.ads.filter(a=>a.platform===p):ST.ads;
@@ -563,10 +733,7 @@ function rAds(){
   const ms=months6(),sp=adByMo(ms),rv=ms.map(m=>ST.ads.filter(a=>mk(a.date)===m).reduce((s,a)=>s+toCHF(a.revenue,a.currency),0));
   const W=360,H=80,maxV=Math.max(...sp,...rv,1);
   const pt=arr=>arr.map((v,i)=>`${12+i*(W-24)/5},${H-6-Math.max(v/maxV,0)*(H-16)}`).join(' ');
-  document.getElementById('adsvg').innerHTML=`
-    <defs><linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/>
-    <stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>
+  document.getElementById('adsvg').innerHTML=`<defs><linearGradient id="gR" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/><stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>
     <polygon points="${pt(rv)} ${12+5*(W-24)/5},${H-6} 12,${H-6}" fill="url(#gR)"/>
     <polyline points="${pt(rv)}" fill="none" stroke="#1ec978" stroke-width="1.8" stroke-linejoin="round"/>
     <polyline points="${pt(sp)}" fill="none" stroke="#f0524a" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>`;
@@ -613,6 +780,7 @@ function addAd(){
 }
 function delA(id){ST.ads=ST.ads.filter(a=>a.id!==id);persist();rAds();}
 
+// ── More ──
 function rMore(){
   document.getElementById('bexp').textContent=ST.expenses.length;
   document.getElementById('bsub').textContent=ST.subs.length;
@@ -622,6 +790,7 @@ function rMore(){
   else{document.getElementById('shdot').className='cdot';document.getElementById('shlbl').textContent='Tap Sync now';}
 }
 
+// ── Expenses ──
 function rExp(){
   document.getElementById('ed').value=document.getElementById('ed').value||today();
   setupC('ecat');setupC('eccy');
@@ -644,6 +813,7 @@ function addExp(){
 }
 function delE(id){ST.expenses=ST.expenses.filter(e=>e.id!==id);persist();rExp();rAll();}
 
+// ── Subscriptions ──
 function rSubs(){
   document.getElementById('snx').value=document.getElementById('snx').value||today();
   setupC('scy');setupC('sccy');
@@ -673,22 +843,83 @@ function addSub(){
 }
 function delS(id){ST.subs=ST.subs.filter(s=>s.id!==id);persist();rSubs();rAll();}
 
+// ── Products & COGS ──
 function rProd(){
   const el=document.getElementById('prodlist');
-  if(!ST.products.length){el.innerHTML=`<div class="empty"><i class="ti ti-package"></i><p>No products — tap Sync in Orders tab</p></div>`;return;}
+  if(!ST.products.length){
+    el.innerHTML=`<div class="empty"><i class="ti ti-package"></i><p>No products — tap Sync in Orders tab</p></div>`;
+    return;
+  }
   el.innerHTML=ST.products.map(p=>{
+    const cogs=ST.cogs[p.title];
     const sold=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.qty,0),0);
-    const rev=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+i.price*i.qty,0),0);
-    const stock=p.variants.reduce((s,v)=>s+(v.inventory||0),0);
-    const minP=p.variants.length?Math.min(...p.variants.map(v=>v.price)):0;
-    return`<div class="ic"><div class="ii b"><i class="ti ti-package"></i></div>
-      <div class="ib"><div class="it">${esc(p.title)}</div>
-      <div class="im">Sold: ${sold} · Stock: ${stock} · from €${minP.toFixed(2)}</div></div>
-      <div class="ir"><div class="ia g">${rev>0?fmt(toCHF(rev,'EUR')):'—'}</div>
-      <div style="font-size:10px;color:var(--t3);margin-top:2px">${p.status}</div></div></div>`;
+    const rev=ST.orders.reduce((s,o)=>s+o.items.filter(i=>i.title===p.title).reduce((a,i)=>a+toCHF(i.price*i.qty,o.currency),0),0);
+    const cogsTotal=ST.orders.reduce((s,o)=>{
+      const items=o.items.filter(i=>i.title===p.title);
+      if(!items.length)return s;
+      const fakeOrder={...o,items};
+      return s+getOrderCOGS(fakeOrder);
+    },0);
+    const profit=rev-cogsTotal;
+    const margin=rev>0?(profit/rev)*100:0;
+    const hasCOGS=!!cogs;
+
+    return`<div class="ic" style="flex-direction:column;align-items:stretch;gap:10px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="ii b"><i class="ti ti-package"></i></div>
+        <div class="ib">
+          <div class="it">${esc(p.title)}</div>
+          <div class="im">Sold: ${sold} · Rev: ${fmt(rev)}</div>
+          ${hasCOGS?`<div class="im" style="color:${profit>=0?'var(--grn)':'var(--red)'}">Profit: ${fmt(profit)} (${margin.toFixed(1)}%)</div>`:''}
+        </div>
+        <div style="flex-shrink:0">
+          ${hasCOGS
+            ?`<div style="font-size:10px;color:var(--grn);font-weight:700;text-align:right">COGS set</div>
+               <div style="font-size:10px;color:var(--t3);text-align:right">Cost: ${fmt(toCHF(Number(cogs.cost)+Number(cogs.ship),cogs.currency))}</div>`
+            :`<div style="font-size:10px;color:var(--amb);font-weight:700">No COGS</div>`}
+        </div>
+      </div>
+      <button class="abtn sec" style="padding:9px" onclick="openCOGS('${esc(p.title)}')">
+        <i class="ti ti-pencil" style="vertical-align:-2px;margin-right:4px"></i>
+        ${hasCOGS?'Edit COGS & fees':'Set COGS & fees'}
+      </button>
+    </div>`;
   }).join('');
 }
 
+function openCOGS(title){
+  editingProductId = title;
+  document.getElementById('cogs-title').textContent = title.slice(0,28)+(title.length>28?'…':'');
+  const existing = ST.cogs[title] || {};
+  document.getElementById('cogs-cost').value = existing.cost || '';
+  document.getElementById('cogs-ship').value = existing.ship || '';
+  document.getElementById('cogs-fee-pct').value = existing.feePct !== undefined ? existing.feePct : ST.settings.shopifyFeePct;
+  document.getElementById('cogs-pay-pct').value = existing.payPct !== undefined ? existing.payPct : ST.settings.payFeePct;
+  setupC('cogs-ccy');
+  if(existing.currency){
+    document.querySelectorAll('#cogs-ccy .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===existing.currency));
+  }
+  showSub('cogs');
+}
+
+function saveCOGS(){
+  if(!editingProductId)return;
+  ST.cogs[editingProductId]={
+    cost: parseFloat(document.getElementById('cogs-cost').value)||0,
+    ship: parseFloat(document.getElementById('cogs-ship').value)||0,
+    feePct: parseFloat(document.getElementById('cogs-fee-pct').value)||0,
+    payPct: parseFloat(document.getElementById('cogs-pay-pct').value)||0,
+    currency: chipV('cogs-ccy')||'EUR',
+  };
+  persist();
+  hideSub('cogs');
+  showSub('prod');
+  rProd();
+  rAll();
+  toast('COGS saved for '+editingProductId.slice(0,20));
+}
+
+// ── Customers ──
 function rCust(){
   const total=ST.customers.length;
   const spent=ST.customers.reduce((s,c)=>s+toCHF(c.total,c.currency),0);
@@ -701,11 +932,15 @@ function rCust(){
     <div class="ir"><div class="ia g">${fmt(toCHF(c.total,c.currency))}</div></div></div>`).join('');
 }
 
+// ── Forecast ──
 function rFc(){
   const ms=months6(),revs=revByMo(ms),adsp=adByMo(ms);
-  const avgRev=revs.reduce((s,v)=>s+v,0)/6,avgAds=adsp.reduce((s,v)=>s+v,0)/6;
-  const avgExp=eTotals()/6,subs=sMo(),cogs=avgRev*.35;
-  const mNet=avgRev-cogs-avgAds-avgExp-subs,proj=mNet*6;
+  const cogsByMo=ms.map(m=>ST.orders.filter(o=>mk(o.date)===m&&(o.status==='paid'||o.status==='partially_refunded')).reduce((s,o)=>s+getOrderCOGS(o),0));
+  const avgRev=revs.reduce((s,v)=>s+v,0)/6;
+  const avgAds=adsp.reduce((s,v)=>s+v,0)/6;
+  const avgCogs=cogsByMo.reduce((s,v)=>s+v,0)/6;
+  const avgExp=eTotals()/6,subs=sMo();
+  const mNet=avgRev-avgCogs-avgAds-avgExp-subs,proj=mNet*6;
   document.getElementById('fcnet').textContent=fmt(mNet);
   document.getElementById('fcnet').className='sv '+(mNet>=0?'g':'r');
   document.getElementById('fcproj').textContent=fmt(proj);
@@ -713,16 +948,13 @@ function rFc(){
   for(let i=0;i<=6;i++){pts.push(b);b+=mNet;}
   const minV=Math.min(...pts),maxV=Math.max(...pts,minV+.01),rng=maxV-minV;
   const coords=pts.map((v,i)=>`${12+i*(W-24)/6},${H-8-((v-minV)/rng)*(H-24)}`).join(' ');
-  document.getElementById('fcsvg').innerHTML=`
-    <defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#4c7bff" stop-opacity=".18"/>
-    <stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>
+  document.getElementById('fcsvg').innerHTML=`<defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4c7bff" stop-opacity=".18"/><stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>
     <polygon points="${coords} ${12+6*(W-24)/6},${H-8} 12,${H-8}" fill="url(#gF)"/>
     <polyline points="${coords}" fill="none" stroke="#4c7bff" stroke-width="2" stroke-linejoin="round"/>
     ${pts.map((v,i)=>`<circle cx="${12+i*(W-24)/6}" cy="${H-8-((v-minV)/rng)*(H-24)}" r="3.5" fill="#4c7bff" stroke="var(--bg)" stroke-width="2"/>`).join('')}`;
   const rows=[
     {l:'Avg revenue / mo',v:fmt(avgRev),pos:true},
-    {l:'Est. COGS (~35%)',v:'−'+fmt(cogs)},
+    {l:'COGS + fees / mo',v:'−'+fmt(avgCogs)},
     {l:'Avg ad spend / mo',v:'−'+fmt(avgAds)},
     {l:'Avg expenses / mo',v:'−'+fmt(avgExp)},
     {l:'Subscriptions / mo',v:'−'+fmt(subs)}
@@ -735,29 +967,56 @@ function rFc(){
       <span style="font-size:14px;font-weight:700;color:var(--${mNet>=0?'grn':'red'})">${fmt(mNet)}</span></div>`;
 }
 
+// ── VAT ──
 function rVAT(){
-  const ot=oTotals(),et=eTotals(),at=aTotals(),rate=8.1,reg=false;
-  const vatS=reg?ot.net*(rate/(100+rate)):0,vatR=reg?(et+at.sp)*(rate/(100+rate)):0;
-  const vatD=Math.max(0,vatS-vatR),profit=ot.net-at.sp-et;
+  const ot=oTotals(),et=eTotals(),at=aTotals(),cogs=totalCOGS();
+  const rate=ST.settings.vatRate||8.1,reg=ST.settings.vatRegistered;
+  const vatS=reg?ot.net*(rate/(100+rate)):0,vatR=reg?(et+at.sp+cogs)*(rate/(100+rate)):0;
+  const vatD=Math.max(0,vatS-vatR),profit=ot.net-cogs-at.sp-et;
   document.getElementById('vatgrid').innerHTML=[
     {l:'Total revenue',v:fmt(ot.net)},
-    {l:'Pre-tax profit',v:fmt(profit),c:profit>=0?'g':'r'},
-    {l:'Refunds',v:fmt(ot.refunds),c:'r'},
+    {l:'True profit',v:fmt(profit),c:profit>=0?'g':'r'},
+    {l:'COGS + fees',v:fmt(cogs),c:'r'},
     {l:'VAT on sales',v:fmt(vatS)},
     {l:'VAT recoverable',v:fmt(vatR)},
     {l:'VAT due (est.)',v:fmt(vatD),c:'a'},
   ].map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv ${s.c||''}">${s.v}</div></div>`).join('');
 }
 
+// ── Settings ──
+function rSettingsForm(){
+  document.getElementById('set-shopify-fee').value=ST.settings.shopifyFeePct||2;
+  document.getElementById('set-pay-fee').value=ST.settings.payFeePct||2.9;
+  document.getElementById('set-vat').value=ST.settings.vatRate||8.1;
+  setupC('set-vat-reg');
+  if(ST.settings.vatRegistered){
+    document.querySelectorAll('#set-vat-reg .chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='1'));
+  }
+}
+function saveSettings(){
+  ST.settings.shopifyFeePct=parseFloat(document.getElementById('set-shopify-fee').value)||2;
+  ST.settings.payFeePct=parseFloat(document.getElementById('set-pay-fee').value)||2.9;
+  ST.settings.vatRate=parseFloat(document.getElementById('set-vat').value)||8.1;
+  ST.settings.vatRegistered=chipV('set-vat-reg')==='1';
+  persist();toast('Settings saved');rAll();
+}
+
+// ── CSV Export ──
 function exportCSV(){
-  const lines=['=== ORDERS ===','date,order,customer,status,amount,currency'];
-  ST.orders.forEach(o=>lines.push([o.date,o.name,o.customer,o.status,o.amount,o.currency].map(cc).join(',')));
-  lines.push('\n=== ADS ===','date,platform,campaign,spend,revenue,impressions,clicks,currency');
-  ST.ads.forEach(a=>lines.push([a.date,a.platform,a.campaign,a.spend,a.revenue,a.impressions,a.clicks,a.currency].map(cc).join(',')));
+  const lines=['=== ORDERS ===','date,order,customer,status,revenue,cogs,profit,currency'];
+  ST.orders.forEach(o=>{
+    const rev=toCHF(o.amount,o.currency);
+    const cogs=getOrderCOGS(o);
+    lines.push([o.date,o.name,o.customer,o.status,rev.toFixed(2),cogs.toFixed(2),(rev-cogs).toFixed(2),'CHF'].map(cc).join(','));
+  });
+  lines.push('\n=== ADS ===','date,platform,campaign,spend,revenue,currency');
+  ST.ads.forEach(a=>lines.push([a.date,a.platform,a.campaign,a.spend,a.revenue,a.currency].map(cc).join(',')));
   lines.push('\n=== EXPENSES ===','date,description,category,amount,currency');
   ST.expenses.forEach(e=>lines.push([e.date,e.description,e.category,e.amount,e.currency].map(cc).join(',')));
   lines.push('\n=== SUBSCRIPTIONS ===','name,amount,currency,cycle,next_date');
   ST.subs.forEach(s=>lines.push([s.name,s.amount,s.currency,s.cycle,s.next_date].map(cc).join(',')));
+  lines.push('\n=== PRODUCT COGS ===','product,cost,shipping,shopify_fee_pct,payment_fee_pct,currency');
+  Object.entries(ST.cogs).forEach(([title,c])=>lines.push([title,c.cost,c.ship,c.feePct,c.payPct,c.currency].map(cc).join(',')));
   const blob=new Blob([lines.join('\n')],{type:'text/csv'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='dropflow-'+today()+'.csv';a.click();URL.revokeObjectURL(url);
@@ -766,13 +1025,15 @@ function exportCSV(){
 function cc(v){const s=String(v==null?'':v);return/[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function setCcy(c,btn){ccy=c;document.querySelectorAll('.cc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rAll();}
 
+// ── Init ──
 hydrate();
 document.getElementById('ad').value=today();
 document.getElementById('ed').value=today();
 document.getElementById('snx').value=today();
 setupC('ap');setupC('accy');
 rAll();
-setTimeout(()=>syncShopify(true),800);
+loadFX().then(()=>rAll());
+setTimeout(()=>syncShopify(true),1000);
 </script>
 </body>
 </html>
