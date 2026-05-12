@@ -245,18 +245,34 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="scr" id="s1">
   <div class="topbar">
     <div><div class="ptitle">Orders</div><div class="psub">Shopify · Carlynx</div></div>
-    <button onclick="syncShopify()" style="background:var(--acc-dim);border:1px solid rgba(76,123,255,.25);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
+    <button onclick="syncShopify()" style="background:var(--acc-dim);border:1px solid var(--acc-glow);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
       <i class="ti ti-refresh" id="sync-ico"></i>Sync
     </button>
   </div>
-  <div class="sec">
-    <span class="stitle" id="o-count">0 orders</span>
-    <div style="display:flex;gap:5px" id="ofilt">
+  <div style="padding:10px 18px 4px">
+    <div style="position:relative">
+      <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px;pointer-events:none"></i>
+      <input type="text" id="o-search" placeholder="Search customer, order, product..." style="padding-left:34px" oninput="rOrders()">
+    </div>
+  </div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);margin:4px 18px 6px;padding:10px 14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px">Avg order value · 8 weeks</div>
+      <div id="aov-current" style="font-size:14px;font-weight:700;color:var(--acc)">—</div>
+    </div>
+    <svg id="aov-svg" width="100%" height="32" style="overflow:visible;display:block"></svg>
+  </div>
+  <div style="padding:4px 18px 4px;display:flex;flex-direction:column;gap:5px">
+    <div style="display:flex;gap:5px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none" id="ofilt">
       <button class="chip on" data-f="all">All</button>
       <button class="chip" data-f="paid">Paid</button>
       <button class="chip" data-f="refunded">Refunded</button>
+      <button class="chip" data-f="unfulfilled">Unfulfilled</button>
+      <button class="chip" data-f="flagged">Flagged</button>
     </div>
+    <div style="display:flex;gap:5px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none" id="prod-filt"></div>
   </div>
+  <div class="sec"><span class="stitle" id="o-count">—</span><span style="font-size:11px;color:var(--t3)" id="o-stats"></span></div>
   <div class="cl" id="o-list"></div>
   <div style="height:14px"></div>
 </div>
@@ -265,16 +281,54 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="scr" id="s2">
   <div class="topbar">
     <div class="ptitle">Ads</div>
-    <button onclick="document.getElementById('meta-csv').click()" style="background:var(--meta-dim);border:1px solid rgba(24,119,242,.3);color:#6fa8ff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
-      <i class="ti ti-upload" style="font-size:14px"></i>Meta CSV
-    </button>
-    <input type="file" id="meta-csv" accept=".csv" style="display:none" onchange="importMetaCSV(event)">
+    <div style="display:flex;gap:5px">
+      <button onclick="document.getElementById('meta-csv').click()" style="background:var(--meta-dim);border:1px solid rgba(24,119,242,.3);color:#6fa8ff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:3px;font-family:inherit"><i class="ti ti-upload" style="font-size:13px"></i>Meta</button>
+      <button onclick="document.getElementById('tt-csv').click()" style="background:var(--tt-dim);border:1px solid rgba(254,44,85,.3);color:#ff8fa3;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:3px;font-family:inherit"><i class="ti ti-upload" style="font-size:13px"></i>TikTok</button>
+      <input type="file" id="meta-csv" accept=".csv" style="display:none" onchange="importMetaCSV(event)">
+      <input type="file" id="tt-csv" accept=".csv" style="display:none" onchange="importTikTokCSV(event)">
+    </div>
   </div>
+  <!-- Platform cards -->
   <div class="pfg" id="pfcards"></div>
-  <div class="cbox" style="height:88px;margin-top:8px">
-    <svg id="adsvg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
+  <!-- Best/worst highlights -->
+  <div id="ad-highlights" style="padding:0 18px 6px;display:flex;flex-direction:column;gap:5px"></div>
+  <!-- Daily budget -->
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);margin:0 18px 8px;padding:12px 14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px">Daily budget</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="number" id="daily-budget" placeholder="0" step="1" style="width:64px;padding:4px 8px;font-size:12px;text-align:right" onchange="saveDailyBudget()">
+        <span style="font-size:11px;color:var(--t3)">CHF</span>
+      </div>
+    </div>
+    <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:5px"><div id="daily-budget-fill" style="height:100%;border-radius:3px;transition:.4s;background:var(--grn)"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3)">
+      <span id="daily-budget-spent">Today: —</span><span id="daily-budget-rem">Remaining: —</span>
+    </div>
   </div>
-  <div class="sec"><span class="stitle">Log campaign</span></div>
+  <!-- Ad fatigue -->
+  <div id="fatigue-strip" style="padding:0 18px 6px;display:flex;flex-direction:column;gap:5px"></div>
+  <!-- ROAS trend -->
+  <div class="sec" style="padding:8px 18px 5px">
+    <span class="stitle">ROAS trend · 8 weeks</span>
+    <div style="display:flex;gap:8px">
+      <div style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--t2)"><div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>ROAS</div>
+      <div style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--t2)"><div style="width:8px;height:2px;background:var(--red);border-radius:1px"></div>Spend</div>
+    </div>
+  </div>
+  <div class="cbox" style="height:84px;margin-bottom:8px">
+    <svg id="roas-svg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
+  </div>
+  <!-- Campaign comparison table -->
+  <div class="sec" style="padding:8px 18px 5px"><span class="stitle">Campaign comparison</span></div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);margin:0 18px 8px;overflow:hidden">
+    <div style="display:flex;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:7px 12px;border-bottom:1px solid var(--b1);background:var(--s2)">
+      <div style="flex:1">Campaign</div><div style="width:54px;text-align:right">Spend</div><div style="width:46px;text-align:right">ROAS</div><div style="width:52px;text-align:right">Profit</div>
+    </div>
+    <div id="campaign-table"></div>
+  </div>
+  <!-- Log form -->
+  <div class="sec" style="padding:8px 18px 5px"><span class="stitle">Log campaign</span></div>
   <div class="fc">
     <div class="fl" style="margin-bottom:5px">Platform</div>
     <div class="chips" id="ap"><button class="chip on" data-v="meta">Meta</button><button class="chip" data-v="tiktok">TikTok</button><button class="chip" data-v="google">Google</button></div>
@@ -761,10 +815,13 @@ const ST={
   supplierCosts:[],
   creatives:[],
   notes:[],
-  invThreshold:5
+  invThreshold:5,
+  orderFlags:{},
+  orderNotes:{},
+  adDailyBudget:0
 };
 
-function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold}));}
+function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold,orderFlags:ST.orderFlags||{},orderNotes:ST.orderNotes||{},adDailyBudget:ST.adDailyBudget||0}));}
 function hydrate(){
   try{
     const r=JSON.parse(localStorage.getItem('df8')||'{}');
@@ -776,11 +833,17 @@ function hydrate(){
     if(r.creatives)ST.creatives=r.creatives;
     if(r.notes)ST.notes=r.notes;
     if(r.invThreshold)ST.invThreshold=r.invThreshold;
+    if(r.orderFlags)ST.orderFlags=r.orderFlags;
+    if(r.orderNotes)ST.orderNotes=r.orderNotes;
+    if(r.adDailyBudget)ST.adDailyBudget=r.adDailyBudget;
     if(r.goals)Object.assign(ST.goals,r.goals);
     if(r.supplierCosts)ST.supplierCosts=r.supplierCosts;
     if(r.creatives)ST.creatives=r.creatives;
     if(r.notes)ST.notes=r.notes;
     if(r.invThreshold)ST.invThreshold=r.invThreshold;
+    if(r.orderFlags)ST.orderFlags=r.orderFlags;
+    if(r.orderNotes)ST.orderNotes=r.orderNotes;
+    if(r.adDailyBudget)ST.adDailyBudget=r.adDailyBudget;
   }catch(e){}
 }
 
@@ -2148,6 +2211,400 @@ function addNote(){
 }
 function delNote(id){ST.notes=ST.notes.filter(n=>n.id!==id);persist();rNotes();}
 
+
+// ══════════════════════════════════════
+//  ENHANCED ORDERS TAB
+// ══════════════════════════════════════
+function rOrders(){
+  setupC('ofilt', ()=>setTimeout(rOrders,0));
+
+  // Build product filter chips from actual orders
+  const prodFilt = document.getElementById('prod-filt');
+  if(prodFilt){
+    const prods = [...new Set(ST.orders.flatMap(o=>o.items.map(i=>i.title)))].slice(0,8);
+    const curProd = document.querySelector('#prod-filt .chip.on')?.dataset.p||'';
+    prodFilt.innerHTML = '<button class="chip'+(curProd===''?' on':'')+'" data-p="" onclick="filterByProd(this,\'\')">All products</button>'+
+      prods.map(p=>'<button class="chip'+(curProd===p?' on':'')+'" data-p="'+esc(p)+'" onclick="filterByProd(this,\''+esc(p)+'\')" style="white-space:nowrap">'+esc(p.slice(0,20))+'</button>').join('');
+  }
+
+  const f = chipV('ofilt')||'all';
+  const search = (document.getElementById('o-search')?.value||'').toLowerCase().trim();
+  const curProd = document.querySelector('#prod-filt .chip.on')?.dataset.p||'';
+  const flagged = ST.orderFlags||{};
+
+  let ords = ST.orders.slice().sort((a,b)=>b.date.localeCompare(a.date));
+
+  // Status filter
+  if(f==='paid') ords = ords.filter(o=>o.status==='paid');
+  else if(f==='refunded') ords = ords.filter(o=>o.refunded);
+  else if(f==='unfulfilled') ords = ords.filter(o=>o.fulfillment!=='fulfilled'&&o.status==='paid');
+  else if(f==='flagged') ords = ords.filter(o=>flagged[o.id]);
+
+  // Product filter
+  if(curProd) ords = ords.filter(o=>o.items.some(i=>i.title===curProd));
+
+  // Search
+  if(search) ords = ords.filter(o=>
+    o.customer.toLowerCase().includes(search)||
+    o.name.toLowerCase().includes(search)||
+    o.email.toLowerCase().includes(search)||
+    o.items.some(i=>i.title.toLowerCase().includes(search))
+  );
+
+  const totalRev = ords.filter(o=>o.status==='paid'||o.status==='partially_refunded').reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  document.getElementById('o-count').textContent = ords.length+' order'+(ords.length!==1?'s':'');
+  const oStats = document.getElementById('o-stats');
+  if(oStats) oStats.textContent = ords.length ? fmt(totalRev)+' total' : '';
+
+  // AOV trend chart (8 weeks)
+  const now = new Date();
+  const wks = [];
+  for(let i=7;i>=0;i--){
+    const ws = new Date(now); ws.setDate(now.getDate()-(now.getDay()||7)+1-i*7); ws.setHours(0,0,0,0);
+    const we = new Date(ws); we.setDate(ws.getDate()+6);
+    const wo = ST.orders.filter(o=>{const d=new Date(o.date);return d>=ws&&d<=we&&(o.status==='paid'||o.status==='partially_refunded');});
+    const rev = wo.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+    wks.push({aov:wo.length?rev/wo.length:0, n:wo.length});
+  }
+  const maxAOV = Math.max(...wks.map(w=>w.aov),1);
+  const curAOV = wks[7].aov;
+  const aovEl = document.getElementById('aov-current');
+  if(aovEl) aovEl.textContent = curAOV>0?fmt(curAOV):'—';
+  const svg = document.getElementById('aov-svg');
+  if(svg){
+    const W=svg.parentElement?.offsetWidth||320, H=32;
+    const pts = wks.map((w,i)=>(i*(W-16)/7+8)+','+(H-4-((w.aov/maxAOV)*(H-8))));
+    svg.innerHTML = '<defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4c7bff" stop-opacity=".2"/><stop offset="100%" stop-color="#4c7bff" stop-opacity="0"/></linearGradient></defs>'+
+      '<polygon points="'+pts.join(' ')+' '+(7*(W-16)/7+8)+','+(H-4)+' 8,'+(H-4)+'" fill="url(#gA)"/>'+
+      '<polyline points="'+pts.join(' ')+'" fill="none" stroke="#4c7bff" stroke-width="1.8" stroke-linejoin="round"/>'+
+      wks.map((w,i)=>'<circle cx="'+(i*(W-16)/7+8)+'" cy="'+(H-4-((w.aov/maxAOV)*(H-8)))+'" r="3" fill="#4c7bff" stroke="var(--bg)" stroke-width="1.5"/>').join('');
+  }
+
+  document.getElementById('o-list').innerHTML = ords.length ? ords.map(o=>oCardExpanded(o)).join('') :
+    '<div class="empty"><i class="ti ti-shopping-cart"></i><p>'+(ST.orders.length?'No orders match your filter':'Sync to load orders')+'</p></div>';
+}
+
+function filterByProd(btn, prod){
+  document.querySelectorAll('#prod-filt .chip').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  rOrders();
+}
+
+function oCardExpanded(o){
+  const sc=o.refunded?'r':o.status==='paid'?'g':'a';
+  const si=o.refunded?'ti-arrow-back-up':o.fulfillment==='fulfilled'?'ti-package-check':'ti-shopping-cart';
+  const rev=toCHF(o.amount,o.currency);
+  const cogs=getOrderCOGS(o);
+  const profit=rev-cogs;
+  const flagged=(ST.orderFlags||{})[o.id];
+  const note=(ST.orderNotes||{})[o.id]||'';
+  const isSuspicious=rev>500||o.items.reduce((s,i)=>s+i.qty,0)>5;
+  const oid=o.id;
+
+  let itemsHTML=o.items.map(item=>{
+    const c=ST.cogs[item.title];
+    const vd=c&&c.variants?(c.variants[item.variantId]||c.variants['default']||Object.values(c.variants)[0]||{}):null;
+    const unitCost=vd?((Number(vd.cost)||0)+(Number(vd.ship)||0)):0;
+    const itemRev=toCHF(item.price*item.qty,o.currency);
+    const itemCOGS=vd?toCHF(unitCost*item.qty,c.currency||'EUR'):0;
+    const payFee=itemRev*((ST.settings.payPct||0)/100);
+    const fixedSplit=toCHF(ST.settings.fixedFee||0,'CHF')/Math.max(o.items.length,1);
+    const itemProfit=itemRev-itemCOGS-payFee-fixedSplit;
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--b1)">'+
+      '<div style="font-size:12px;color:var(--t2)">'+esc(item.title.slice(0,28))+(item.qty>1?' x'+item.qty:'')+'</div>'+
+      '<div style="text-align:right"><div style="font-size:12px;font-weight:600">'+fmt(itemRev)+'</div>'+
+      (vd?'<div style="font-size:10px;color:'+(itemProfit>=0?'var(--grn)':'var(--red)')+'">'+fmt(itemProfit)+' profit</div>':
+          '<div style="font-size:10px;color:var(--t3)">set COGS</div>')+
+      '</div></div>';
+  }).join('');
+
+  // Use data-id attrs to avoid nested quote hell
+  return '<div style="background:var(--s1);border:1px solid '+(flagged?'var(--amb)':isSuspicious?'rgba(240,160,32,.25)':'var(--b1)')+';border-radius:var(--r16);overflow:hidden">'+
+    '<div style="padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer" data-expand="'+oid+'" onclick="toggleOrderExpand(this.dataset.expand)">'+
+      '<div class="ii '+sc+'"><i class="ti '+si+'"></i></div>'+
+      '<div class="ib"><div class="it">'+esc(o.customer||'Guest')+' - '+esc(o.name)+'</div>'+
+      '<div class="im">'+o.date+' - '+o.items.length+' item'+(o.items.length!==1?'s':'')+' - '+o.status+'</div>'+
+      (note?'<div class="im" style="color:var(--amb);margin-top:2px">Note: '+esc(note)+'</div>':'')+
+      '</div>'+
+      '<div class="ir"><div class="ia '+sc+'">'+fmt(rev)+'</div>'+
+      '<div style="font-size:10px;color:'+(profit>=0?'var(--grn)':'var(--red)')+';margin-top:2px">'+fmt(profit)+'</div></div>'+
+    '</div>'+
+    '<div id="oe-'+oid+'" style="display:none;border-top:1px solid var(--b1);padding:10px 14px;background:var(--s2)">'+
+      '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Items</div>'+
+      itemsHTML+
+      '<div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:6px">'+
+        '<div style="font-size:11px;color:var(--t3)">Revenue<br><b style="color:var(--t1);font-size:13px">'+fmt(rev)+'</b></div>'+
+        '<div style="font-size:11px;color:var(--t3)">Fees+COGS<br><b style="color:var(--red);font-size:13px">-'+fmt(cogs)+'</b></div>'+
+        '<div style="font-size:11px;color:var(--t3)">Profit<br><b style="color:'+(profit>=0?'var(--grn)':'var(--red)')+';font-size:13px">'+fmt(profit)+'</b></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;margin-top:8px">'+
+        '<button data-flag="'+oid+'" onclick="toggleFlag(this.dataset.flag)" style="flex:1;padding:7px;border-radius:var(--r8);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid '+(flagged?'var(--amb)':'var(--b2)')+';background:'+(flagged?'var(--amb-dim)':'var(--s2)')+';color:'+(flagged?'var(--amb)':'var(--t2)')+'">'+
+          (flagged?'Flagged':'Flag order')+
+        '</button>'+
+        '<button data-note="'+oid+'" onclick="addOrderNote(this.dataset.note)" style="flex:1;padding:7px;border-radius:var(--r8);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid var(--b2);background:var(--s2);color:var(--t2)">'+
+          (note?'Edit note':'Add note')+
+        '</button>'+
+      '</div>'+
+      (isSuspicious&&!flagged?'<div style="font-size:11px;color:var(--amb);margin-top:6px">Unusual order — consider reviewing</div>':'')+
+    '</div>'+
+  '</div>';
+}
+
+
+function toggleOrderExpand(id){
+  const el = document.getElementById('ord-expand-'+id);
+  if(el) el.style.display = el.style.display==='none'?'block':'none';
+}
+
+function toggleFlag(id){
+  if(!ST.orderFlags) ST.orderFlags={};
+  ST.orderFlags[id] = !ST.orderFlags[id];
+  if(!ST.orderFlags[id]) delete ST.orderFlags[id];
+  persist();rOrders();
+}
+
+function addOrderNote(id){
+  if(!ST.orderNotes) ST.orderNotes={};
+  const cur = ST.orderNotes[id]||'';
+  const note = prompt('Note for this order:', cur);
+  if(note===null) return;
+  if(note.trim()) ST.orderNotes[id]=note.trim();
+  else delete ST.orderNotes[id];
+  persist();rOrders();
+}
+
+// ══════════════════════════════════════
+//  ENHANCED ADS TAB
+// ══════════════════════════════════════
+function rAds(){
+  const calc = p=>{
+    const arr = p?ST.ads.filter(a=>a.platform===p):ST.ads;
+    const sp = arr.reduce((s,a)=>s+toCHF(a.spend,a.currency),0);
+    const rv = arr.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);
+    const imp = arr.reduce((s,a)=>s+(a.impressions||0),0);
+    const clk = arr.reduce((s,a)=>s+(a.clicks||0),0);
+    return{sp,rv,roas:sp>0?rv/sp:0,cpc:clk>0?sp/clk:0,ctr:imp>0?(clk/imp)*100:0,count:arr.length};
+  };
+  const m=calc('meta'),t=calc('tiktok');
+  document.getElementById('pfcards').innerHTML=pfCard('Meta','meta',m)+pfCard('TikTok','tt',t);
+
+  // Best/worst highlights
+  if(ST.ads.length>=2){
+    const sorted = ST.ads.filter(a=>a.spend>0).map(a=>({...a,roas:a.revenue/a.spend})).sort((a,b)=>b.roas-a.roas);
+    const best=sorted[0], worst=sorted[sorted.length-1];
+    document.getElementById('ad-highlights').innerHTML=[
+      best&&'<div style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.2);border-radius:var(--r12);padding:9px 12px;display:flex;align-items:center;gap:8px">'+
+        '<i class="ti ti-trophy" style="color:var(--grn);font-size:16px"></i>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--grn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Best: '+esc(best.campaign)+'</div>'+
+        '<div style="font-size:11px;color:var(--t2)">ROAS '+best.roas.toFixed(2)+'x · '+best.platform+'</div></div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--grn)">'+best.roas.toFixed(2)+'x</div></div>',
+      worst&&worst.campaign!==best.campaign&&'<div style="background:var(--red-dim);border:1px solid rgba(240,82,74,.2);border-radius:var(--r12);padding:9px 12px;display:flex;align-items:center;gap:8px">'+
+        '<i class="ti ti-thumb-down" style="color:var(--red);font-size:16px"></i>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Worst: '+esc(worst.campaign)+'</div>'+
+        '<div style="font-size:11px;color:var(--t2)">ROAS '+worst.roas.toFixed(2)+'x · '+worst.platform+'</div></div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--red)">'+worst.roas.toFixed(2)+'x</div></div>',
+    ].filter(Boolean).join('');
+  } else {
+    document.getElementById('ad-highlights').innerHTML='';
+  }
+
+  // Daily budget tracker
+  const budget = ST.adDailyBudget||0;
+  const todaySpend = ST.ads.filter(a=>a.date===today()).reduce((s,a)=>s+toCHF(a.spend,a.currency),0);
+  const budEl = document.getElementById('daily-budget');
+  if(budEl&&!budEl.value) budEl.value = budget||'';
+  const pct = budget>0?Math.min((todaySpend/budget)*100,100):0;
+  const overBudget = budget>0&&todaySpend>budget;
+  const fill = document.getElementById('daily-budget-fill');
+  if(fill){fill.style.width=pct+'%';fill.style.background=overBudget?'var(--red)':pct>80?'var(--amb)':'var(--grn)';}
+  const spentEl=document.getElementById('daily-budget-spent');
+  const remEl=document.getElementById('daily-budget-rem');
+  if(spentEl)spentEl.textContent='Today: '+fmt(todaySpend);
+  if(remEl)remEl.textContent=budget>0?(overBudget?'OVER by '+fmt(todaySpend-budget):'Left: '+fmt(budget-todaySpend)):'No budget set';
+
+  // Ad fatigue detector (campaigns with spend on 7+ consecutive days)
+  const fatigueAlerts=[];
+  const byCampaign={};
+  ST.ads.forEach(a=>{if(!byCampaign[a.campaign])byCampaign[a.campaign]=[];byCampaign[a.campaign].push(a.date);});
+  Object.entries(byCampaign).forEach(([name,dates])=>{
+    const uniqueDates=[...new Set(dates)].sort();
+    if(uniqueDates.length>=7){
+      const lastDate=new Date(uniqueDates[uniqueDates.length-1]);
+      const daysSinceLast=Math.round((new Date()-lastDate)/86400000);
+      if(daysSinceLast<=3){
+        fatigueAlerts.push({name,days:uniqueDates.length,lastDate:uniqueDates[uniqueDates.length-1]});
+      }
+    }
+  });
+  document.getElementById('fatigue-strip').innerHTML=fatigueAlerts.map(f=>
+    '<div class="info warn" style="margin:0;display:flex;align-items:center;gap:8px">'+
+      '<i class="ti ti-alert-triangle" style="flex-shrink:0"></i>'+
+      '<div><div style="font-weight:700">Ad fatigue: '+esc(f.name.slice(0,30))+'</div>'+
+      '<div style="opacity:.8">Running '+f.days+' days. Consider refreshing creative.</div></div></div>'
+  ).join('');
+
+  // ROAS trend chart (8 weeks)
+  const now=new Date();
+  const weeks8=[];
+  for(let i=7;i>=0;i--){
+    const ws=new Date(now);ws.setDate(now.getDate()-(now.getDay()||7)+1-i*7);ws.setHours(0,0,0,0);
+    const we=new Date(ws);we.setDate(ws.getDate()+6);
+    const wAds=ST.ads.filter(a=>{const d=new Date(a.date);return d>=ws&&d<=we;});
+    const sp=wAds.reduce((s,a)=>s+toCHF(a.spend,a.currency),0);
+    const rv=wAds.reduce((s,a)=>s+toCHF(a.revenue,a.currency),0);
+    weeks8.push({sp,rv,roas:sp>0?rv/sp:0});
+  }
+  const roasSvg=document.getElementById('roas-svg');
+  if(roasSvg){
+    const W=340,H=78;
+    const maxRoas=Math.max(...weeks8.map(w=>w.roas),4);
+    const maxSp=Math.max(...weeks8.map(w=>w.sp),1);
+    const roasPts=weeks8.map((w,i)=>((i*(W-16)/7+8)+','+(H-8-((w.roas/maxRoas)*(H-20)))));
+    const spPts=weeks8.map((w,i)=>((i*(W-16)/7+8)+','+(H-8-((w.sp/maxSp)*(H-20)))));
+    roasSvg.innerHTML=
+      '<defs><linearGradient id="gRs" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1ec978" stop-opacity=".2"/><stop offset="100%" stop-color="#1ec978" stop-opacity="0"/></linearGradient></defs>'+
+      '<polygon points="'+roasPts.join(' ')+' '+(7*(W-16)/7+8)+','+(H-8)+' 8,'+(H-8)+'" fill="url(#gRs)"/>'+
+      '<polyline points="'+roasPts.join(' ')+'" fill="none" stroke="#1ec978" stroke-width="2" stroke-linejoin="round"/>'+
+      '<polyline points="'+spPts.join(' ')+'" fill="none" stroke="#f0524a" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>'+
+      // ROAS labels on each week
+      weeks8.map((w,i)=>w.roas>0?'<text x="'+(i*(W-16)/7+8)+'" y="'+(H-8-((w.roas/maxRoas)*(H-20))-6)+'" fill="#1ec978" font-size="8" text-anchor="middle">'+w.roas.toFixed(1)+'x</text>':'').join('');
+  }
+
+  // Campaign comparison table
+  const byName={};
+  ST.ads.forEach(a=>{
+    if(!byName[a.campaign])byName[a.campaign]={sp:0,rv:0,imp:0,clk:0,platform:a.platform,dates:[]};
+    byName[a.campaign].sp+=toCHF(a.spend,a.currency);
+    byName[a.campaign].rv+=toCHF(a.revenue,a.currency);
+    byName[a.campaign].imp+=(a.impressions||0);
+    byName[a.campaign].clk+=(a.clicks||0);
+    byName[a.campaign].dates.push(a.date);
+  });
+  const campaigns=Object.entries(byName).map(([name,d])=>{
+    const roas=d.sp>0?d.rv/d.sp:0;
+    const profit=d.rv-d.sp;
+    return{name,roas,profit,...d};
+  }).sort((a,b)=>b.roas-a.roas);
+
+  document.getElementById('campaign-table').innerHTML=campaigns.length?campaigns.map((c,i)=>{
+    const rc=c.roas>=2?'var(--grn)':c.roas>=1?'var(--amb)':'var(--red)';
+    const rank=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    return '<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--b1)">'+
+      '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rank+esc(c.name)+'</div>'+
+      '<div style="font-size:10px;color:var(--t3)">'+c.platform+' · '+c.dates.length+' logs · CPC '+(c.clk>0?fmt(c.sp/c.clk):'—')+'</div></div>'+
+      '<div style="width:54px;text-align:right;font-size:12px;font-weight:600">'+fmt(c.sp)+'</div>'+
+      '<div style="width:46px;text-align:right;font-size:12px;font-weight:700;color:'+rc+'">'+c.roas.toFixed(2)+'x</div>'+
+      '<div style="width:52px;text-align:right;font-size:12px;font-weight:700;color:'+(c.profit>=0?'var(--grn)':'var(--red)')+'">'+fmt(c.profit)+'</div>'+
+    '</div>';
+  }).join(''):'<div style="padding:20px;text-align:center;color:var(--t3);font-size:13px">No campaigns logged yet</div>';
+
+  // History list
+  document.getElementById('ad-d').value=document.getElementById('ad-d').value||today();
+  setupC('ap');setupC('ad-ccy');
+  const sorted=ST.ads.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('adcount').textContent=sorted.length+' campaign'+(sorted.length!==1?'s':'');
+  document.getElementById('adlist').innerHTML=sorted.length?sorted.map(a=>{
+    const rc=a.spend>0&&a.revenue/a.spend>=2?'g':a.spend>0&&a.revenue/a.spend>=1?'a':'r';
+    const ic=a.platform==='meta'?'ti-brand-facebook':a.platform==='tiktok'?'ti-brand-tiktok':'ti-brand-google';
+    const icls=a.platform==='meta'?'meta':a.platform==='tiktok'?'tt':'b';
+    return '<div class="ic"><div class="ii '+icls+'"><i class="ti '+ic+'"></i></div>'+
+      '<div class="ib"><div class="it">'+esc(a.campaign)+'</div><div class="im">'+a.date+' · '+a.platform+' · ROAS '+(a.spend>0?(a.revenue/a.spend).toFixed(2)+'x':'—')+'</div></div>'+
+      '<div class="ir"><div class="ia r">-'+fmt(toCHF(a.spend,a.currency))+'</div>'+
+      '<button class="db" onclick="delA(\"'+a.id+'\")"><i class="ti ti-trash"></i></button></div></div>';
+  }).join(''):'<div class="empty"><i class="ti ti-target-arrow"></i><p>No campaigns. Log above or import CSV.</p></div>';
+}
+
+function saveDailyBudget(){
+  ST.adDailyBudget = parseFloat(document.getElementById('daily-budget').value)||0;
+  persist();rAds();toast('Budget set: '+fmt(ST.adDailyBudget)+'/day');
+}
+
+// TikTok CSV import (same format logic as Meta but TikTok columns)
+function importTikTokCSV(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      const lines=e.target.result.split(/[\r\n]+/).filter(l=>l.trim());
+      if(lines.length<2){toast('CSV too short');return;}
+      let hi=0;
+      for(let i=0;i<Math.min(8,lines.length);i++){
+        const l=lines[i].toLowerCase();
+        if(l.includes('campaign')||l.includes('impressions')||l.includes('spend')||l.includes('cost')){hi=i;break;}
+      }
+      const hdrs=parseCSVRow(lines[hi]).map(h=>h.toLowerCase().trim());
+      function fc(names){for(const n of names){const i=hdrs.findIndex(h=>h.includes(n));if(i>=0)return i;}return -1;}
+      const ci={
+        date:fc(['date','day','stat_time']),
+        campaign:fc(['campaign name','campaign','ad group name']),
+        spend:fc(['cost','spend','total cost','amount spent']),
+        imp:fc(['impressions']),
+        clicks:fc(['clicks']),
+        conv:fc(['conversions','complete payment','purchases']),
+        roas:fc(['roas','purchase roas','complete payment roas']),
+      };
+      let imported=0,skipped=0;
+      const cur=chipV('ad-ccy')||'EUR';
+      for(let i=hi+1;i<lines.length;i++){
+        const row=parseCSVRow(lines[i]);if(row.length<3)continue;
+        if(row.join('').trim().toLowerCase().startsWith('total'))continue;
+        const spend=parseFloat((ci.spend>=0?row[ci.spend]||'':'').replace(/[^0-9.-]/g,''));
+        if(!spend||isNaN(spend)||spend<=0){skipped++;continue;}
+        let date=ci.date>=0?(row[ci.date]||'').trim():'';
+        if(date.includes('/')){const p=date.split('/');if(p.length===3)date=p[2]+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');}
+        if(!date||date.length<8)date=today();
+        const campaign=ci.campaign>=0?(row[ci.campaign]||'TikTok').trim():'TikTok';
+        const impressions=ci.imp>=0?parseInt((row[ci.imp]||'').replace(/[^0-9]/g,''))||0:0;
+        const clicks=ci.clicks>=0?parseInt((row[ci.clicks]||'').replace(/[^0-9]/g,''))||0:0;
+        const conversions=ci.conv>=0?parseInt((row[ci.conv]||'').replace(/[^0-9]/g,''))||0:0;
+        let revenue=0;if(ci.roas>=0){const rv=parseFloat((row[ci.roas]||'').replace(/[^0-9.-]/g,''));if(rv>0)revenue=rv<50?rv*spend:rv;}
+        ST.ads.push({id:uid(),date,platform:'tiktok',campaign,spend,revenue,impressions,clicks,conversions,currency:cur});imported++;
+      }
+      persist();rAds();rAll();event.target.value='';
+      toast('TikTok: imported '+imported+' rows'+(skipped?' ('+skipped+' skipped)':''));
+    }catch(err){toast('Import error: '+err.message,3500);event.target.value='';}
+  };reader.readAsText(file);
+}
+
 </script>
 </body>
-</html>
+</html><!-- ═══ ORDERS ═══ -->
+<div class="scr" id="s1">
+  <div class="topbar">
+    <div><div class="ptitle">Orders</div><div class="psub">Shopify · Carlynx</div></div>
+    <button onclick="syncShopify()" style="background:var(--acc-dim);border:1px solid var(--acc-glow);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit">
+      <i class="ti ti-refresh" id="sync-ico"></i>Sync
+    </button>
+  </div>
+  <div style="padding:10px 18px 4px">
+    <div style="position:relative">
+      <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px"></i>
+      <input type="text" id="o-search" placeholder="Search customer, order, product..." style="padding-left:34px" oninput="rOrders()">
+    </div>
+  </div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);margin:4px 18px 6px;padding:10px 14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px">Avg order value · 8 weeks</div>
+      <div id="aov-current" style="font-size:14px;font-weight:700;color:var(--acc)">—</div>
+    </div>
+    <svg id="aov-svg" width="100%" height="32" style="overflow:visible;display:block"></svg>
+  </div>
+  <div style="padding:4px 18px 4px;display:flex;flex-direction:column;gap:5px">
+    <div style="display:flex;gap:5px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none" id="ofilt">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="paid">Paid</button>
+      <button class="chip" data-f="refunded">Refunded</button>
+      <button class="chip" data-f="unfulfilled">Unfulfilled</button>
+      <button class="chip" data-f="flagged">Flagged ⚑</button>
+    </div>
+    <div style="display:flex;gap:5px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none" id="prod-filt"></div>
+  </div>
+  <div class="sec">
+    <span class="stitle" id="o-count">—</span>
+    <span style="font-size:12px;color:var(--t3)" id="o-stats"></span>
+  </div>
+  <div class="cl" id="o-list"></div>
+  <div style="height:14px"></div>
+</div>
+
+
