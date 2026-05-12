@@ -324,6 +324,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="mr" onclick="showSub('goals')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-trophy"></i></div><span class="ml">Goals tracker</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('fc')"><div class="mi" style="background:var(--cyn-dim);color:var(--cyn)"><i class="ti ti-chart-line"></i></div><span class="ml">Cashflow forecast</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('upgrade')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-arrow-up-circle"></i></div><span class="ml">Plan upgrade advisor</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('payout')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-calendar-dollar"></i></div><span class="ml">Payout calendar</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('refunds')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-arrow-back-up"></i></div><span class="ml">Refund rate tracker</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('pnl')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-report-analytics"></i></div><span class="ml">P&amp;L summary</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('supplier')"><div class="mi" style="background:var(--amb-dim);color:var(--amb)"><i class="ti ti-truck"></i></div><span class="ml">Supplier cost tracker</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('research')"><div class="mi" style="background:var(--pur-dim);color:var(--pur)"><i class="ti ti-search"></i></div><span class="ml">Product research</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('inventory')"><div class="mi" style="background:var(--cyn-dim);color:var(--cyn)"><i class="ti ti-box"></i></div><span class="ml">Inventory alerts</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('creatives')"><div class="mi" style="background:var(--meta-dim);color:var(--meta)"><i class="ti ti-photo"></i></div><span class="ml">Ad creative log</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('notes')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-notes"></i></div><span class="ml">Notes &amp; journal</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('beven')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-calculator"></i></div><span class="ml">Breakeven calculator</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('settings')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings & fees</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
@@ -588,6 +596,142 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div style="padding:0 18px;margin-bottom:32px"><button class="abtn" onclick="saveSettings()">Save settings</button></div>
 </div>
 
+<!-- PAYOUT CALENDAR -->
+<div class="ss" id="ss-payout">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('payout')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Payout calendar</span></div>
+  <div class="info" style="margin-top:10px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:4px"></i>Shopify Payments pays out weekly (Mon–Fri). Estimated based on your paid orders minus fees.</div>
+  <div class="sg" style="padding:12px 18px 8px">
+    <div class="sc"><div class="sl">Next payout (est.)</div><div class="sv g" id="pay-next">—</div></div>
+    <div class="sc"><div class="sl">Last 4 weeks total</div><div class="sv" id="pay-month">—</div></div>
+  </div>
+  <div class="sec"><span class="stitle">Upcoming payouts</span></div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 24px;overflow:hidden" id="payout-list"></div>
+</div>
+
+<!-- REFUND RATE -->
+<div class="ss" id="ss-refunds">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('refunds')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Refund rate tracker</span></div>
+  <div class="sg" style="padding:12px 18px 8px">
+    <div class="sc"><div class="sl">Overall refund rate</div><div class="sv" id="ref-rate">—</div></div>
+    <div class="sc"><div class="sl">Lost to refunds</div><div class="sv r" id="ref-lost">—</div></div>
+  </div>
+  <div class="sec"><span class="stitle">By product</span></div>
+  <div class="cl" id="refund-list"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- P&L SUMMARY -->
+<div class="ss" id="ss-pnl">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('pnl')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">P&amp;L Summary</span></div>
+  <div class="sec"><span class="stitle">Period</span>
+    <div style="display:flex;gap:5px" id="pnl-period">
+      <button class="chip on" data-p="this">This month</button>
+      <button class="chip" data-p="last">Last month</button>
+      <button class="chip" data-p="all">All time</button>
+    </div>
+  </div>
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r20);margin:0 18px 10px;overflow:hidden" id="pnl-table"></div>
+  <div style="padding:0 18px 24px"><button class="abtn sec" onclick="exportPNL()" style="margin-top:8px"><i class="ti ti-download" style="vertical-align:-2px;margin-right:6px"></i>Export P&amp;L CSV</button></div>
+</div>
+
+<!-- SUPPLIER COST TRACKER -->
+<div class="ss" id="ss-supplier">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('supplier')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Supplier costs</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="fr">
+      <div class="fld"><div class="fl">Product name</div><input type="text" id="sup-name" placeholder="e.g. CarPlay Screen 7 inch"></div>
+    </div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Supplier cost</div><input type="number" id="sup-cost" placeholder="0.00" step="0.01"></div>
+      <div class="fld"><div class="fl">Shipping cost</div><input type="number" id="sup-ship" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="fr" style="margin-bottom:0">
+      <div class="fld"><div class="fl">Currency</div><div class="chips" id="sup-ccy" style="margin:0"><button class="chip on" data-v="EUR">EUR</button><button class="chip" data-v="CHF">CHF</button><button class="chip" data-v="USD">USD</button></div></div>
+      <div class="fld"><div class="fl">Supplier</div><input type="text" id="sup-supplier" placeholder="AliExpress / CJ / etc"></div>
+    </div>
+  </div>
+  <div style="padding:0 18px 10px"><button class="abtn" onclick="addSupplierCost()">+ Log cost</button></div>
+  <div class="sec"><span class="stitle">Cost history</span></div>
+  <div class="cl" id="supplier-list"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- PRODUCT RESEARCH -->
+<div class="ss" id="ss-research">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('research')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Product research</span></div>
+  <div class="info" style="margin-top:10px">Calculate what you need to sell at to hit your target margin after all Shopify fees.</div>
+  <div class="fc" style="margin-top:10px">
+    <div class="fr">
+      <div class="fld"><div class="fl">Product cost (supplier)</div><input type="number" id="res-cost" placeholder="0.00" step="0.01" oninput="calcResearch()"></div>
+      <div class="fld"><div class="fl">Shipping cost</div><input type="number" id="res-ship" placeholder="0.00" step="0.01" oninput="calcResearch()"></div>
+    </div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Currency</div><div class="chips" id="res-ccy" style="margin:0"><button class="chip on" data-v="EUR">EUR</button><button class="chip" data-v="CHF">CHF</button></div></div>
+      <div class="fld"><div class="fl">Target margin %</div><input type="number" id="res-margin" placeholder="30" step="1" oninput="calcResearch()"></div>
+    </div>
+    <div class="fr" style="margin-bottom:0">
+      <div class="fld"><div class="fl">Expected ad cost / order</div><input type="number" id="res-adcpa" placeholder="0.00" step="0.01" oninput="calcResearch()"></div>
+      <div class="fld"><div class="fl">Other cost / order</div><input type="number" id="res-other" placeholder="0.00" step="0.01" oninput="calcResearch()"></div>
+    </div>
+  </div>
+  <div id="res-result" style="display:flex;flex-direction:column;gap:8px;padding:0 18px 24px"></div>
+</div>
+
+<!-- INVENTORY ALERTS -->
+<div class="ss" id="ss-inventory">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('inventory')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Inventory alerts</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="fr" style="margin-bottom:0">
+      <div class="fld"><div class="fl">Low stock threshold</div><input type="number" id="inv-threshold" placeholder="5" step="1"></div>
+      <div class="fld" style="display:flex;align-items:flex-end"><button class="abtn" onclick="saveInvThreshold()" style="margin-bottom:0">Set</button></div>
+    </div>
+  </div>
+  <div class="sec"><span class="stitle">Stock levels</span></div>
+  <div class="cl" id="inventory-list"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- AD CREATIVE LOG -->
+<div class="ss" id="ss-creatives">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('creatives')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Ad creative log</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="fr">
+      <div class="fld"><div class="fl">Creative name / angle</div><input type="text" id="cr-name" placeholder="e.g. Unboxing video"></div>
+    </div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Platform</div><div class="chips" id="cr-plat" style="margin:0"><button class="chip on" data-v="meta">Meta</button><button class="chip" data-v="tiktok">TikTok</button><button class="chip" data-v="google">Google</button></div></div>
+      <div class="fld"><div class="fl">Format</div><div class="chips" id="cr-fmt" style="margin:0"><button class="chip on" data-v="video">Video</button><button class="chip" data-v="image">Image</button><button class="chip" data-v="carousel">Carousel</button></div></div>
+    </div>
+    <div class="fr">
+      <div class="fld"><div class="fl">Spend</div><input type="number" id="cr-spend" placeholder="0.00" step="0.01"></div>
+      <div class="fld"><div class="fl">Revenue attr.</div><input type="number" id="cr-rev" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="fld" style="margin-bottom:10px"><div class="fl">Notes / hook</div><input type="text" id="cr-notes" placeholder="e.g. Shock hook, problem-solution"></div>
+    <div class="fl" style="margin-bottom:5px">Status</div>
+    <div class="chips" id="cr-status"><button class="chip on" data-v="testing">Testing</button><button class="chip" data-v="winner">Winner</button><button class="chip" data-v="killed">Killed</button></div>
+    <button class="abtn" onclick="addCreative()">+ Log creative</button>
+  </div>
+  <div class="sec"><span class="stitle" id="cr-count">Creatives</span></div>
+  <div class="cl" id="creatives-list"></div>
+  <div style="height:24px"></div>
+</div>
+
+<!-- NOTES & JOURNAL -->
+<div class="ss" id="ss-notes">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('notes')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Notes &amp; journal</span></div>
+  <div class="fc" style="margin-top:12px">
+    <div class="fld" style="margin-bottom:10px"><div class="fl">Date</div><input type="date" id="note-date" style="color-scheme:dark"></div>
+    <div class="fld" style="margin-bottom:10px"><div class="fl">Title</div><input type="text" id="note-title" placeholder="e.g. Campaign idea, supplier note..."></div>
+    <div class="fld" style="margin-bottom:10px"><div class="fl">Note</div><textarea id="note-body" rows="4" placeholder="Write anything..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r8);padding:9px 11px;color:var(--t1);font-size:14px;font-family:inherit;outline:none;resize:vertical;transition:.15s"></textarea></div>
+    <div class="fl" style="margin-bottom:5px">Tag</div>
+    <div class="chips" id="note-tag"><button class="chip on" data-v="general">general</button><button class="chip" data-v="supplier">supplier</button><button class="chip" data-v="ads">ads</button><button class="chip" data-v="product">product</button><button class="chip" data-v="idea">idea</button></div>
+    <button class="abtn" onclick="addNote()">+ Save note</button>
+  </div>
+  <div class="sec"><span class="stitle" id="notes-count">Journal</span></div>
+  <div class="cl" id="notes-list"></div>
+  <div style="height:24px"></div>
+</div>
+
 <nav id="nav">
   <button class="nb on" id="nt0" onclick="goTab(0)"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
   <button class="nb" id="nt1" onclick="goTab(1)"><i class="ti ti-shopping-cart"></i><span>Orders</span></button>
@@ -613,10 +757,14 @@ const PLANS=[
 const ST={
   orders:[],products:[],customers:[],ads:[],expenses:[],subs:[],cogs:{},
   settings:{plan:'basic',payPct:2.95,fixedFee:0.30,thirdPct:0,vatRate:8.1,vatReg:false},
-  goals:{rev:0,profit:0,orders:0}
+  goals:{rev:0,profit:0,orders:0},
+  supplierCosts:[],
+  creatives:[],
+  notes:[],
+  invThreshold:5
 };
 
-function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals}));}
+function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold}));}
 function hydrate(){
   try{
     const r=JSON.parse(localStorage.getItem('df8')||'{}');
@@ -624,7 +772,15 @@ function hydrate(){
     if(r.cogs)ST.cogs=r.cogs;
     if(r.settings)Object.assign(ST.settings,r.settings);
     if(r.goals)Object.assign(ST.goals,r.goals);
+    if(r.supplierCosts)ST.supplierCosts=r.supplierCosts;
+    if(r.creatives)ST.creatives=r.creatives;
+    if(r.notes)ST.notes=r.notes;
+    if(r.invThreshold)ST.invThreshold=r.invThreshold;
     if(r.goals)Object.assign(ST.goals,r.goals);
+    if(r.supplierCosts)ST.supplierCosts=r.supplierCosts;
+    if(r.creatives)ST.creatives=r.creatives;
+    if(r.notes)ST.notes=r.notes;
+    if(r.invThreshold)ST.invThreshold=r.invThreshold;
   }catch(e){}
 }
 
@@ -694,6 +850,14 @@ function renderSub(n){
   else if(n==='cpa')rCPA();
   else if(n==='goals')rGoals();
   else if(n==='upgrade')rUpgrade();
+  else if(n==='payout')rPayout();
+  else if(n==='refunds')rRefunds();
+  else if(n==='pnl')rPNL();
+  else if(n==='supplier')rSupplier();
+  else if(n==='research'){setupC('res-ccy',calcResearch);setupC('cpa-ccy',calcCPA);calcResearch();}
+  else if(n==='inventory')rInventory();
+  else if(n==='creatives')rCreatives();
+  else if(n==='notes')rNotes();
   else if(n==='beven')rBeven();
 }
 
@@ -1608,6 +1772,381 @@ function rUpgrade(){
     '</div>';
   }).join('');
 }
+
+
+// ══════════════════════════════════════
+//  PAYOUT CALENDAR
+// ══════════════════════════════════════
+function rPayout(){
+  // Shopify pays weekly, typically Mon-Fri, 1-3 business days after period ends
+  // Group orders by week, estimate payout
+  const paid=ST.orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
+  
+  // Get last 8 weeks of data
+  const weeks=[];
+  const now=new Date();
+  for(let i=0;i<8;i++){
+    const weekStart=new Date(now);
+    weekStart.setDate(now.getDate()-(now.getDay()||7)+1-i*7);
+    weekStart.setHours(0,0,0,0);
+    const weekEnd=new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate()+6);
+    const wOrders=paid.filter(o=>{const d=new Date(o.date);return d>=weekStart&&d<=weekEnd;});
+    const gross=wOrders.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+    const fees=wOrders.reduce((s,o)=>s+getOrderCOGS(o),0);
+    const net=gross-fees+(fees-wOrders.reduce((s,o)=>s+getOrderCOGS({...o,items:o.items}),0)); 
+    // Simpler: just gross minus platform fees (not COGS)
+    const pfee=(ST.settings.payPct||0)/100;
+    const ffee=ST.settings.fixedFee||0;
+    const platformFees=wOrders.reduce((s,o)=>s+toCHF(o.amount*pfee+ffee,o.currency),0);
+    const payout=gross-platformFees;
+    // Payout date: about 3 business days after Sunday of that week
+    const payDate=new Date(weekEnd);
+    payDate.setDate(weekEnd.getDate()+4); // ~Wed next week
+    weeks.push({weekStart,weekEnd,orders:wOrders.length,gross,platformFees,payout,payDate,isFuture:weekEnd>now});
+  }
+
+  const upcoming=weeks.filter(w=>w.isFuture||w.payout>0).slice(0,2);
+  const past=weeks.filter(w=>!w.isFuture&&w.orders>0);
+  
+  const nextPay=upcoming[0];
+  document.getElementById('pay-next').textContent=nextPay?fmt(nextPay.payout):'—';
+  document.getElementById('pay-month').textContent=fmt(past.slice(0,4).reduce((s,w)=>s+w.payout,0));
+
+  document.getElementById('payout-list').innerHTML=[...upcoming,...past].map((w,i)=>{
+    const dateStr=w.payDate.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'});
+    const wStr=w.weekStart.toLocaleDateString('en',{month:'short',day:'numeric'})+' – '+w.weekEnd.toLocaleDateString('en',{month:'short',day:'numeric'});
+    const cls=w.isFuture?'a':'g';
+    return '<div style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--b1)">'+
+      '<div style="flex:1">'+
+        '<div style="font-size:13px;font-weight:600">'+wStr+'</div>'+
+        '<div style="font-size:11px;color:var(--t2);margin-top:2px">'+w.orders+' orders · Pays out ~'+dateStr+'</div>'+
+        '<div style="font-size:11px;color:var(--t3);margin-top:1px">Gross '+fmt(w.gross)+' − fees '+fmt(w.platformFees)+'</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-size:15px;font-weight:700;color:var(--'+(w.isFuture?'amb':'grn')+')">'+fmt(w.payout)+'</div>'+
+        '<div style="font-size:10px;color:var(--t3);margin-top:2px">'+(w.isFuture?'estimated':'approx.')+'</div>'+
+      '</div></div>';
+  }).join('')||'<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">Sync orders to see payout estimates</div>';
+}
+
+// ══════════════════════════════════════
+//  REFUND RATE TRACKER
+// ══════════════════════════════════════
+function rRefunds(){
+  const allOrders=ST.orders.filter(o=>o.status==='paid'||o.status==='partially_refunded'||o.status==='refunded');
+  const refunded=ST.orders.filter(o=>o.status==='refunded');
+  const rate=allOrders.length?((refunded.length/allOrders.length)*100):0;
+  const lostCHF=refunded.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  document.getElementById('ref-rate').textContent=rate.toFixed(1)+'%';
+  document.getElementById('ref-rate').className='sv '+(rate>10?'r':rate>5?'a':'g');
+  document.getElementById('ref-lost').textContent=fmt(lostCHF);
+
+  // Per product refund stats
+  const prodStats={};
+  ST.orders.forEach(o=>{
+    o.items.forEach(item=>{
+      if(!prodStats[item.title])prodStats[item.title]={sold:0,refunded:0,revLost:0};
+      if(o.status==='paid'||o.status==='partially_refunded')prodStats[item.title].sold+=item.qty;
+      if(o.status==='refunded'){prodStats[item.title].refunded+=item.qty;prodStats[item.title].revLost+=toCHF(item.price*item.qty,o.currency);}
+    });
+  });
+
+  const sorted=Object.entries(prodStats)
+    .filter(([,v])=>v.sold>0)
+    .map(([title,v])=>({title,rate:v.sold?(v.refunded/v.sold)*100:0,...v}))
+    .sort((a,b)=>b.rate-a.rate);
+
+  document.getElementById('refund-list').innerHTML=sorted.length?sorted.map(p=>{
+    const rc=p.rate>15?'r':p.rate>5?'a':'g';
+    return '<div class="ic"><div class="ii '+rc+'"><i class="ti ti-arrow-back-up"></i></div>'+
+      '<div class="ib"><div class="it">'+esc(p.title)+'</div>'+
+      '<div class="im">'+p.sold+' sold · '+p.refunded+' refunded</div></div>'+
+      '<div class="ir"><div class="ia '+rc+'">'+p.rate.toFixed(1)+'%</div>'+
+      '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+fmt(p.revLost)+' lost</div></div></div>';
+  }).join(''):'<div class="empty"><i class="ti ti-arrow-back-up"></i><p>No refund data yet</p></div>';
+}
+
+// ══════════════════════════════════════
+//  P&L SUMMARY
+// ══════════════════════════════════════
+function rPNL(){
+  setupC('pnl-period',()=>setTimeout(rPNL,0));
+  const period=chipV('pnl-period')||'this';
+  const now=new Date();
+  let orders,label;
+  if(period==='this'){
+    const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().slice(0,10);
+    orders=ST.orders.filter(o=>o.date>=start);
+    label=now.toLocaleDateString('en',{month:'long',year:'numeric'});
+  }else if(period==='last'){
+    const d=new Date(now.getFullYear(),now.getMonth()-1,1);
+    const start=d.toISOString().slice(0,10);
+    const end=new Date(now.getFullYear(),now.getMonth(),0).toISOString().slice(0,10);
+    orders=ST.orders.filter(o=>o.date>=start&&o.date<=end);
+    label=d.toLocaleDateString('en',{month:'long',year:'numeric'});
+  }else{
+    orders=ST.orders;
+    label='All time';
+  }
+
+  const paid=orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
+  const refs=orders.filter(o=>o.status==='refunded');
+  const grossRev=paid.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  const refunds=refs.reduce((s,o)=>s+toCHF(o.amount,o.currency),0);
+  const netRev=grossRev-refunds;
+  const cogs=totalCOGS(paid);
+  const grossProfit=netRev-cogs;
+
+  // Ad spend for period
+  const adSpend=ST.ads.reduce((s,a)=>{
+    if(period==='all')return s+toCHF(a.spend,a.currency);
+    const start=period==='this'?new Date(now.getFullYear(),now.getMonth(),1):new Date(now.getFullYear(),now.getMonth()-1,1);
+    const end=period==='last'?new Date(now.getFullYear(),now.getMonth(),0):now;
+    const d=new Date(a.date);
+    return d>=start&&d<=end?s+toCHF(a.spend,a.currency):s;
+  },0);
+
+  const expenses=period==='all'?eTotals():ST.expenses.reduce((s,e)=>{
+    const start=period==='this'?new Date(now.getFullYear(),now.getMonth(),1):new Date(now.getFullYear(),now.getMonth()-1,1);
+    const end=period==='last'?new Date(now.getFullYear(),now.getMonth(),0):now;
+    const d=new Date(e.date);
+    return d>=start&&d<=end?s+toCHF(e.amount,e.currency):s;
+  },0);
+
+  const subs=sMo()*(period==='all'?6:1);
+  const opEx=adSpend+expenses+subs;
+  const netProfit=grossProfit-opEx;
+  const margin=netRev>0?(netProfit/netRev)*100:0;
+
+  const rows=[
+    {label:'REVENUE',isHeader:true},
+    {label:'Gross revenue',value:fmt(grossRev),pos:true},
+    {label:'Refunds',value:refunds>0?('-'+fmt(refunds)):fmt(0),neg:refunds>0},
+    {label:'Net revenue',value:fmt(netRev),pos:true,bold:true},
+    {label:'COST OF GOODS',isHeader:true},
+    {label:'COGS + platform fees',value:'-'+fmt(cogs),neg:true},
+    {label:'Gross profit',value:fmt(grossProfit),pos:grossProfit>0,bold:true},
+    {label:'OPERATING EXPENSES',isHeader:true},
+    {label:'Ad spend',value:'-'+fmt(adSpend),neg:true},
+    {label:'Other expenses',value:'-'+fmt(expenses),neg:true},
+    {label:'Subscriptions',value:'-'+fmt(subs),neg:true},
+    {label:'Total op. expenses',value:'-'+fmt(opEx),neg:true,bold:true},
+    {label:'NET PROFIT',isHeader:true},
+    {label:'Net profit',value:fmt(netProfit),pos:netProfit>0,neg:netProfit<0,bold:true,large:true},
+    {label:'Net margin',value:margin.toFixed(1)+'%',pos:margin>0,neg:margin<0,bold:true},
+    {label:'Orders (paid)',value:String(paid.length)},
+    {label:'Avg order value',value:paid.length?fmt(netRev/paid.length):'—'},
+  ];
+
+  document.getElementById('pnl-table').innerHTML=
+    '<div style="padding:12px 16px;background:var(--s2);font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px">'+label+'</div>'+
+    rows.map(r=>{
+      if(r.isHeader)return '<div style="padding:8px 16px 4px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;background:var(--s2);border-top:1px solid var(--b1)">'+r.label+'</div>';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:'+(r.large?'12':'8')+'px 16px;border-bottom:1px solid var(--b1);background:'+(r.large?'var(--s2)':'')+'">'+
+        '<span style="font-size:'+(r.bold?'13':'12')+'px;font-weight:'+(r.bold?'700':'400')+';color:'+(r.bold?'var(--t1)':'var(--t2)')+'">'+r.label+'</span>'+
+        '<span style="font-size:'+(r.large?'16':r.bold?'13':'12')+'px;font-weight:'+(r.bold?'700':'400')+';color:'+(r.pos?'var(--grn)':r.neg?'var(--red)':'var(--t1)')+'">'+r.value+'</span>'+
+      '</div>';
+    }).join('');
+}
+
+function exportPNL(){
+  const period=chipV('pnl-period')||'this';
+  const rows=document.getElementById('pnl-table').querySelectorAll('div[style*="justify-content"]');
+  const lines=['P&L Export - DropFlow'];
+  rows.forEach(r=>{
+    const cols=r.querySelectorAll('span');
+    if(cols.length===2)lines.push(cols[0].textContent+','+cols[1].textContent);
+  });
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='pnl-'+today()+'.csv';a.click();URL.revokeObjectURL(url);
+  toast('P&L exported');
+}
+
+// ══════════════════════════════════════
+//  SUPPLIER COST TRACKER
+// ══════════════════════════════════════
+function rSupplier(){
+  setupC('sup-ccy');
+  document.getElementById('supplier-list').innerHTML=ST.supplierCosts.length?
+    ST.supplierCosts.slice().reverse().map(c=>{
+      // Find if cost went up vs previous entry for same product
+      const prev=ST.supplierCosts.filter(x=>x.name===c.name&&x.date<c.date).sort((a,b)=>b.date.localeCompare(a.date))[0];
+      const totalCost=toCHF((Number(c.cost)||0)+(Number(c.ship)||0),c.currency);
+      let trend='';
+      if(prev){
+        const prevTotal=toCHF((Number(prev.cost)||0)+(Number(prev.ship)||0),prev.currency);
+        const diff=totalCost-prevTotal;
+        if(Math.abs(diff)>0.01)trend='<span style="color:'+(diff>0?'var(--red)':'var(--grn)')+'"> '+(diff>0?'↑':'↓')+fmt(Math.abs(diff))+'</span>';
+      }
+      return '<div class="ic"><div class="ii a"><i class="ti ti-truck"></i></div>'+
+        '<div class="ib"><div class="it">'+esc(c.name)+'</div>'+
+        '<div class="im">'+c.date+' · '+esc(c.supplier||'Unknown')+'</div></div>'+
+        '<div class="ir"><div class="ia">'+fmt(totalCost)+trend+'</div>'+
+        '<button class="db" onclick="delSupplier(\"'+c.id+'\")">' +'<i class="ti ti-trash"></i></button></div></div>';
+    }).join(''):
+    '<div class="empty"><i class="ti ti-truck"></i><p>No supplier costs logged yet</p></div>';
+}
+function addSupplierCost(){
+  const name=document.getElementById('sup-name').value.trim();
+  const cost=parseFloat(document.getElementById('sup-cost').value)||0;
+  if(!name||!cost){toast('Enter product name and cost');return;}
+  ST.supplierCosts.push({id:uid(),date:today(),name,cost,ship:parseFloat(document.getElementById('sup-ship').value)||0,currency:chipV('sup-ccy')||'EUR',supplier:document.getElementById('sup-supplier').value.trim()});
+  document.getElementById('sup-cost').value='';document.getElementById('sup-ship').value='';
+  persist();rSupplier();toast('Cost logged');
+}
+function delSupplier(id){ST.supplierCosts=ST.supplierCosts.filter(c=>c.id!==id);persist();rSupplier();}
+
+// ══════════════════════════════════════
+//  PRODUCT RESEARCH
+// ══════════════════════════════════════
+function calcResearch(){
+  const cur=chipV('res-ccy')||'EUR';
+  const cost=parseFloat(document.getElementById('res-cost').value)||0;
+  const ship=parseFloat(document.getElementById('res-ship').value)||0;
+  const targetMargin=parseFloat(document.getElementById('res-margin').value)||30;
+  const adCPA=parseFloat(document.getElementById('res-adcpa').value)||0;
+  const other=parseFloat(document.getElementById('res-other').value)||0;
+  const el=document.getElementById('res-result');
+  if(cost<=0){el.innerHTML='';return;}
+  const cogsCHF=toCHF(cost+ship,cur)+toCHF(adCPA+other,'CHF');
+  const pfee=(ST.settings.payPct||0)/100;
+  const ffee=toCHF(ST.settings.fixedFee||0,'CHF');
+  // Price = (COGS + fixed fees) / (1 - fee% - margin%)
+  const minPrice=cogsCHF/(1-pfee-(targetMargin/100));
+  const bePrice=cogsCHF/(1-pfee); // breakeven
+  // Show scenarios
+  const scenarios=[
+    {label:'Min price ('+targetMargin+'% margin)',price:minPrice,margin:targetMargin,highlight:true},
+    {label:'Breakeven price',price:bePrice,margin:0},
+    {label:'+10% above target',price:minPrice*1.1,margin:((minPrice*1.1-cogsCHF-minPrice*1.1*pfee-ffee)/(minPrice*1.1))*100},
+    {label:'+25% above target',price:minPrice*1.25,margin:((minPrice*1.25-cogsCHF-minPrice*1.25*pfee-ffee)/(minPrice*1.25))*100},
+  ];
+  el.innerHTML=[
+    '<div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);padding:12px 14px">'+
+      '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Total costs per unit (CHF)</div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="color:var(--t2);font-size:13px">COGS + shipping</span><span style="font-weight:700">'+fmt(toCHF(cost+ship,cur))+'</span></div>'+
+      (adCPA?'<div style="display:flex;justify-content:space-between;margin-top:4px"><span style="color:var(--t2);font-size:13px">Ad cost / order</span><span style="font-weight:700">'+fmt(toCHF(adCPA,'CHF'))+'</span></div>':'')+
+      '<div style="display:flex;justify-content:space-between;margin-top:4px"><span style="color:var(--t2);font-size:13px">Platform fee %</span><span style="font-weight:700">'+ST.settings.payPct+'% + CHF '+ST.settings.fixedFee+'</span></div>'+
+    '</div>',
+    ...scenarios.map(s=>{
+      const profit=s.price-cogsCHF-s.price*pfee-ffee;
+      const mc=s.margin>=30?'var(--grn)':s.margin>=15?'var(--amb)':'var(--red)';
+      return '<div style="background:var(--s1);border:'+(s.highlight?'2px solid var(--acc)':'1px solid var(--b1)')+';border-radius:var(--r12);padding:12px 14px">'+
+        '<div style="font-size:11px;color:'+(s.highlight?'var(--acc)':'var(--t3)')+';font-weight:700;margin-bottom:8px">'+s.label+'</div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:baseline">'+
+          '<span style="font-size:22px;font-weight:700;color:'+(s.highlight?'var(--t1)':'var(--t2)')+'">'+fmt(s.price)+'</span>'+
+          '<span style="font-size:13px;color:'+mc+';font-weight:700">'+s.margin.toFixed(1)+'% margin · '+fmt(profit)+'/order</span>'+
+        '</div></div>';
+    })
+  ].join('');
+}
+
+// ══════════════════════════════════════
+//  INVENTORY ALERTS
+// ══════════════════════════════════════
+function rInventory(){
+  document.getElementById('inv-threshold').value=ST.invThreshold||5;
+  if(!ST.products.length){
+    document.getElementById('inventory-list').innerHTML='<div class="empty"><i class="ti ti-box"></i><p>Sync orders to load product inventory</p></div>';
+    return;
+  }
+  const threshold=ST.invThreshold||5;
+  const items=ST.products.flatMap(p=>p.variants.map(v=>({product:p.title,variant:v.title,sku:v.sku,stock:v.inventory||0,isDefault:v.title==='Default Title'})));
+  items.sort((a,b)=>a.stock-b.stock);
+  document.getElementById('inventory-list').innerHTML=items.map(item=>{
+    const isLow=item.stock<=threshold;
+    const isOut=item.stock<=0;
+    const cls=isOut?'r':isLow?'a':'g';
+    const icon=isOut?'ti-package-off':isLow?'ti-alert-triangle':'ti-package-check';
+    return '<div class="ic"><div class="ii '+cls+'"><i class="ti '+icon+'"></i></div>'+
+      '<div class="ib"><div class="it">'+esc(item.product)+(item.isDefault?'':' – '+esc(item.variant))+'</div>'+
+      '<div class="im">'+(item.sku?'SKU: '+esc(item.sku)+' · ':'')+(isOut?'OUT OF STOCK':isLow?'Low stock':'In stock')+'</div></div>'+
+      '<div class="ir"><div class="ia '+cls+'" style="font-size:20px">'+item.stock+'</div>'+
+      '<div style="font-size:10px;color:var(--t3);margin-top:2px">units</div></div></div>';
+  }).join('');
+}
+function saveInvThreshold(){
+  ST.invThreshold=parseInt(document.getElementById('inv-threshold').value)||5;
+  persist();rInventory();toast('Threshold saved: '+ST.invThreshold+' units');
+}
+
+// ══════════════════════════════════════
+//  AD CREATIVE LOG
+// ══════════════════════════════════════
+function rCreatives(){
+  setupC('cr-plat');setupC('cr-fmt');setupC('cr-status');
+  const sorted=ST.creatives.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('cr-count').textContent=sorted.length+' creative'+(sorted.length!==1?'s':'');
+  document.getElementById('creatives-list').innerHTML=sorted.length?sorted.map(c=>{
+    const roas=c.spend>0?(c.rev/c.spend):0;
+    const statusColor=c.status==='winner'?'var(--grn)':c.status==='killed'?'var(--red)':'var(--amb)';
+    const statusIcon=c.status==='winner'?'ti-trophy':c.status==='killed'?'ti-x':'ti-clock';
+    const platIcon=c.platform==='meta'?'ti-brand-facebook':c.platform==='tiktok'?'ti-brand-tiktok':'ti-brand-google';
+    const platCls=c.platform==='meta'?'meta':c.platform==='tiktok'?'tt':'b';
+    return '<div class="ic" style="flex-direction:column;align-items:stretch;gap:8px">'+
+      '<div style="display:flex;align-items:center;gap:11px">'+
+        '<div class="ii '+platCls+'"><i class="ti '+platIcon+'"></i></div>'+
+        '<div class="ib"><div class="it">'+esc(c.name)+'</div>'+
+        '<div class="im">'+c.format+' · '+c.platform+' · '+c.date+'</div>'+
+        (c.notes?'<div class="im" style="color:var(--t3);margin-top:2px">'+esc(c.notes)+'</div>':'')+
+        '</div>'+
+        '<div style="text-align:right;flex-shrink:0">'+
+          '<div style="font-size:12px;font-weight:700;color:'+statusColor+'"><i class="ti '+statusIcon+'"></i> '+c.status+'</div>'+
+          (c.spend>0?'<div style="font-size:11px;color:var(--t3);margin-top:2px">ROAS '+roas.toFixed(2)+'x</div>':'')+
+        '</div>'+
+      '</div>'+
+      (c.spend>0?'<div style="display:flex;gap:8px;font-size:12px">'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:5px 10px;flex:1;text-align:center">Spend<br><b>'+fmt(toCHF(c.spend,'CHF'))+'</b></div>'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:5px 10px;flex:1;text-align:center">Revenue<br><b>'+fmt(toCHF(c.rev,'CHF'))+'</b></div>'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:5px 10px;flex:1;text-align:center">ROAS<br><b style="color:'+(roas>=2?'var(--grn)':roas>=1?'var(--amb)':'var(--red)')+'">'+roas.toFixed(2)+'x</b></div>'+
+      '</div>':'')+
+      '<button class="db" style="align-self:flex-end" onclick="delCreative(\"'+c.id+'\")">'+'<i class="ti ti-trash"></i></button>'+
+    '</div>';
+  }).join(''):'<div class="empty"><i class="ti ti-photo"></i><p>No creatives logged yet. Track which ads are winning.</p></div>';
+}
+function addCreative(){
+  const name=document.getElementById('cr-name').value.trim();
+  if(!name){toast('Enter creative name');return;}
+  ST.creatives.unshift({id:uid(),date:today(),name,platform:chipV('cr-plat')||'meta',format:chipV('cr-fmt')||'video',spend:parseFloat(document.getElementById('cr-spend').value)||0,rev:parseFloat(document.getElementById('cr-rev').value)||0,notes:document.getElementById('cr-notes').value.trim(),status:chipV('cr-status')||'testing'});
+  ['cr-name','cr-spend','cr-rev','cr-notes'].forEach(id=>document.getElementById(id).value='');
+  persist();rCreatives();toast('Creative logged');
+}
+function delCreative(id){ST.creatives=ST.creatives.filter(c=>c.id!==id);persist();rCreatives();}
+
+// ══════════════════════════════════════
+//  NOTES & JOURNAL
+// ══════════════════════════════════════
+function rNotes(){
+  setupC('note-tag');
+  document.getElementById('note-date').value=document.getElementById('note-date').value||today();
+  const sorted=ST.notes.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('notes-count').textContent=sorted.length+' note'+(sorted.length!==1?'s':'');
+  const tagColors={supplier:'var(--amb)',ads:'var(--meta)',product:'var(--acc)',idea:'var(--pur)',general:'var(--t3)'};
+  document.getElementById('notes-list').innerHTML=sorted.length?sorted.map(n=>{
+    const tc=tagColors[n.tag]||'var(--t3)';
+    return '<div style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:13px 14px">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
+        '<div style="font-size:14px;font-weight:600;flex:1">'+esc(n.title)+'</div>'+
+        '<div style="font-size:10px;font-weight:700;color:'+tc+';background:var(--s2);padding:2px 8px;border-radius:999px">'+n.tag+'</div>'+
+        '<button class="db" onclick="delNote(\"'+n.id+'\")">'+'<i class="ti ti-trash"></i></button>'+
+      '</div>'+
+      '<div style="font-size:12px;color:var(--t2);line-height:1.6;white-space:pre-wrap">'+esc(n.body)+'</div>'+
+      '<div style="font-size:10px;color:var(--t3);margin-top:6px">'+n.date+'</div>'+
+    '</div>';
+  }).join(''):'<div class="empty"><i class="ti ti-notes"></i><p>No notes yet. Keep track of ideas, supplier info, what is working.</p></div>';
+}
+function addNote(){
+  const title=document.getElementById('note-title').value.trim();
+  const body=document.getElementById('note-body').value.trim();
+  if(!title&&!body){toast('Enter a title or note');return;}
+  ST.notes.unshift({id:uid(),date:document.getElementById('note-date').value||today(),title:title||'Note',body,tag:chipV('note-tag')||'general'});
+  document.getElementById('note-title').value='';
+  document.getElementById('note-body').value='';
+  persist();rNotes();toast('Note saved');
+}
+function delNote(id){ST.notes=ST.notes.filter(n=>n.id!==id);persist();rNotes();}
 
 </script>
 </body>
