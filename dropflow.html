@@ -198,8 +198,17 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <!-- DASHBOARD -->
 <div class="scr on" id="s0">
-  <div class="topbar">
-    <div><div class="ptitle">DropFlow</div><div class="psub" id="d-sub">—</div></div>
+  <div class="topbar" style="gap:8px">
+    <button onclick="openStoreModal()" style="background:none;border:none;cursor:pointer;padding:0;text-align:left;flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="store-dot" style="width:10px;height:10px;border-radius:50%;background:var(--acc);flex-shrink:0"></div>
+        <div>
+          <div class="ptitle" id="store-title" style="font-size:18px">DropFlow</div>
+          <div class="psub" id="d-sub">Tap to switch store</div>
+        </div>
+        <i class="ti ti-chevron-down" style="color:var(--t3);font-size:16px;flex-shrink:0"></i>
+      </div>
+    </button>
     <div class="ccy-row">
       <button class="cc on" onclick="setCcy('CHF',this)">CHF</button>
       <button class="cc" onclick="setCcy('EUR',this)">EUR</button>
@@ -388,6 +397,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="mr" onclick="showSub('notes')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-notes"></i></div><span class="ml">Notes &amp; journal</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('vat')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-file-invoice"></i></div><span class="ml">Swiss VAT estimate</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('beven')"><div class="mi" style="background:var(--grn-dim);color:var(--grn)"><i class="ti ti-calculator"></i></div><span class="ml">Breakeven calculator</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
+    <div class="mr" onclick="showSub('global')"><div class="mi" style="background:var(--acc-dim);color:var(--acc)"><i class="ti ti-world"></i></div><span class="ml">Global journey view</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
     <div class="mr" onclick="showSub('settings')"><div class="mi" style="background:var(--s3);color:var(--t2)"><i class="ti ti-settings"></i></div><span class="ml">Settings & fees</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
   </div>
   <div class="mg">
@@ -786,6 +796,77 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div style="height:24px"></div>
 </div>
 
+<!-- STORE SWITCHER MODAL -->
+<div id="store-modal" style="display:none;position:absolute;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+  <div style="position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:var(--r20) var(--r20) 0 0;padding:0 0 calc(20px + var(--safe));max-height:85vh;overflow-y:auto">
+    <div style="padding:14px 18px 0;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:17px;font-weight:700">Stores</div>
+      <button onclick="closeStoreModal()" style="background:var(--s3);border:none;color:var(--t2);border-radius:999px;width:28px;height:28px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">&times;</button>
+    </div>
+    <div id="store-list-modal" style="padding:12px 18px 8px;display:flex;flex-direction:column;gap:8px"></div>
+    <div style="padding:0 18px">
+      <button onclick="showAddStore()" class="abtn" style="background:var(--s2);color:var(--acc);border:1px solid var(--acc-glow)">
+        <i class="ti ti-plus" style="vertical-align:-2px;margin-right:6px"></i>Add store
+      </button>
+    </div>
+    <div style="padding:10px 18px 0">
+      <button onclick="showSub('global');closeStoreModal()" class="abtn sec">
+        <i class="ti ti-world" style="vertical-align:-2px;margin-right:6px"></i>Global view (all stores)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STORE MODAL -->
+<div id="add-store-modal" style="display:none;position:absolute;inset:0;z-index:201;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+  <div style="position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:var(--r20) var(--r20) 0 0;padding:0 0 calc(20px + var(--safe))">
+    <div style="padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--b1)">
+      <div style="font-size:17px;font-weight:700">Add store</div>
+      <button onclick="closeAddStore()" style="background:var(--s3);border:none;color:var(--t2);border-radius:999px;width:28px;height:28px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">&times;</button>
+    </div>
+    <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px">
+      <div><div class="fl">Store name</div><input type="text" id="ns-name" placeholder="e.g. Carlynx, My Store 2"></div>
+      <div><div class="fl">Shopify domain (myshopify.com)</div><input type="text" id="ns-domain" placeholder="yourstore.myshopify.com"></div>
+      <div class="fl" style="margin-bottom:4px">Store color</div>
+      <div style="display:flex;gap:8px" id="ns-colors">
+        <div class="store-color-btn on" data-c="#4c7bff" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#4c7bff;cursor:pointer;border:3px solid white"></div>
+        <div class="store-color-btn" data-c="#1ec978" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#1ec978;cursor:pointer;border:3px solid transparent"></div>
+        <div class="store-color-btn" data-c="#f0a020" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#f0a020;cursor:pointer;border:3px solid transparent"></div>
+        <div class="store-color-btn" data-c="#f0524a" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#f0524a;cursor:pointer;border:3px solid transparent"></div>
+        <div class="store-color-btn" data-c="#a855f7" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#a855f7;cursor:pointer;border:3px solid transparent"></div>
+        <div class="store-color-btn" data-c="#fe2c55" onclick="pickColor(this)" style="width:28px;height:28px;border-radius:50%;background:#fe2c55;cursor:pointer;border:3px solid transparent"></div>
+      </div>
+      <button class="abtn" onclick="addStore()">Add store</button>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL VIEW SUBSCREEN -->
+<div class="ss" id="ss-global">
+  <div class="bbar"><button class="bbtn" onclick="hideSub('global')"><i class="ti ti-chevron-left"></i>Back</button><span class="sstitle">Global journey</span></div>
+
+  <!-- Journey stats -->
+  <div class="sg" style="padding:12px 18px 8px">
+    <div class="sc"><div class="sl">Total invested</div><div class="sv r" id="g-invested">—</div><div class="sv-sub" id="g-invested-sub"></div></div>
+    <div class="sc"><div class="sl">Total revenue</div><div class="sv g" id="g-revenue">—</div></div>
+    <div class="sc"><div class="sl">Net profit</div><div class="sv" id="g-profit">—</div></div>
+    <div class="sc"><div class="sl">Stores active</div><div class="sv b" id="g-stores">—</div></div>
+  </div>
+
+  <!-- Profitability milestone -->
+  <div id="g-milestone" style="margin:0 18px 10px;padding:14px;border-radius:var(--r16);border:2px solid var(--b1);background:var(--s1)"></div>
+
+  <!-- Cumulative P&L journey chart -->
+  <div class="sec"><span class="stitle">Cumulative journey · all time</span></div>
+  <div class="cbox" style="height:140px;margin-bottom:10px">
+    <svg id="journey-svg" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible"></svg>
+  </div>
+
+  <!-- Per store breakdown -->
+  <div class="sec"><span class="stitle">Per store</span></div>
+  <div id="g-store-breakdown" style="display:flex;flex-direction:column;gap:8px;padding:0 18px 24px"></div>
+</div>
+
 <nav id="nav">
   <button class="nb on" id="nt0" onclick="goTab(0)"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></button>
   <button class="nb" id="nt1" onclick="goTab(1)"><i class="ti ti-shopping-cart"></i><span>Orders</span></button>
@@ -824,7 +905,7 @@ const ST={
 function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold,orderFlags:ST.orderFlags||{},orderNotes:ST.orderNotes||{},adDailyBudget:ST.adDailyBudget||0}));}
 function hydrate(){
   try{
-    const r=JSON.parse(localStorage.getItem('df8')||'{}');
+    const r=JSON.parse(localStorage.getItem('df9')||localStorage.getItem('df8')||'{}');
     ['ads','expenses','subs','orders','products','customers'].forEach(k=>{if(r[k])ST[k]=r[k];});
     if(r.cogs)ST.cogs=r.cogs;
     if(r.settings)Object.assign(ST.settings,r.settings);
@@ -921,6 +1002,7 @@ function renderSub(n){
   else if(n==='inventory')rInventory();
   else if(n==='creatives')rCreatives();
   else if(n==='notes')rNotes();
+  else if(n==='global')rGlobal();
   else if(n==='beven')rBeven();
 }
 
@@ -2558,7 +2640,427 @@ function importTikTokCSV(event){
         const clicks=ci.clicks>=0?parseInt((row[ci.clicks]||'').replace(/[^0-9]/g,''))||0:0;
         const conversions=ci.conv>=0?parseInt((row[ci.conv]||'').replace(/[^0-9]/g,''))||0:0;
         let revenue=0;if(ci.roas>=0){const rv=parseFloat((row[ci.roas]||'').replace(/[^0-9.-]/g,''));if(rv>0)revenue=rv<50?rv*spend:rv;}
-        ST.ads.push({id:uid(),date,platform:'tiktok',campaign,spend,revenue,impressions,clicks,conversions,currency:cur});imported++;
+        ST.ads.push({id:uid(),date,platform:'tiktok',campaign,spend,revenue,impressions,clicks,conversions,currency:cur});imp
+// ════════════════════════════════════════
+//  MULTI-STORE ARCHITECTURE
+// ════════════════════════════════════════
+
+// Store registry — array of {id, name, domain, color, createdAt}
+let STORES = [];
+let ACTIVE_STORE_ID = null;
+
+// Default store data template
+function emptyStoreData(){
+  return {
+    orders:[],products:[],customers:[],ads:[],expenses:[],subs:[],cogs:{},
+    settings:{plan:'basic',payPct:2.95,fixedFee:0.30,thirdPct:0,vatRate:8.1,vatReg:false},
+    goals:{rev:0,profit:0,orders:0},
+    orderFlags:{},orderNotes:{},adDailyBudget:0,invThreshold:5,
+  };
+}
+
+// ── Storage keys ──
+function storeKey(id){ return 'df_data_'+id; }
+const STORES_KEY = 'df_stores';
+const ACTIVE_KEY = 'df_active';
+
+// ── Save/load stores registry ──
+function saveStores(){
+  localStorage.setItem(STORES_KEY, JSON.stringify(STORES));
+}
+function loadStores(){
+  try{ STORES = JSON.parse(localStorage.getItem(STORES_KEY)||'[]'); }
+  catch(e){ STORES=[]; }
+}
+
+// ── Save/load active store data ──
+function persistStore(){
+  if(!ACTIVE_STORE_ID) return;
+  const data = {
+    ads:ST.ads, expenses:ST.expenses, subs:ST.subs,
+    orders:ST.orders, products:ST.products, customers:ST.customers,
+    cogs:ST.cogs, settings:ST.settings, goals:ST.goals,
+    orderFlags:ST.orderFlags||{}, orderNotes:ST.orderNotes||{},
+    adDailyBudget:ST.adDailyBudget||0, invThreshold:ST.invThreshold||5,
+  };
+  localStorage.setItem(storeKey(ACTIVE_STORE_ID), JSON.stringify(data));
+  // Also save shared data (notes, creatives, supplier costs)
+  localStorage.setItem('df_global', JSON.stringify({
+    notes:ST.notes, creatives:ST.creatives, supplierCosts:ST.supplierCosts,
+  }));
+}
+
+function loadStoreData(id){
+  try{
+    const raw = localStorage.getItem(storeKey(id));
+    if(raw){
+      const d = JSON.parse(raw);
+      Object.assign(ST, emptyStoreData(), d);
+    }else{
+      Object.assign(ST, emptyStoreData());
+    }
+    // Load global shared data
+    const g = JSON.parse(localStorage.getItem('df_global')||'{}');
+    ST.notes = g.notes||[];
+    ST.creatives = g.creatives||[];
+    ST.supplierCosts = g.supplierCosts||[];
+  }catch(e){ Object.assign(ST, emptyStoreData()); }
+}
+
+// Override persist to use multi-store storage
+function persist(){
+  persistStore();
+}
+
+// ── MIGRATION: import old single-store data ──
+function migrateOldData(){
+  // If no stores exist yet but old data does, create a "Carlynx" store from it
+  if(STORES.length > 0) return;
+  const oldData = localStorage.getItem('df9') || localStorage.getItem('df8');
+  if(oldData){
+    try{
+      const d = JSON.parse(oldData);
+      const id = 'store_'+Date.now();
+      STORES = [{id, name:'Carlynx', domain:'carlynx-2.myshopify.com', color:'#4c7bff', createdAt:new Date().toISOString().slice(0,10)}];
+      localStorage.setItem(storeKey(id), oldData);
+      ACTIVE_STORE_ID = id;
+      saveStores();
+      localStorage.setItem(ACTIVE_KEY, id);
+      console.log('Migrated old data to store:', id);
+      return true;
+    }catch(e){}
+  }
+  return false;
+}
+
+// ── Switch active store ──
+function switchStore(id){
+  if(id === ACTIVE_STORE_ID) return;
+  persistStore(); // save current store first
+  ACTIVE_STORE_ID = id;
+  localStorage.setItem(ACTIVE_KEY, id);
+  loadStoreData(id);
+  updateStoreDot();
+  closeStoreModal();
+  rAll();
+  syncShopify(true);
+  toast('Switched to '+getActiveStore()?.name);
+}
+
+function getActiveStore(){
+  return STORES.find(s=>s.id===ACTIVE_STORE_ID)||STORES[0]||null;
+}
+
+function updateStoreDot(){
+  const store = getActiveStore();
+  const dot = document.getElementById('store-dot');
+  const title = document.getElementById('store-title');
+  if(dot&&store) dot.style.background = store.color||'var(--acc)';
+  if(title&&store) title.textContent = store.name||'DropFlow';
+}
+
+// ── Store modal ──
+function openStoreModal(){
+  renderStoreModal();
+  document.getElementById('store-modal').style.display='block';
+}
+function closeStoreModal(){
+  document.getElementById('store-modal').style.display='none';
+}
+function showAddStore(){
+  closeStoreModal();
+  document.getElementById('add-store-modal').style.display='block';
+}
+function closeAddStore(){
+  document.getElementById('add-store-modal').style.display='none';
+  document.getElementById('store-modal').style.display='block';
+}
+
+function renderStoreModal(){
+  const el = document.getElementById('store-list-modal');
+  el.innerHTML = STORES.map(s=>{
+    const isActive = s.id===ACTIVE_STORE_ID;
+    let revenue = 0, orderCount = 0;
+    try{
+      const d = JSON.parse(localStorage.getItem(storeKey(s.id))||'{}');
+      const paid = (d.orders||[]).filter(o=>o.status==='paid'||o.status==='partially_refunded');
+      revenue = paid.reduce((sum,o)=>sum+toCHF(o.amount,o.currency),0);
+      orderCount = paid.length;
+    }catch(e){}
+    const sid = s.id;
+    return '<div data-sid="'+sid+'" onclick="switchStore(this.dataset.sid)" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r12);background:'+(isActive?'var(--acc-dim)':'var(--s2)')+';border:2px solid '+(isActive?'var(--acc)':'transparent')+';cursor:pointer">'+
+      '<div style="width:36px;height:36px;border-radius:var(--r8);background:'+s.color+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">'+s.name.slice(0,2).toUpperCase()+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:14px;font-weight:700">'+esc(s.name)+'</div>'+
+        '<div style="font-size:11px;color:var(--t3)">'+orderCount+' orders - '+fmt(revenue)+'</div>'+
+      '</div>'+
+      (isActive?'<i class="ti ti-check" style="color:var(--acc);font-size:18px"></i>':'')+
+      (STORES.length>1?'<button data-del="'+sid+'" onclick="event.stopPropagation();deleteStore(this.dataset.del)" style="background:none;border:none;color:var(--red);opacity:.5;cursor:pointer;padding:4px;font-size:14px"><i class="ti ti-trash"></i></button>':'')+
+    '</div>';
+  }).join('');
+}
+
+function pickColor(btn){
+  document.querySelectorAll('.store-color-btn').forEach(b=>b.style.border='3px solid transparent');
+  btn.style.border='3px solid white';
+}
+
+function addStore(){
+  const name = document.getElementById('ns-name').value.trim();
+  const domain = document.getElementById('ns-domain').value.trim();
+  if(!name){toast('Enter a store name');return;}
+  const colorBtn = document.querySelector('.store-color-btn[style*="white"]');
+  const color = colorBtn?colorBtn.dataset.c:'#4c7bff';
+  const id = 'store_'+Date.now();
+  STORES.push({id, name, domain:domain||'', color, createdAt:today()});
+  saveStores();
+  document.getElementById('ns-name').value='';
+  document.getElementById('ns-domain').value='';
+  // Auto-switch to new store
+  persistStore();
+  ACTIVE_STORE_ID = id;
+  localStorage.setItem(ACTIVE_KEY, id);
+  Object.assign(ST, emptyStoreData());
+  updateStoreDot();
+  closeAddStore();
+  closeStoreModal();
+  rAll();
+  toast(name+' added! Update domain in Settings.');
+}
+
+function deleteStore(id){
+  if(STORES.length<=1){toast('Cannot delete the only store');return;}
+  if(!confirm('Delete this store and all its data?')) return;
+  STORES = STORES.filter(s=>s.id!==id);
+  localStorage.removeItem(storeKey(id));
+  saveStores();
+  if(ACTIVE_STORE_ID===id){
+    ACTIVE_STORE_ID = STORES[0].id;
+    localStorage.setItem(ACTIVE_KEY, ACTIVE_STORE_ID);
+    loadStoreData(ACTIVE_STORE_ID);
+  }
+  updateStoreDot();
+  renderStoreModal();
+  rAll();
+  toast('Store deleted');
+}
+
+// ── GLOBAL VIEW — cross-store analytics ──
+function rGlobal(){
+  // Aggregate data across ALL stores
+  let totalRevenue=0, totalCOGSAll=0, totalAds=0, totalExpenses=0, totalOrders=0;
+  let allEvents = []; // {date, amount, type, store} for journey chart
+
+  STORES.forEach(s=>{
+    try{
+      const d = JSON.parse(localStorage.getItem(storeKey(s.id))||'{}');
+      const orders = d.orders||[];
+      const ads = d.ads||[];
+      const expenses = d.expenses||[];
+      const subs = d.subs||[];
+      const cogs = d.cogs||{};
+      const settings = d.settings||{payPct:2.95,fixedFee:0.30,thirdPct:0};
+
+      // Revenue
+      const paid = orders.filter(o=>o.status==='paid'||o.status==='partially_refunded');
+      const storeRev = paid.reduce((sum,o)=>sum+toCHF(o.amount,o.currency),0);
+      totalRevenue += storeRev;
+      totalOrders += paid.length;
+
+      // COGS (simplified — use fee % only if no COGS set)
+      const pfee = (settings.payPct||0)/100;
+      const ffee = settings.fixedFee||0;
+      const storeCOGS = paid.reduce((sum,o)=>{
+        // Simple fee-only calculation for global view
+        return sum + toCHF(o.amount*pfee+ffee, o.currency);
+      },0);
+      totalCOGSAll += storeCOGS;
+
+      // Ad spend
+      const storeAds = ads.reduce((sum,a)=>sum+toCHF(a.spend,a.currency),0);
+      totalAds += storeAds;
+
+      // Expenses + subs
+      const storeExp = expenses.reduce((sum,e)=>sum+toCHF(e.amount,e.currency),0);
+      const storeSubs = subs.reduce((sum,x)=>{const a=toCHF(x.amount,x.currency);return sum+(x.cycle==='yearly'?a/12:a);},0);
+      totalExpenses += storeExp + storeSubs*6; // 6mo estimate
+
+      // Events for journey chart
+      paid.forEach(o=>allEvents.push({date:o.date, amount:toCHF(o.amount,o.currency)-toCHF(o.amount*pfee+ffee,o.currency), type:'revenue', store:s.name, color:s.color}));
+      ads.forEach(a=>allEvents.push({date:a.date, amount:-toCHF(a.spend,a.currency), type:'ads', store:s.name, color:s.color}));
+      expenses.forEach(e=>allEvents.push({date:e.date, amount:-toCHF(e.amount,e.currency), type:'expense', store:s.name, color:s.color}));
+
+    }catch(e){ console.log('Store load error:', e); }
+  });
+
+  const totalInvested = totalAds + totalExpenses + totalCOGSAll;
+  const netProfit = totalRevenue - totalInvested;
+  const isProfitable = netProfit > 0;
+
+  // Update stat cards
+  document.getElementById('g-invested').textContent = fmt(totalInvested);
+  document.getElementById('g-invested').className = 'sv r';
+  document.getElementById('g-invested-sub').textContent = 'across all stores';
+  document.getElementById('g-revenue').textContent = fmt(totalRevenue);
+  document.getElementById('g-profit').textContent = fmt(netProfit);
+  document.getElementById('g-profit').className = 'sv '+(isProfitable?'g':'r');
+  document.getElementById('g-stores').textContent = String(STORES.length);
+
+  // Profitability milestone
+  const milestoneEl = document.getElementById('g-milestone');
+  if(isProfitable){
+    const margin = totalRevenue>0?(netProfit/totalRevenue)*100:0;
+    milestoneEl.style.borderColor = 'var(--grn)';
+    milestoneEl.style.background = 'var(--grn-dim)';
+    milestoneEl.innerHTML = '<div style="font-size:22px;margin-bottom:4px">🎯</div>'+
+      '<div style="font-size:16px;font-weight:700;color:var(--grn)">You are profitable!</div>'+
+      '<div style="font-size:13px;color:var(--t2);margin-top:4px">Net profit: '+fmt(netProfit)+' ('+margin.toFixed(1)+'% margin) across all stores</div>';
+  }else{
+    const needed = -netProfit;
+    milestoneEl.style.borderColor = 'var(--amb)';
+    milestoneEl.style.background = 'var(--amb-dim)';
+    milestoneEl.innerHTML = '<div style="font-size:22px;margin-bottom:4px">📈</div>'+
+      '<div style="font-size:16px;font-weight:700;color:var(--amb)">'+fmt(needed)+' to profitability</div>'+
+      '<div style="font-size:13px;color:var(--t2);margin-top:4px">You have invested '+fmt(totalInvested)+' total. Keep going.</div>';
+  }
+
+  // Journey chart — cumulative P&L over time
+  allEvents.sort((a,b)=>a.date.localeCompare(b.date));
+  if(allEvents.length > 0){
+    const svg = document.getElementById('journey-svg');
+    const W=340, H=130;
+    let cumulative = 0;
+    const points = [];
+    // Group by week for smoother chart
+    const byWeek = {};
+    allEvents.forEach(e=>{
+      const d = new Date(e.date);
+      const week = new Date(d.getFullYear(), d.getMonth(), d.getDate()-d.getDay()).toISOString().slice(0,10);
+      byWeek[week] = (byWeek[week]||0) + e.amount;
+    });
+    const weeks = Object.keys(byWeek).sort();
+    const cumulativePoints = [];
+    let running = 0;
+    weeks.forEach(w=>{running+=byWeek[w]; cumulativePoints.push({date:w,val:running});});
+
+    // Add current point
+    if(!cumulativePoints.length) return;
+    const minV = Math.min(...cumulativePoints.map(p=>p.val),0);
+    const maxV = Math.max(...cumulativePoints.map(p=>p.val),1);
+    const range = maxV - minV || 1;
+    const zeroY = H-10 - ((0-minV)/range)*(H-24);
+    const n = cumulativePoints.length;
+    const pts = cumulativePoints.map((p,i)=>((8+i*(W-16)/(Math.max(n-1,1)))+','+(H-10-((p.val-minV)/range)*(H-24))));
+
+    // Color: red below zero, green above
+    const profitPoints = cumulativePoints.filter(p=>p.val>=0);
+    const lossPoints = cumulativePoints.filter(p=>p.val<0);
+
+    svg.innerHTML =
+      '<defs>'+
+        '<linearGradient id="gJ" x1="0" y1="0" x2="0" y2="1">'+
+          '<stop offset="0%" stop-color="#1ec978" stop-opacity=".25"/>'+
+          '<stop offset="100%" stop-color="#1ec978" stop-opacity="0"/>'+
+        '</linearGradient>'+
+        '<linearGradient id="gJr" x1="0" y1="0" x2="0" y2="1">'+
+          '<stop offset="0%" stop-color="#f0524a" stop-opacity="0"/>'+
+          '<stop offset="100%" stop-color="#f0524a" stop-opacity=".2"/>'+
+        '</linearGradient>'+
+      '</defs>'+
+      // Zero line
+      '<line x1="8" y1="'+zeroY+'" x2="'+(W-8)+'" y2="'+zeroY+'" stroke="var(--b2)" stroke-width="1" stroke-dasharray="4,3"/>'+
+      '<text x="12" y="'+(zeroY-4)+'" fill="var(--t3)" font-size="9">Break even</text>'+
+      // Area fill
+      '<polygon points="'+pts.join(' ')+' '+(8+(n-1)*(W-16)/Math.max(n-1,1))+','+(H-10)+' 8,'+(H-10)+'" fill="url(#'+(cumulativePoints[cumulativePoints.length-1]?.val>=0?'gJ':'gJr')+')"/>'+
+      // Line
+      '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+(cumulativePoints[cumulativePoints.length-1]?.val>=0?'#1ec978':'#f0524a')+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+      // Profit marker
+      (cumulativePoints.some(p=>p.val<0)&&cumulativePoints.some(p=>p.val>=0)?
+        (()=>{
+          // Find first profitable point
+          const fi = cumulativePoints.findIndex(p=>p.val>=0);
+          if(fi>0){
+            const px = 8+fi*(W-16)/Math.max(n-1,1);
+            return '<circle cx="'+px+'" cy="'+zeroY+'" r="5" fill="#1ec978" stroke="var(--bg)" stroke-width="2"/>'+
+              '<text x="'+(px+8)+'" y="'+(zeroY-4)+'" fill="#1ec978" font-size="9" font-weight="700">Turned profitable!</text>';
+          }return '';
+        })():'');
+
+    // Labels
+    const first = cumulativePoints[0];
+    const last = cumulativePoints[cumulativePoints.length-1];
+    if(first&&last){
+      svg.innerHTML += '<text x="8" y="'+(H-2)+'" fill="var(--t3)" font-size="9">'+first.date.slice(0,7)+'</text>'+
+        '<text x="'+(W-8)+'" y="'+(H-2)+'" fill="var(--t3)" font-size="9" text-anchor="end">'+last.date.slice(0,7)+'</text>';
+    }
+  }
+
+  // Per-store breakdown
+  const breakdownEl = document.getElementById('g-store-breakdown');
+  breakdownEl.innerHTML = STORES.map(s=>{
+    let sRev=0, sCOGS=0, sAds=0, sOrders=0;
+    try{
+      const d = JSON.parse(localStorage.getItem(storeKey(s.id))||'{}');
+      const paid = (d.orders||[]).filter(o=>o.status==='paid'||o.status==='partially_refunded');
+      const settings = d.settings||{payPct:2.95,fixedFee:0.30};
+      const pfee=(settings.payPct||0)/100, ffee=settings.fixedFee||0;
+      sRev = paid.reduce((sum,o)=>sum+toCHF(o.amount,o.currency),0);
+      sCOGS = paid.reduce((sum,o)=>sum+toCHF(o.amount*pfee+ffee,o.currency),0);
+      sAds = (d.ads||[]).reduce((sum,a)=>sum+toCHF(a.spend,a.currency),0);
+      sOrders = paid.length;
+    }catch(e){}
+    const sProfit = sRev - sCOGS - sAds;
+    const isActive = s.id===ACTIVE_STORE_ID;
+    return '<div style="background:var(--s1);border:2px solid '+(isActive?s.color:'var(--b1)')+';border-radius:var(--r16);padding:14px;cursor:pointer" data-sid="'+s.id+'" onclick="switchStore(this.dataset.sid)">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
+        '<div style="width:34px;height:34px;border-radius:var(--r8);background:'+s.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">'+s.name.slice(0,2).toUpperCase()+'</div>'+
+        '<div><div style="font-size:15px;font-weight:700">'+esc(s.name)+'</div>'+
+        '<div style="font-size:11px;color:var(--t3)">'+sOrders+' orders · since '+s.createdAt+'</div></div>'+
+        (isActive?'<div style="margin-left:auto;background:var(--acc-dim);color:var(--acc);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px">Active</div>':'')+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:8px 10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Revenue</div><div style="font-size:13px;font-weight:700;color:var(--grn)">'+fmt(sRev)+'</div></div>'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:8px 10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Ad spend</div><div style="font-size:13px;font-weight:700;color:var(--red)">-'+fmt(sAds)+'</div></div>'+
+        '<div style="background:var(--s2);border-radius:var(--r8);padding:8px 10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Net profit</div><div style="font-size:13px;font-weight:700;color:'+(sProfit>=0?'var(--grn)':'var(--red)')+'">'+fmt(sProfit)+'</div></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── Also add Global to More menu ──
+// ── Also update shStatus to show domain ──
+function updateShopifyDomain(){
+  const store = getActiveStore();
+  if(store&&store.domain){
+    ST.settings.shopifyDomain = store.domain;
+  }
+}
+
+// ── INIT override for multi-store ──
+function initMultiStore(){
+  loadStores();
+  
+  // Migrate old single-store data if needed
+  const migrated = migrateOldData();
+  
+  if(STORES.length === 0){
+    // No stores at all — create default
+    const id = 'store_default';
+    STORES = [{id, name:'My Store', domain:'', color:'#4c7bff', createdAt:today()}];
+    saveStores();
+    ACTIVE_STORE_ID = id;
+    localStorage.setItem(ACTIVE_KEY, id);
+  }else{
+    // Restore last active store
+    const savedActive = localStorage.getItem(ACTIVE_KEY);
+    ACTIVE_STORE_ID = (savedActive && STORES.find(s=>s.id===savedActive)) ? savedActive : STORES[0].id;
+  }
+  
+  loadStoreData(ACTIVE_STORE_ID);
+  updateStoreDot();
+}
+
+orted++;
       }
       persist();rAds();rAll();event.target.value='';
       toast('TikTok: imported '+imported+' rows'+(skipped?' ('+skipped+' skipped)':''));
