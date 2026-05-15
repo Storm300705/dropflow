@@ -660,6 +660,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <input type="text" id="set-domain" placeholder="yourstore.myshopify.com" autocapitalize="none" autocorrect="off">
       <div class="srh">Used for Shopify sync. Find it in your Shopify admin URL.</div>
     </div>
+    <div class="sr">
+      <div class="srl">Access token (optional)</div>
+      <input type="password" id="set-token" placeholder="shpca_xxxx (leave blank for Carlynx)">
+      <div class="srh">Only needed for stores other than Carlynx. Get it via the OAuth install flow.</div>
+    </div>
   </div>
   <div class="sec"><span class="stitle">Override manually</span></div>
   <div class="mg" style="margin-bottom:6px">
@@ -1078,7 +1083,7 @@ function addStore(){
   const colorBtn=document.querySelector('.store-color-btn[style*="white"]');
   const color=colorBtn?colorBtn.dataset.c:'#fe2c55';
   const id='store_'+Date.now();
-  STORES.push({id,name,domain:domain.replace(/^https?:\/\//,''),color,createdAt:today()});
+  STORES.push({id,name,domain:domain.replace(/^https?:\/\//,'').replace(/\/$/,''),color,token:'',createdAt:today()});
   saveStores();
   document.getElementById('ns-name').value='';
   document.getElementById('ns-domain').value='';
@@ -1465,8 +1470,14 @@ async function sfetch(path,params={}){
   return r.json();
 }
 async function syncShopify(silent){
+  const store=typeof getActiveStore==="function"?getActiveStore():null;
+  if(store&&!store.domain){
+    setBanner('er','No Shopify domain set for '+store.name+'. Go to Settings to add it.');
+    if(!silent)toast('Set Shopify domain in Settings first');
+    return;
+  }
   const ico=document.getElementById('sync-ico');ico.classList.add('sp');
-  setBanner('sy','Syncing…');
+  setBanner('sy','Syncing '+( store?store.name:'')+'…');
   try{
     const[od,pd,cd]=await Promise.all([sfetch('orders.json',{limit:250,status:'any'}),sfetch('products.json',{limit:250}),sfetch('customers.json',{limit:250})]);
     ST.orders=(od.orders||[]).map(o=>({
@@ -2095,6 +2106,8 @@ function rSettings(){
   const activeStore=getActiveStore();
   const domEl=document.getElementById('set-domain');
   if(domEl&&activeStore)domEl.value=activeStore.domain||'';
+  const tokEl=document.getElementById('set-token');
+  if(tokEl&&activeStore)tokEl.value=activeStore.token||'';
 }
 
 function selectPlan(id){
@@ -2115,10 +2128,15 @@ function saveSettings(){
   ST.settings.vatReg=chipV('set-vat-reg')==='1';
   // Save Shopify domain to store registry
   const domEl=document.getElementById('set-domain');
-  if(domEl){
-    const store=getActiveStore();
-    if(store){store.domain=domEl.value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');saveStores();}
+  const tokEl=document.getElementById('set-token');
+  const store=getActiveStore();
+  if(domEl&&store){
+    store.domain=domEl.value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
   }
+  if(tokEl&&store&&tokEl.value.trim()){
+    store.token=tokEl.value.trim();
+  }
+  if(store)saveStores();
   persist();toast('Settings saved');rAll();hideSub('settings');
 }
 
