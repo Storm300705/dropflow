@@ -976,12 +976,12 @@ function persist(){
 // ── MIGRATION: import old single-store data ──
 function migrateOldData(){
   if(STORES.length>0)return false;
-  // Seed two stores: Carlynx (with old data) + Abash Icons (empty)
+  // Seed two stores with hardcoded domains
   const carlynxId='store_carlynx';
   const abashId='store_abash';
   STORES=[
-    {id:carlynxId, name:'Carlynx', domain:'carlynx-2.myshopify.com', color:'#4c7bff', createdAt:'2026-01-01'},
-    {id:abashId,   name:'Abash Icons', domain:'', color:'#fe2c55', createdAt:today()},
+    {id:carlynxId, name:'Carlynx',     domain:'carlynx-2.myshopify.com',   color:'#4c7bff', createdAt:'2026-01-01'},
+    {id:abashId,   name:'Abash Icons', domain:'abashevmodel.myshopify.com', color:'#fe2c55', createdAt:'2026-01-01'},
   ];
   // Migrate old data into Carlynx store
   const oldData=localStorage.getItem('df9')||localStorage.getItem('df8');
@@ -1326,6 +1326,13 @@ function initMultiStore(){
     ACTIVE_STORE_ID = (savedActive && STORES.find(s=>s.id===savedActive)) ? savedActive : STORES[0].id;
   }
   
+  // Ensure domains are always set (fix for stores created before hardcoding)
+  STORES.forEach(s=>{
+    if(s.id==='store_carlynx'&&!s.domain) s.domain='carlynx-2.myshopify.com';
+    if(s.id==='store_abash'&&!s.domain)   s.domain='abashevmodel.myshopify.com';
+  });
+  saveStores();
+
   loadStoreData(ACTIVE_STORE_ID);
   updateStoreDot();
 }
