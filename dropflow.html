@@ -385,7 +385,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         <div style="font-size:11px;color:var(--t2)" id="shlbl">Checking…</div>
       </div>
     </div>
-    <button onclick="syncShopify()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.2);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Sync</button>
+    <button onclick="syncAllStores()" style="background:var(--grn-dim);border:1px solid rgba(30,201,120,.2);color:var(--grn);border-radius:var(--r8);padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Sync</button>
   </div>
   <div class="mg">
     <div class="mr" onclick="showSub('exp')"><div class="mi" style="background:var(--red-dim);color:var(--red)"><i class="ti ti-receipt"></i></div><span class="ml">Expenses</span><span class="mb" id="bexp">0</span><i class="ti ti-chevron-right" style="color:var(--t3);font-size:14px"></i></div>
@@ -898,7 +898,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </nav>
 </div>
 <div id="toast"></div>
-<script>
+<scrip
 // ── STATE ──
 
 
@@ -1307,6 +1307,31 @@ function updateShopifyDomain(){
 }
 
 // ── INIT override for multi-store ──
+// Sync ALL stores in sequence (independent of which is active)
+async function syncAllStores(silent){
+  const originalId=ACTIVE_STORE_ID;
+  for(const s of STORES){
+    if(!s.domain)continue;
+    // Switch context (in-memory only — no full reload to avoid re-render thrash)
+    persistStore(); // save current store state first
+    ACTIVE_STORE_ID=s.id;
+    loadStoreData(s.id);
+    try{
+      await syncShopify(true); // silent sync
+    }catch(e){
+      console.log('Sync failed for '+s.name+':',e.message);
+    }
+    persistStore();
+  }
+  // Restore original active store
+  ACTIVE_STORE_ID=originalId;
+  loadStoreData(originalId);
+  localStorage.setItem(ACTIVE_KEY,originalId);
+  updateStoreDot();
+  rAll();
+  if(!silent)toast('All stores synced');
+}
+
 function initMultiStore(){
   loadStores();
   
@@ -2322,7 +2347,7 @@ document.getElementById('snx').value=today();
 setupC('ap');setupC('ad-ccy');
 rAll();
 loadFX().then(()=>rAll());
-setTimeout(()=>syncShopify(true),900);
+setTimeout(()=>syncAllStores(true),900);
 
 // ── Price Sensitivity ──
 function rPriceS(){setupC('ps-ccy',calcPS);calcPS();}
@@ -3912,6 +3937,8 @@ orted++;
     }catch(err){toast('Import error: '+err.message,3500);event.target.value='';}
   };reader.readAsText(file);
 }
+
+
 
 </script>
 </body>
