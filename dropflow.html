@@ -1484,7 +1484,9 @@ async function syncShopify(silent){
     return;
   }
   const ico=document.getElementById('sync-ico');ico.classList.add('sp');
-  setBanner('sy','Syncing '+( store?store.name:'')+'…');
+  const storeLabel=store?(store.name+' ('+store.domain+')'):'unknown';
+  setBanner('sy','Syncing '+storeLabel+'…');
+  if(!silent)toast('Syncing '+storeLabel,3000);
   try{
     const[od,pd,cd]=await Promise.all([sfetch('orders.json',{limit:250,status:'any'}),sfetch('products.json',{limit:250}),sfetch('customers.json',{limit:250})]);
     ST.orders=(od.orders||[]).map(o=>({
