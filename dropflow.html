@@ -1306,26 +1306,28 @@ function updateShopifyDomain(){
 // Sync ALL stores in sequence (independent of which is active)
 async function syncAllStores(silent){
   const originalId=ACTIVE_STORE_ID;
+  const results=[];
   for(const s of STORES){
-    if(!s.domain)continue;
-    // Switch context (in-memory only — no full reload to avoid re-render thrash)
-    persistStore(); // save current store state first
+    if(!s.domain){results.push(s.name+': no domain');continue;}
+    persistStore();
     ACTIVE_STORE_ID=s.id;
     loadStoreData(s.id);
     try{
-      await syncShopify(true); // silent sync
+      await syncShopify(true);
+      results.push(s.name+': '+ST.orders.length+' orders, '+ST.products.length+' products');
     }catch(e){
+      results.push(s.name+': FAIL - '+e.message);
       console.log('Sync failed for '+s.name+':',e.message);
     }
     persistStore();
   }
-  // Restore original active store
   ACTIVE_STORE_ID=originalId;
   loadStoreData(originalId);
   localStorage.setItem(ACTIVE_KEY,originalId);
   updateStoreDot();
   rAll();
-  if(!silent)toast('All stores synced');
+  // Show what happened for each store
+  toast(results.join(' | '), 6000);
 }
 
 function initMultiStore(){
@@ -1334,20 +1336,33 @@ function initMultiStore(){
   // Migrate old single-store data if needed
   const migrated = migrateOldData();
   
-  // Ensure Carlynx + Abash Icons exist (idempotent)
-  const hasCarlynx=STORES.find(s=>s.id==='store_carlynx');
-  const hasAbash=STORES.find(s=>s.id==='store_abash');
-  if(!hasCarlynx){
+  // FORCE correct config for both stores every load (overrides any bad saved data)
+  const carlynx=STORES.find(s=>s.id==='store_carlynx');
+  const abash=STORES.find(s=>s.id==='store_abash');
+  if(!carlynx){
     STORES.unshift({id:'store_carlynx',name:'Carlynx',domain:'carlynx-2.myshopify.com',color:'#4c7bff',createdAt:'2026-01-01'});
-    // Migrate any old df9 data into Carlynx
     const old=localStorage.getItem('df9');
     if(old&&!localStorage.getItem(storeKey('store_carlynx'))){
       try{localStorage.setItem(storeKey('store_carlynx'),old);}catch(e){}
     }
+  }else{
+    // Force correct domain regardless of what was saved
+    carlynx.name='Carlynx';
+    carlynx.domain='carlynx-2.myshopify.com';
+    carlynx.color='#4c7bff';
   }
-  if(!hasAbash){
+  if(!abash){
     STORES.push({id:'store_abash',name:'Abash Icons',domain:'abashevmodel.myshopify.com',color:'#fe2c55',createdAt:'2026-01-01'});
+  }else{
+    // Force correct domain — fixes the abashicons.com bug
+    abash.name='Abash Icons';
+    abash.domain='abashevmodel.myshopify.com';
+    abash.color='#fe2c55';
   }
+  // Remove any rogue stores that aren't Carlynx or Abash Icons
+  STORES=STORES.filter(s=>s.id==='store_carlynx'||s.id==='store_abash');
+  // Ensure correct order: Carlynx first, Abash second
+  STORES.sort((a,b)=>a.id==='store_carlynx'?-1:1);
   saveStores();
   // Restore last active store
   const savedActive=localStorage.getItem(ACTIVE_KEY);
