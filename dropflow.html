@@ -1009,6 +1009,13 @@ function getActiveStore(){
 }
 
 function updateStoreDot(){
+  if(COMBINED_MODE){
+    const dot=document.getElementById('store-dot');
+    const title=document.getElementById('store-title');
+    if(dot)dot.style.background='linear-gradient(45deg,#4c7bff,#fe2c55)';
+    if(title)title.textContent='All stores';
+    return;
+  }
   const store=getActiveStore();
   const dot=document.getElementById('store-dot');
   const title=document.getElementById('store-title');
@@ -1322,11 +1329,14 @@ async function syncAllStores(silent){
     persistStore();
   }
   ACTIVE_STORE_ID=originalId;
-  loadStoreData(originalId);
-  localStorage.setItem(ACTIVE_KEY,originalId);
+  if(COMBINED_MODE){
+    loadCombinedData();
+  }else{
+    loadStoreData(originalId);
+    localStorage.setItem(ACTIVE_KEY,originalId);
+  }
   updateStoreDot();
   rAll();
-  // Show what happened for each store
   toast(results.join(' | '), 6000);
 }
 
@@ -1808,7 +1818,16 @@ function rMore(){
   // Render store switcher
   const el=document.getElementById('store-switcher-list');
   if(!el)return;
-  el.innerHTML=STORES.map(s=>{
+  // Add "All stores" button at top
+  let html='<div onclick="switchToAllStores()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r12);background:'+(COMBINED_MODE?'var(--acc-dim)':'var(--s2)')+';border:2px solid '+(COMBINED_MODE?'var(--acc)':'var(--b2)')+';cursor:pointer;margin-bottom:6px">'+
+    '<div style="width:34px;height:34px;border-radius:var(--r8);background:linear-gradient(45deg,#4c7bff,#fe2c55);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0">⊕</div>'+
+    '<div style="flex:1;min-width:0">'+
+      '<div style="font-size:14px;font-weight:700">All stores combined</div>'+
+      '<div style="font-size:11px;color:var(--t3)">Unified view across '+STORES.length+' stores</div>'+
+    '</div>'+
+    (COMBINED_MODE?'<span style="font-size:11px;font-weight:700;color:var(--acc);background:var(--acc-dim);padding:3px 9px;border-radius:999px">Active</span>':'<button style="background:var(--acc);color:#fff;border:none;border-radius:var(--r8);padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" onclick="event.stopPropagation();switchToAllStores()">View all</button>')+
+  '</div>';
+  el.innerHTML=html+STORES.map(s=>{
     const isActive=s.id===ACTIVE_STORE_ID;
     let rev=0,ords=0;
     try{
@@ -1831,7 +1850,75 @@ function rMore(){
   }).join('');
 }
 
+
+// ── ALL STORES COMBINED MODE ──
+let COMBINED_MODE=false;
+
+function loadCombinedData(){
+  // Aggregate data from ALL stores into ST
+  Object.assign(ST,emptyStoreData());
+  STORES.forEach(s=>{
+    try{
+      const d=JSON.parse(localStorage.getItem(storeKey(s.id))||'{}');
+      // Prefix order/product IDs with store ID to avoid collisions
+      (d.orders||[]).forEach(o=>ST.orders.push({...o,id:s.id+'_'+o.id,_storeName:s.name,_storeColor:s.color}));
+      (d.products||[]).forEach(p=>ST.products.push({...p,id:s.id+'_'+p.id,_storeName:s.name,_storeColor:s.color}));
+      (d.customers||[]).forEach(c=>ST.customers.push({...c,id:s.id+'_'+c.id,_storeName:s.name}));
+      (d.ads||[]).forEach(a=>ST.ads.push({...a,id:s.id+'_'+a.id,_storeName:s.name}));
+      (d.expenses||[]).forEach(e=>ST.expenses.push({...e,id:s.id+'_'+e.id,_storeName:s.name}));
+      (d.subs||[]).forEach(x=>ST.subs.push({...x,id:s.id+'_'+x.id,_storeName:s.name}));
+      // Merge COGS (keyed by product title)
+      Object.assign(ST.cogs,d.cogs||{});
+      // Merge orderFlags + orderNotes with prefixed keys
+      Object.keys(d.orderFlags||{}).forEach(k=>{ST.orderFlags[s.id+'_'+k]=d.orderFlags[k];});
+      Object.keys(d.orderNotes||{}).forEach(k=>{ST.orderNotes[s.id+'_'+k]=d.orderNotes[k];});
+    }catch(e){console.log('Combine err for '+s.name+':',e);}
+  });
+  // Load global shared data
+  const g=JSON.parse(localStorage.getItem('df_global')||'{}');
+  ST.notes=g.notes||[];
+  ST.creatives=g.creatives||[];
+  ST.supplierCosts=g.supplierCosts||[];
+}
+
+function switchToAllStores(){
+  COMBINED_MODE=true;
+  persistStore(); // save current store first
+  loadCombinedData();
+  // Update topbar
+  const dot=document.getElementById('store-dot');
+  const title=document.getElementById('store-title');
+  if(dot)dot.style.background='linear-gradient(45deg,#4c7bff,#fe2c55)';
+  if(title)title.textContent='All stores';
+  rAll();
+  toast('Viewing all stores combined');
+}
+
+// Override doSwitchStore to disable combined mode
+const _origSwitch=typeof doSwitchStore==='function'?doSwitchStore:null;
+function doSwitchStoreNew(id){
+  COMBINED_MODE=false;
+  if(id===ACTIVE_STORE_ID&&!COMBINED_MODE){toast('Already on this store');return;}
+  persistStore();
+  ACTIVE_STORE_ID=id;
+  localStorage.setItem(ACTIVE_KEY,id);
+  loadStoreData(id);
+  updateStoreDot();
+  rAll();
+  syncShopify(true);
+  toast('Switched to '+(getActiveStore()?.name||'store'));
+}
+
+// Prevent persist() from saving combined data over individual stores
+const _origPersistStore=persistStore;
+persistStore=function(){
+  if(COMBINED_MODE)return; // don't save when in combined view
+  _origPersistStore();
+};
+
+
 function doSwitchStore(id){
+  COMBINED_MODE=false;
   if(id===ACTIVE_STORE_ID){toast('Already on this store');return;}
   persistStore();
   ACTIVE_STORE_ID=id;
