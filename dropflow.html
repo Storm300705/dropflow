@@ -1334,18 +1334,24 @@ function initMultiStore(){
   // Migrate old single-store data if needed
   const migrated = migrateOldData();
   
-  if(STORES.length === 0){
-    // No stores at all — create default
-    const id = 'store_default';
-    STORES = [{id, name:'My Store', domain:'', color:'#4c7bff', createdAt:today()}];
-    saveStores();
-    ACTIVE_STORE_ID = id;
-    localStorage.setItem(ACTIVE_KEY, id);
-  }else{
-    // Restore last active store
-    const savedActive = localStorage.getItem(ACTIVE_KEY);
-    ACTIVE_STORE_ID = (savedActive && STORES.find(s=>s.id===savedActive)) ? savedActive : STORES[0].id;
+  // Ensure Carlynx + Abash Icons exist (idempotent)
+  const hasCarlynx=STORES.find(s=>s.id==='store_carlynx');
+  const hasAbash=STORES.find(s=>s.id==='store_abash');
+  if(!hasCarlynx){
+    STORES.unshift({id:'store_carlynx',name:'Carlynx',domain:'carlynx-2.myshopify.com',color:'#4c7bff',createdAt:'2026-01-01'});
+    // Migrate any old df9 data into Carlynx
+    const old=localStorage.getItem('df9');
+    if(old&&!localStorage.getItem(storeKey('store_carlynx'))){
+      try{localStorage.setItem(storeKey('store_carlynx'),old);}catch(e){}
+    }
   }
+  if(!hasAbash){
+    STORES.push({id:'store_abash',name:'Abash Icons',domain:'abashevmodel.myshopify.com',color:'#fe2c55',createdAt:'2026-01-01'});
+  }
+  saveStores();
+  // Restore last active store
+  const savedActive=localStorage.getItem(ACTIVE_KEY);
+  ACTIVE_STORE_ID=(savedActive&&STORES.find(s=>s.id===savedActive))?savedActive:STORES[0].id;
   
   // Ensure domains are always set (fix for stores created before hardcoding)
   STORES.forEach(s=>{
@@ -1384,7 +1390,7 @@ const ST={
   adDailyBudget:0
 };
 
-function persist(){localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold,orderFlags:ST.orderFlags||{},orderNotes:ST.orderNotes||{},adDailyBudget:ST.adDailyBudget||0}));}
+function persist(){if(typeof persistStore==="function")persistStore();else localStorage.setItem('df9',JSON.stringify({ads:ST.ads,expenses:ST.expenses,subs:ST.subs,orders:ST.orders,products:ST.products,customers:ST.customers,cogs:ST.cogs,settings:ST.settings,goals:ST.goals,supplierCosts:ST.supplierCosts,creatives:ST.creatives,notes:ST.notes,invThreshold:ST.invThreshold,orderFlags:ST.orderFlags||{},orderNotes:ST.orderNotes||{},adDailyBudget:ST.adDailyBudget||0}));}
 function hydrate(){
   try{
     const r=JSON.parse(localStorage.getItem('df9')||localStorage.getItem('df8')||'{}');
